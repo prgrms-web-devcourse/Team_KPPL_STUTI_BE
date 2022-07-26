@@ -1,0 +1,17 @@
+<included>
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <property name="CONSOLE_LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}:%L){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <property name="FILE_LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{36}  :%L - %msg%n" />
+
+    <property name="MAX_FILE_SIZE" value="100MB" />
+    <property name="MAX_HISTORY" value="30" />
+
+    <property name="ROOT_PATH" value="./logs" />
+    <property name="RECORD_PATH" value="${ROOT_PATH}/records" />
+    <property name="RECORD_FILE_FORMAT" value="%d{yyyy-MM-dd}.%i.log.gz" />
+    <property name="ERROR_LOG_FILE" value="${ROOT_PATH}/error.log" />
+    <property name="ERROR_LOG_RECORD_FILE" value="${RECORD_PATH}/error/error_${RECORD_FILE_FORMAT}" />
+</included>

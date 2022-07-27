@@ -60,7 +60,7 @@ public class QFeed extends EntityPathBase<Feed> {
 
     public QFeed(Class<? extends Feed> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member"), inits.get("member")) : null;
     }
 
 }

@@ -20,10 +20,8 @@ spring:
     baseline-on-migrate: true
 
 app:
-  # cors
   cors:
     allowed-origins: 'http://localhost:3000'
-  # OAuth path
   oauth:
     domain: "http://localhost:3000"
 

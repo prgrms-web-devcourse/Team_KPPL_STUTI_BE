@@ -19,10 +19,8 @@ spring:
     enabled: false
 
 app:
-  # cors
   cors:
     allowed-origins: 'http://localhost:3000'
-  # OAuth path
   oauth:
     domain: "http://localhost:3000"
 

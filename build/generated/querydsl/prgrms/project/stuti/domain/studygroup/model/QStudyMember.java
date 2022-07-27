@@ -62,7 +62,7 @@ public class QStudyMember extends EntityPathBase<StudyMember> {
 
     public QStudyMember(Class<? extends StudyMember> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member"), inits.get("member")) : null;
         this.studyGroup = inits.isInitialized("studyGroup") ? new QStudyGroup(forProperty("studyGroup")) : null;
     }
 

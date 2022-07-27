@@ -67,7 +67,7 @@ public class QComment extends EntityPathBase<Comment> {
     public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.feed = inits.isInitialized("feed") ? new QFeed(forProperty("feed"), inits.get("feed")) : null;
-        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member"), inits.get("member")) : null;
         this.parent = inits.isInitialized("parent") ? new QComment(forProperty("parent"), inits.get("parent")) : null;
     }
 

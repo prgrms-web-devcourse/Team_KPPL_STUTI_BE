@@ -61,7 +61,7 @@ public class QFeedLike extends EntityPathBase<FeedLike> {
     public QFeedLike(Class<? extends FeedLike> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.feed = inits.isInitialized("feed") ? new QFeed(forProperty("feed"), inits.get("feed")) : null;
-        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member")) : null;
+        this.member = inits.isInitialized("member") ? new prgrms.project.stuti.domain.member.model.QMember(forProperty("member"), inits.get("member")) : null;
     }
 
 }

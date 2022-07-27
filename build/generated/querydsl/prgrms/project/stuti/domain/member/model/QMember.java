@@ -30,6 +30,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath email = createString("email");
 
+    public final EnumPath<Field> field = createEnum("field", Field.class);
+
     public final StringPath githubUrl = createString("githubUrl");
 
     public final NumberPath<Long> id = createNumber("id", Long.class);

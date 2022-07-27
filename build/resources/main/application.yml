@@ -2,5 +2,5 @@ spring:
   profiles:
     active: local
     group:
-      local: local, common
-      prod: prod, common
+      local: local, security, common
+      prod: prod, security, common

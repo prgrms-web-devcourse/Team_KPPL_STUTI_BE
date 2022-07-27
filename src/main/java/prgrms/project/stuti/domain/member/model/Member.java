@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -28,7 +29,7 @@ public class Member extends BaseTimeEntity {
 	private Long id;
 
 	@Column(name = "email", length = 40, unique = true, nullable = false)
-	private String email;
+	private Email email;
 
 	@Column(name = "nick_name", length = 30, unique = true, nullable = false)
 	private String nickName;
@@ -44,6 +45,9 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "profile_image_url", length = 150, unique = true, nullable = false)
 	private String profileImageUrl;
 
+	@Column(name = "mbti", length = 5, nullable = false)
+	private Mbti mbti;
+
 	@Column(name = "github_url", length = 100)
 	private String githubUrl;
 
@@ -54,16 +58,23 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "member_role", length = 16, nullable = false)
 	private MemberRole memberRole;
 
+	@Column
+	@NotNull
+	private boolean isDeleted;
+
 	@Builder
-	public Member(String email, String nickName, Career career, String profileImageUrl, String githubUrl,
-		String blogUrl, MemberRole memberRole) {
-		this.email = email;
+	public Member(String email, String nickName, Field field, String career, String profileImageUrl, String githubUrl,
+		Mbti mbti, String blogUrl, MemberRole memberRole) {
+		this.email = new Email(email);
 		this.nickName = nickName;
-		this.career = career;
+		this.field = field;
+		this.career = Career.toCareer(career);
 		this.profileImageUrl = profileImageUrl;
+		this.mbti = mbti;
 		this.githubUrl = githubUrl;
 		this.blogUrl = blogUrl;
 		this.memberRole = memberRole;
+		this.isDeleted = false;
 	}
 
 	@Override
@@ -73,6 +84,7 @@ public class Member extends BaseTimeEntity {
 			.append("id", id)
 			.append("email", email)
 			.append("nickName", nickName)
+			.append("field", field)
 			.append("career", career)
 			.append("profileImageUrl", profileImageUrl)
 			.append("githubUrl", githubUrl)

@@ -51,11 +51,11 @@ class ImageUploaderTest {
 	void testUpload() throws IOException {
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
-		String imageFilePath = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
+		String imageFileUrl = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
 
-		assertThat(imageFilePath).isNotNull();
+		assertThat(imageFileUrl).isNotNull();
 
-		String fullPath = rootPath + File.separator + imageFilePath;
+		String fullPath = rootPath + File.separator + imageFileUrl;
 		imageFile = new File(fullPath);
 
 		assertThat(imageFile).isFile();
@@ -67,13 +67,13 @@ class ImageUploaderTest {
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 		MultipartFile testMultipartFile2 = getMockMultipartFile(testImageFile);
 
-		List<String> imageFilePaths = imageUploader
+		List<String> imageFileUrls = imageUploader
 			.uploadAll(List.of(testMultipartFile, testMultipartFile2), ImageDirectory.STUDY_GROUP);
 
-		assertThat(imageFilePaths).isNotNull();
-		assertThat(imageFilePaths.size()).isNotZero();
+		assertThat(imageFileUrls).isNotNull();
+		assertThat(imageFileUrls.size()).isNotZero();
 
-		List<String> fullPaths = imageFilePaths.stream().map(i -> rootPath + File.separator + i).toList();
+		List<String> fullPaths = imageFileUrls.stream().map(i -> rootPath + File.separator + i).toList();
 
 		for (String fullPath : fullPaths) {
 			imageFile = new File(fullPath);
@@ -89,23 +89,23 @@ class ImageUploaderTest {
 	void testCreateThumbnail() throws IOException {
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
-		String imageFilePath = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
+		String imageFileUrl = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
 
-		assertThat(imageFilePath).isNotNull();
+		assertThat(imageFileUrl).isNotNull();
 
-		String fullPath = rootPath + File.separator + imageFilePath;
+		String fullPath = rootPath + File.separator + imageFileUrl;
 		imageFile = new File(fullPath);
 
 		assertThat(imageFile).isFile();
 
-		String thumbnailFilePath = imageUploader.createThumbnail(imageFilePath);
+		String thumbnailFileUrl = imageUploader.createThumbnail(imageFileUrl);
 
-		String thumbnailFullPath = rootPath + File.separator + thumbnailFilePath;
+		String thumbnailFullPath = rootPath + File.separator + thumbnailFileUrl;
 		File thumbnailImageFile = new File(thumbnailFullPath);
 
 		assertThat(thumbnailImageFile).isFile();
 
-		Files.deleteIfExists(Paths.get(rootPath, thumbnailFilePath));
+		Files.deleteIfExists(Paths.get(rootPath, thumbnailFileUrl));
 	}
 
 	@Test
@@ -113,16 +113,16 @@ class ImageUploaderTest {
 	void testDelete() throws IOException {
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
-		String imageFilePath = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
+		String imageFileUrl = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
 
-		assertThat(imageFilePath).isNotNull();
+		assertThat(imageFileUrl).isNotNull();
 
-		String fullPath = rootPath + File.separator + imageFilePath;
+		String fullPath = rootPath + File.separator + imageFileUrl;
 		imageFile = new File(fullPath);
 
 		assertThat(imageFile).isFile();
 
-		imageUploader.delete(imageFilePath);
+		imageUploader.delete(imageFileUrl);
 
 		assertThat(imageFile.isFile()).isFalse();
 	}

@@ -31,14 +31,14 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		ImageFileValidator.validateImageFile(multipartFile);
 
 		try {
-			URL rootPath = resource.getURL();
+			URL rootUrl = resource.getURL();
 			File directory =
-				ImageFileUtils.makeDirectory(getDirectoryPath(rootPath.getPath(), imageDirectory.getDirectory()));
+				ImageFileUtils.makeDirectory(getDirectoryPath(rootUrl.getPath(), imageDirectory.getDirectory()));
 			File imageFile = createImageFile(multipartFile, directory);
 
 			multipartFile.transferTo(imageFile);
 
-			return getImageFilePath(imageDirectory.getDirectory(), imageFile.getName());
+			return getImageFileUrl(imageDirectory.getDirectory(), imageFile.getName());
 		} catch (IOException ex) {
 			FileException.FAILED_TO_UPLOAD.accept(ex);
 		}
@@ -49,26 +49,26 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 	@Override
 	public List<String> uploadAll(List<MultipartFile> multipartFiles, ImageDirectory imageDirectory) {
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
-		List<String> imageFilePaths = Collections.synchronizedList(new ArrayList<>());
+		List<String> imageFileUrls = Collections.synchronizedList(new ArrayList<>());
 
 		for (MultipartFile multipartFile : multipartFiles) {
 			ImageFileValidator.validateImageFile(multipartFile);
 
 			try {
-				URL rootPath = resource.getURL();
+				URL rootUrl = resource.getURL();
 				File directory =
-					ImageFileUtils.makeDirectory(getDirectoryPath(rootPath.getPath(), imageDirectory.getDirectory()));
+					ImageFileUtils.makeDirectory(getDirectoryPath(rootUrl.getPath(), imageDirectory.getDirectory()));
 				File imageFile = createImageFile(multipartFile, directory);
 
 				multipartFile.transferTo(imageFile);
 
-				imageFilePaths.add(getImageFilePath(imageDirectory.getDirectory(), imageFile.getName()));
+				imageFileUrls.add(getImageFileUrl(imageDirectory.getDirectory(), imageFile.getName()));
 			} catch (IOException ex) {
 				FileException.FAILED_TO_UPLOAD.accept(ex);
 			}
 		}
 
-		return imageFilePaths;
+		return imageFileUrls;
 	}
 
 	@Override
@@ -78,11 +78,11 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		try {
 			URL rootUrl = resource.getURL();
 			String rootPath = rootUrl.getPath();
-			String imageFileFullPath = Paths.get(rootPath, imageUrl).toString();
+			String imageFileUrl = Paths.get(rootPath, imageUrl).toString();
 
-			String thumbnailFullPath = ImageFileUtils.createThumbnail(new File(imageFileFullPath));
+			String thumbnailFileUrl = ImageFileUtils.createThumbnail(new File(imageFileUrl));
 
-			return getThumbnailUrl(rootPath, thumbnailFullPath);
+			return getThumbnailFileUrl(rootPath, thumbnailFileUrl);
 		} catch (IOException ex) {
 			FileException.FAILED_TO_UPLOAD.accept(ex);
 		}
@@ -106,7 +106,7 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		return Paths.get(rootPath, directory).toString();
 	}
 
-	private String getImageFilePath(String directory, String name) {
+	private String getImageFileUrl(String directory, String name) {
 		return Paths.get(File.separator, directory, name).toString();
 	}
 
@@ -114,10 +114,10 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		String extension = ImageFileUtils.getExtension(Objects.requireNonNull(multipartFile.getContentType()));
 		String newName = ImageFileUtils.rename(extension);
 
-		return new File(getImageFilePath(directory.getAbsolutePath(), newName));
+		return new File(getImageFileUrl(directory.getAbsolutePath(), newName));
 	}
 
-	private String getThumbnailUrl(String rootPath, String thumbnailFullPath) {
+	private String getThumbnailFileUrl(String rootPath, String thumbnailFullPath) {
 		return thumbnailFullPath.replace(rootPath, Strings.EMPTY);
 	}
 }

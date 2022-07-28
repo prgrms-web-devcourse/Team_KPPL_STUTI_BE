@@ -5,6 +5,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.global.error.dto.ErrorCode;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
 		BindingResult bindingResult) {
 		log.info("Got MethodArgumentNotValidException: {}", ex.getMessage(), ex);
 
-		return null;
+		return ErrorResponseMapper.toErrorResponse(ErrorCode.EMPTY_INPUT_VALUE, bindingResult);
 	}
 
 	@ExceptionHandler(BusinessException.class)
@@ -28,6 +29,13 @@ public class GlobalExceptionHandler {
 		log.info("Got BusinessException: {}", ex.getMessage(), ex);
 
 		return ErrorResponseMapper.toErrorResponse(ex.getErrorCode());
+	}
+
+	@ExceptionHandler(MultipartException.class)
+	protected ResponseEntity<ErrorResponse> handleBusinessException(MultipartException ex) {
+		log.info("Got BusinessException: {}", ex.getMessage(), ex);
+
+		return ErrorResponseMapper.toErrorResponse(ErrorCode.OVER_MAX_SIZE);
 	}
 
 	@ExceptionHandler(Exception.class)

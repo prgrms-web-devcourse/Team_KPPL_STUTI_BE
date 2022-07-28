@@ -61,12 +61,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			if (optionalRefreshToken.isPresent()) {
 				RefreshToken refreshToken = optionalRefreshToken.get();
-				String email = tokenService.getUid(refreshToken.getRefreshTokenValue());
+				String memberId = tokenService.getUid(refreshToken.getRefreshTokenValue());
 				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
 
 				// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
-				String newAccessToken = tokenGenerator.generateAccessToken(email, role);
-				setAuthenticationToSecurityContextHolder(email, role);
+				String newAccessToken = tokenGenerator.generateAccessToken(memberId, role);
+				setAuthenticationToSecurityContextHolder(memberId, role);
 				tokenService.addAccessTokenToCookie(response, newAccessToken, TokenType.JWT_TYPE);
 			}
 		}

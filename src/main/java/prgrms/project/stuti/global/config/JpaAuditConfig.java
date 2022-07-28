@@ -26,9 +26,9 @@ public class JpaAuditConfig {
 			}
 
 			UsernamePasswordAuthenticationToken userToken = (UsernamePasswordAuthenticationToken) authentication.getPrincipal();
-			String email = (String) userToken.getPrincipal();
+			String memberId = (String) userToken.getPrincipal();
 
-			return Optional.ofNullable(email);
+			return Optional.ofNullable(memberId);
 		};
 	}
 

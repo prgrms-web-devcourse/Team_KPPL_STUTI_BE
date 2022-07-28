@@ -60,7 +60,8 @@ public class AuthenticationController {
 			temporaryMember);
 
 		// 생성된 refreshToken 저장 후
-		Tokens tokens = tokenGenerator.generateTokens(memberSaveRequest.email(), MemberRole.ROLE_USER.stringValue);
+		Tokens tokens = tokenGenerator.generateTokens(memberResponse.memberId().toString(),
+			MemberRole.ROLE_USER.stringValue);
 		refreshTokenService.save(tokens, tokenService.getRefreshPeriod());
 
 		// 생성된 accessToken 쿠키 전달

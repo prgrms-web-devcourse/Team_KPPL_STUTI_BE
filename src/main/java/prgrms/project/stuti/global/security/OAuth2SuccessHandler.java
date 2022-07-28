@@ -86,7 +86,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		} else {
 			// 이미 회원가입 한 유저의 경우 토큰을 refreshToken 저장 후
 			// accessToken 은 쿠키로 담아 main 으로 redirect 한다.
-			Tokens tokens = tokenGenerator.generateTokens(email, MemberRole.ROLE_USER.stringValue);
+			Long memberId = optionalMember.get().getId();
+			Tokens tokens = tokenGenerator.generateTokens(memberId.toString(), MemberRole.ROLE_USER.stringValue);
 			saveRefreshTokenToRedis(tokens);
 			addAccessTokenToCookie(response, tokens.getAccessToken(), TokenType.JWT_TYPE);
 

@@ -89,8 +89,8 @@ class AuthenticationControllerTest extends TestConfig {
 		given(temporaryMemberService.findById(memberSaveRequest.email())).willReturn(Optional.of(temporaryMember));
 		given(memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember)).willReturn(
 			memberResponse);
-		given(tokenGenerator.generateTokens(memberSaveRequest.email(), MemberRole.ROLE_USER.stringValue)).willReturn(
-			tokens);
+		given(tokenGenerator.generateTokens(memberResponse.memberId().toString(),
+			MemberRole.ROLE_USER.stringValue)).willReturn(tokens);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(

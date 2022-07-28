@@ -52,6 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String[] roles = tokenService.getRole(token);
 
 			setAuthenticationToSecurityContextHolder(email, roles);
+			tokenService.addAccessTokenToCookie(response, token, TokenType.JWT_TYPE);
 
 		} else if (token != null) {
 			// 토큰이 유효하지 않은경우

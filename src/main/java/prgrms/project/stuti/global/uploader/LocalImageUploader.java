@@ -3,6 +3,7 @@ package prgrms.project.stuti.global.uploader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.global.error.exception.FileException;
+import prgrms.project.stuti.global.uploader.dto.ImageDeleteDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
 import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
@@ -96,6 +98,18 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 			ImageFileUtils.createThumbnail(directory, imageFile, width, height);
 		} catch (IOException ex) {
 			FileException.FAILED_TO_UPLOAD.accept(ex);
+		}
+	}
+
+	@Override
+	public void delete(ImageDeleteDto deleteDto) {
+		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
+
+		try{
+			URL rootUrl = resource.getURL();
+			Files.deleteIfExists(Paths.get(rootUrl.getPath(), deleteDto.imageUrl()));
+		} catch (IOException ex) {
+			FileException.FAILED_TO_DELETE.accept(ex);
 		}
 	}
 

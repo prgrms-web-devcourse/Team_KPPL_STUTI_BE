@@ -3,6 +3,7 @@ package prgrms.project.stuti.global.uploader;
 import java.util.Collections;
 import java.util.List;
 
+import prgrms.project.stuti.global.uploader.dto.ImageDeleteDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
 import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
@@ -22,5 +23,9 @@ public class AwsS3ImageUploader implements ImageUploader {
 
 	@Override
 	public void createThumbnail(ThumbnailCreateDto createDto) {
+	}
+
+	@Override
+	public void delete(ImageDeleteDto deleteDto) {
 	}
 }

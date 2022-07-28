@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import net.coobird.thumbnailator.name.Rename;
 
+import prgrms.project.stuti.global.uploader.dto.ImageDeleteDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
 import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
@@ -39,7 +40,7 @@ class ImageUploaderTest {
 
 	private String rootPath;
 	private File testImageFile;
-	private File thumbnailFile;
+	private File imageFile;
 	private final int width = 200;
 	private final int height = 200;
 
@@ -54,7 +55,7 @@ class ImageUploaderTest {
 
 	@AfterEach
 	void cleanup() throws IOException {
-		Files.deleteIfExists(Paths.get(thumbnailFile.getAbsolutePath()));
+		Files.deleteIfExists(Paths.get(imageFile.getAbsolutePath()));
 	}
 
 	@Test
@@ -68,11 +69,11 @@ class ImageUploaderTest {
 		assertThat(imageFilePath).isNotNull();
 
 		String fullPath = rootPath + File.separator + imageFilePath;
-		thumbnailFile = new File(fullPath);
+		imageFile = new File(fullPath);
 
-		assertThat(thumbnailFile).isFile();
+		assertThat(imageFile).isFile();
 
-		BufferedImage bufferedImage = ImageIO.read(thumbnailFile);
+		BufferedImage bufferedImage = ImageIO.read(imageFile);
 
 		assertThat(bufferedImage.getWidth()).isEqualTo(width);
 		assertThat(bufferedImage.getHeight()).isEqualTo(height);
@@ -94,15 +95,15 @@ class ImageUploaderTest {
 		List<String> fullPaths = imageFilePaths.stream().map(i -> rootPath + File.separator + i).toList();
 
 		for (String fullPath : fullPaths) {
-			thumbnailFile = new File(fullPath);
-			assertThat(thumbnailFile).isFile();
+			imageFile = new File(fullPath);
+			assertThat(imageFile).isFile();
 
-			BufferedImage bufferedImage = ImageIO.read(thumbnailFile);
+			BufferedImage bufferedImage = ImageIO.read(imageFile);
 
 			assertThat(bufferedImage.getWidth()).isEqualTo(width);
 			assertThat(bufferedImage.getHeight()).isEqualTo(height);
 
-			Files.deleteIfExists(Paths.get(thumbnailFile.getAbsolutePath()));
+			Files.deleteIfExists(Paths.get(imageFile.getAbsolutePath()));
 		}
 	}
 
@@ -118,19 +119,45 @@ class ImageUploaderTest {
 
 		assertThat(imageFilePath).isNotNull();
 
+		String fullPath = rootPath + File.separator + imageFilePath;
+		imageFile = new File(fullPath);
+
+		assertThat(imageFile).isFile();
+
 		imageUploader.createThumbnail(new ThumbnailCreateDto(imageFilePath, thumbnailWidth, thumbnailHeight));
 
-		String thumbnailPath = rootPath + File.separator + Rename.SUFFIX_DOT_THUMBNAIL.apply(imageFilePath, null);
-		thumbnailFile = new File(thumbnailPath);
+		String thumbnailFilePath = Rename.SUFFIX_DOT_THUMBNAIL.apply(imageFilePath, null);
+		String thumbnailFullPath = rootPath + File.separator + thumbnailFilePath;
+		File thumbnailImageFile = new File(thumbnailFullPath);
 
-		assertThat(thumbnailFile).isFile();
+		assertThat(thumbnailImageFile).isFile();
 
-		BufferedImage bufferedImage = ImageIO.read(thumbnailFile);
+		BufferedImage bufferedImage = ImageIO.read(thumbnailImageFile);
 
 		assertThat(bufferedImage.getWidth()).isEqualTo(thumbnailWidth);
 		assertThat(bufferedImage.getHeight()).isEqualTo(thumbnailHeight);
 
-		Files.deleteIfExists(Paths.get(rootPath, imageFilePath));
+		Files.deleteIfExists(Paths.get(rootPath, thumbnailFilePath));
+	}
+
+	@Test
+	@DisplayName("업로드된 이미지 파일을 삭제한다.")
+	void testDelete() throws IOException {
+		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
+		ImageUploadDto uploadDto = new ImageUploadDto(testMultipartFile, width, height);
+
+		String imageFilePath = imageUploader.upload(uploadDto, ImageDirectory.STUDY_GROUP);
+
+		assertThat(imageFilePath).isNotNull();
+
+		String fullPath = rootPath + File.separator + imageFilePath;
+		imageFile = new File(fullPath);
+
+		assertThat(imageFile).isFile();
+
+		imageUploader.delete(new ImageDeleteDto(imageFilePath));
+
+		assertThat(imageFile.isFile()).isFalse();
 	}
 
 	private MultipartFile getMockMultipartFile(File testFile) throws IOException {

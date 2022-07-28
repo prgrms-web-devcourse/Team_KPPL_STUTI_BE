@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.uploader;
+package prgrms.project.stuti.global.uploader.common;
 
 import lombok.Getter;
 

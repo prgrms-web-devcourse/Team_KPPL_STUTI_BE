@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import prgrms.project.stuti.global.uploader.common.ImageDirectory;
+
 public interface ImageUploader {
 
 	String upload(MultipartFile multipartFile, ImageDirectory imageDirectory);

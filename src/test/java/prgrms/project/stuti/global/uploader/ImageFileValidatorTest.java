@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.global.error.exception.FileException;
+import prgrms.project.stuti.global.uploader.common.ImageFileValidator;
 
 class ImageFileValidatorTest {
 

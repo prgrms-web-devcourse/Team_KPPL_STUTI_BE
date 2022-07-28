@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.global.error.exception.FileException;
+import prgrms.project.stuti.global.uploader.common.ImageDirectory;
+import prgrms.project.stuti.global.uploader.common.ImageFileUtils;
+import prgrms.project.stuti.global.uploader.common.ImageFileValidator;
 
 @Service
 public record LocalImageUploader(ResourceLoader resourceLoader) implements ImageUploader {

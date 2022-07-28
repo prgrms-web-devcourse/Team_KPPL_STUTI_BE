@@ -19,6 +19,8 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import prgrms.project.stuti.global.uploader.common.ImageDirectory;
+
 @SpringBootTest
 class ImageUploaderTest {
 

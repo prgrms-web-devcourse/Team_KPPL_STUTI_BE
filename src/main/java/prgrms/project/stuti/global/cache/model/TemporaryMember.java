@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -18,6 +19,7 @@ public class TemporaryMember {
     @TimeToLive
     private Long expiration;
 
+    @Builder
     public TemporaryMember(String email, String imageUrl, String nickname, Long expiration) {
         this.email = email;
         this.imageUrl = imageUrl;

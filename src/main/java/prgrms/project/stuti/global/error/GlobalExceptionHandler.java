@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(MultipartException.class)
 	protected ResponseEntity<ErrorResponse> handleBusinessException(MultipartException ex) {
-		log.info("Got BusinessException: {}", ex.getMessage(), ex);
+		log.info("Got MultipartException: {}", ex.getMessage(), ex);
 
 		return ErrorResponseMapper.toErrorResponse(ErrorCode.OVER_MAX_SIZE);
 	}

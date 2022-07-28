@@ -3,29 +3,28 @@ package prgrms.project.stuti.global.uploader;
 import java.util.Collections;
 import java.util.List;
 
-import prgrms.project.stuti.global.uploader.dto.ImageDeleteDto;
-import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
-import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
-import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.web.multipart.MultipartFile;
 
 //TODO: 2022/07/27 배포 환경에서 사용
 public class AwsS3ImageUploader implements ImageUploader {
 
 	@Override
-	public String upload(ImageUploadDto uploadDto, ImageDirectory imageDirectory) {
-		return null;
+	public String upload(MultipartFile multipartFile, ImageDirectory imageDirectory) {
+		return Strings.EMPTY;
 	}
 
 	@Override
-	public List<String> uploadAll(ImageUploadAllDto uploadAllDto, ImageDirectory imageDirectory) {
+	public List<String> uploadAll(List<MultipartFile> multipartFiles, ImageDirectory imageDirectory) {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public void createThumbnail(ThumbnailCreateDto createDto) {
+	public String createThumbnail(String imageUrl) {
+		return Strings.EMPTY;
 	}
 
 	@Override
-	public void delete(ImageDeleteDto deleteDto) {
+	public void delete(String imageUrl) {
 	}
 }

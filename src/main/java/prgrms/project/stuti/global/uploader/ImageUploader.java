@@ -2,18 +2,15 @@ package prgrms.project.stuti.global.uploader;
 
 import java.util.List;
 
-import prgrms.project.stuti.global.uploader.dto.ImageDeleteDto;
-import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
-import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
-import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageUploader {
 
-	String upload(ImageUploadDto uploadDto, ImageDirectory imageDirectory);
+	String upload(MultipartFile multipartFile, ImageDirectory imageDirectory);
 
-	List<String> uploadAll(ImageUploadAllDto uploadAllDto, ImageDirectory imageDirectory);
+	List<String> uploadAll(List<MultipartFile> multipartFiles, ImageDirectory imageDirectory);
 
-	void createThumbnail(ThumbnailCreateDto createDto);
+	String createThumbnail(String imageUrl);
 
-	void delete(ImageDeleteDto deleteDto);
+	void delete(String imageUrl);
 }

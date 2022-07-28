@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.apache.logging.log4j.util.Strings;
+
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
 
@@ -16,7 +18,7 @@ import prgrms.project.stuti.global.error.exception.FileException;
 public class ImageFileUtils {
 
 	private static final double OUTPUT_QUALITY = 0.9;
-
+	private static final int THUMBNAIL_WIDTH = 320;
 	public static String rename(String extension) {
 		return UUID.randomUUID() + "." + extension;
 	}
@@ -37,25 +39,23 @@ public class ImageFileUtils {
 		return directory;
 	}
 
-	public static void resize(File directory, File imageFile, int width, int height) {
-		try {
-			Thumbnails.of(imageFile)
-				.outputQuality(OUTPUT_QUALITY)
-				.forceSize(width, height)
-				.toFiles(directory, Rename.NO_CHANGE);
-		} catch (IOException ex) {
-			FileException.FAILED_TO_RESIZE.accept(ex);
-		}
-	}
+	public static String createThumbnail(File imageFile) {
 
-	public static void createThumbnail(File directory, File imageFile, int width, int height) {
+		String originName = imageFile.getName();
+		String thumbnailName = Rename.PREFIX_DOT_THUMBNAIL.apply(originName, null);
+		String thumbnailFullPath = imageFile.getAbsolutePath().replace(originName, thumbnailName);
+
 		try {
 			Thumbnails.of(imageFile)
 				.outputQuality(OUTPUT_QUALITY)
-				.forceSize(width, height)
-				.toFiles(directory, Rename.SUFFIX_DOT_THUMBNAIL);
+				.width(THUMBNAIL_WIDTH)
+				.toFile(new File(thumbnailFullPath));
+
+			return thumbnailFullPath;
 		} catch (IOException ex) {
 			FileException.FAILED_TO_RESIZE.accept(ex);
 		}
+
+		return Strings.EMPTY;
 	}
 }

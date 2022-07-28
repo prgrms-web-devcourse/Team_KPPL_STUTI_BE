@@ -11,16 +11,13 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.global.error.exception.FileException;
-import prgrms.project.stuti.global.uploader.dto.ImageDeleteDto;
-import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
-import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
-import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
 
 @Service
 public record LocalImageUploader(ResourceLoader resourceLoader) implements ImageUploader {
@@ -28,11 +25,8 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 	private static final String DEFAULT_CLASS_PATH = "classpath:static";
 
 	@Override
-	public String upload(ImageUploadDto uploadDto, ImageDirectory imageDirectory) {
+	public String upload(MultipartFile multipartFile, ImageDirectory imageDirectory) {
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
-		MultipartFile multipartFile = uploadDto.multipartFile();
-		int width = uploadDto.width();
-		int height = uploadDto.height();
 
 		ImageFileValidator.validateImageFile(multipartFile);
 
@@ -43,7 +37,6 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 			File imageFile = createImageFile(multipartFile, directory);
 
 			multipartFile.transferTo(imageFile);
-			ImageFileUtils.resize(directory, imageFile, width, height);
 
 			return getImageFilePath(imageDirectory.getDirectory(), imageFile.getName());
 		} catch (IOException ex) {
@@ -53,14 +46,10 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		return StringUtils.EMPTY;
 	}
 
-
 	@Override
-	public List<String> uploadAll(ImageUploadAllDto uploadAllDto, ImageDirectory imageDirectory) {
+	public List<String> uploadAll(List<MultipartFile> multipartFiles, ImageDirectory imageDirectory) {
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
 		List<String> imageFilePaths = Collections.synchronizedList(new ArrayList<>());
-		List<MultipartFile> multipartFiles = uploadAllDto.multipartFiles();
-		int width = uploadAllDto.width();
-		int height = uploadAllDto.height();
 
 		for (MultipartFile multipartFile : multipartFiles) {
 			ImageFileValidator.validateImageFile(multipartFile);
@@ -72,7 +61,6 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 				File imageFile = createImageFile(multipartFile, directory);
 
 				multipartFile.transferTo(imageFile);
-				ImageFileUtils.resize(directory, imageFile, width, height);
 
 				imageFilePaths.add(getImageFilePath(imageDirectory.getDirectory(), imageFile.getName()));
 			} catch (IOException ex) {
@@ -84,30 +72,31 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 	}
 
 	@Override
-	public void createThumbnail(ThumbnailCreateDto createDto) {
+	public String createThumbnail(String imageUrl) {
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
 
 		try {
-			URL rootPath = resource.getURL();
-			File imageFile = new File(getImageFilePath(rootPath.getPath(), createDto.imageUrl()));
-			int width = createDto.width();
-			int height = createDto.height();
-			String fullPath = imageFile.getParent() + File.separator;
-			File directory = ImageFileUtils.makeDirectory(fullPath);
+			URL rootUrl = resource.getURL();
+			String rootPath = rootUrl.getPath();
+			String imageFileFullPath = Paths.get(rootPath, imageUrl).toString();
 
-			ImageFileUtils.createThumbnail(directory, imageFile, width, height);
+			String thumbnailFullPath = ImageFileUtils.createThumbnail(new File(imageFileFullPath));
+
+			return getThumbnailUrl(rootPath, thumbnailFullPath);
 		} catch (IOException ex) {
 			FileException.FAILED_TO_UPLOAD.accept(ex);
 		}
+
+		return Strings.EMPTY;
 	}
 
 	@Override
-	public void delete(ImageDeleteDto deleteDto) {
+	public void delete(String imageUrl) {
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
 
-		try{
+		try {
 			URL rootUrl = resource.getURL();
-			Files.deleteIfExists(Paths.get(rootUrl.getPath(), deleteDto.imageUrl()));
+			Files.deleteIfExists(Paths.get(rootUrl.getPath(), imageUrl));
 		} catch (IOException ex) {
 			FileException.FAILED_TO_DELETE.accept(ex);
 		}
@@ -118,7 +107,7 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 	}
 
 	private String getImageFilePath(String directory, String name) {
-		return Paths.get(directory, name).toString();
+		return Paths.get(File.separator, directory, name).toString();
 	}
 
 	private File createImageFile(MultipartFile multipartFile, File directory) {
@@ -126,5 +115,9 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		String newName = ImageFileUtils.rename(extension);
 
 		return new File(getImageFilePath(directory.getAbsolutePath(), newName));
+	}
+
+	private String getThumbnailUrl(String rootPath, String thumbnailFullPath) {
+		return thumbnailFullPath.replace(rootPath, Strings.EMPTY);
 	}
 }

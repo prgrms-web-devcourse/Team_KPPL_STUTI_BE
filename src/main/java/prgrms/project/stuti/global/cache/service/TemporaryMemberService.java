@@ -14,6 +14,10 @@ public class TemporaryMemberService {
 
     private final TemporaryMemberRepository temporaryMemberRepository;
 
+    public void save(TemporaryMember temporaryMember){
+        temporaryMemberRepository.save(temporaryMember);
+    }
+
     public Optional<TemporaryMember> findById(String id) {
         return temporaryMemberRepository.findById(id);
     }

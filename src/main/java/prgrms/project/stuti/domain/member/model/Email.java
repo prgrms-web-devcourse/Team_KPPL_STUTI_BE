@@ -9,6 +9,7 @@ import javax.persistence.Embeddable;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import prgrms.project.stuti.global.error.exception.MemberException;
 
 @Getter
 @Embeddable
@@ -27,9 +28,7 @@ public class Email {
 	private void validateEmailPattern(String email) {
 		boolean matches = Pattern.matches(EMAIL_REGEX, email);
 		if (!matches) {
-			throw new IllegalArgumentException(
-				format("입력값이 이메일 형식에 맞지 않습니다. inputEmail : {0}", email));
+			MemberException.INVALID_EMAIL.get();
 		}
 	}
-
 }

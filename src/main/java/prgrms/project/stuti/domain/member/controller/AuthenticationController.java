@@ -1,6 +1,5 @@
 package prgrms.project.stuti.domain.member.controller;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +26,7 @@ import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
 import prgrms.project.stuti.global.cache.service.RefreshTokenService;
 import prgrms.project.stuti.global.cache.service.TemporaryMemberService;
+import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.TokenGenerator;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
@@ -44,40 +44,32 @@ public class AuthenticationController {
 	private final TemporaryMemberService temporaryMemberService;
 	private final TokenGenerator tokenGenerator;
 
-	@GetMapping("/login")
-	public String index() {
-		return "index.html";
-	}
-
 	@PostMapping("/signup")
 	public ResponseEntity<MemberResponse> singup(
 		HttpServletResponse response,
 		@Valid @RequestBody MemberSaveRequest memberSaveRequest
-	) throws IOException {
-		Optional<TemporaryMember> optionalMember = temporaryMemberService.findById(
-			memberSaveRequest.email());
+	) {
+		Optional<TemporaryMember> optionalMember = temporaryMemberService.findById(memberSaveRequest.email());
+
 		if (optionalMember.isEmpty()) {
-			throw new RuntimeException("signup time is expired"); //main 이동
+			TokenException.TOKEN_EXPIRATION.get();
 		}
 
 		TemporaryMember temporaryMember = optionalMember.get();
 		MemberResponse memberResponse = memberService.signup(MemberMapper.toMemberDto(memberSaveRequest),
 			temporaryMember);
 
-		//토큰을 refreshToken 저장 후 accessToken 쿠키 전달
-		Tokens tokens = tokenGenerator.generateTokens(memberSaveRequest.email(),
-			MemberRole.ROLE_USER.stringValue);
-
+		// 생성된 refreshToken 저장 후
+		Tokens tokens = tokenGenerator.generateTokens(memberSaveRequest.email(), MemberRole.ROLE_USER.stringValue);
 		refreshTokenService.save(tokens, tokenService.getRefreshPeriod());
 
-		// cookie 로 전달
+		// 생성된 accessToken 쿠키 전달
 		String accessToken = tokens.getAccessToken();
-		System.out.println(accessToken);
 		tokenService.addAccessTokenToCookie(response, accessToken, TokenType.JWT_TYPE);
 
-		return ResponseEntity.created(
-				URI.create("/api/v1/main")).
-			body(memberResponse);
+		return ResponseEntity
+			.created(URI.create("/api/v1/main"))
+			.body(memberResponse);
 	}
 
 	@GetMapping("/logout")
@@ -88,16 +80,15 @@ public class AuthenticationController {
 			long expiration = tokenService.getExpiration(token);
 
 			refreshTokenService.findAndDelete(token);
-			blackListTokenService.logout(
-				tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST), expiration);
+			blackListTokenService.logout(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST), expiration);
 		}
-		System.out.println("logout 성공");
-		return "redirect:/main";
 
+		return "redirect:/main";
 	}
 
 	@GetMapping("/users")
 	public ResponseEntity<List<Member>> getUsers() {
+		// 테스트 용도입니다.
 		return ResponseEntity
 			.ok()
 			.body(memberService.getUsers());

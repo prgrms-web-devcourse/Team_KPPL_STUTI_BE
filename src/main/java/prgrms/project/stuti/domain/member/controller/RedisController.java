@@ -18,43 +18,42 @@ import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
 @RequestMapping("/redis")
 @RequiredArgsConstructor
 public class RedisController {
+	// redis 체크 용도의 테스트 클래스입니다. 무시해 주세요
+	private final BlackListTokenRepository blackListTokenRedisRepo;
+	private final RefreshTokenRepository refreshTokenRedisRepo;
 
-    private final BlackListTokenRepository blackListTokenRedisRepo;
-    private final RefreshTokenRepository refreshTokenRedisRepo;
+	@GetMapping("/refresh")
+	public List<List<String>> refresh() {
+		List<List<String>> list = new ArrayList<>();
+		if (refreshTokenRedisRepo.count() != 0L) {
+			Iterator<RefreshToken> iterator = refreshTokenRedisRepo.findAll().iterator();
+			while (iterator.hasNext()) {
+				RefreshToken token = iterator.next();
+				List<String> tokenDetail = new ArrayList<>();
+				tokenDetail.add(token.getAccessTokenValue());
+				tokenDetail.add(token.getRefreshTokenValue());
+				tokenDetail.add(token.getExpiration().toString());
+				tokenDetail.add(token.getCreatedTime().toString());
+				tokenDetail.add(token.getExpirationTime().toString());
+				list.add(tokenDetail);
+			}
+		}
+		return list;
+	}
 
-
-    @GetMapping("/refresh")
-    public List<List<String>> refresh() {
-        List<List<String>> list = new ArrayList<>();
-        if (refreshTokenRedisRepo.count() != 0L) {
-            Iterator<RefreshToken> iterator = refreshTokenRedisRepo.findAll().iterator();
-            while (iterator.hasNext()) {
-                RefreshToken token = iterator.next();
-                List<String> tokenDetail = new ArrayList<>();
-                tokenDetail.add(token.getAccessTokenValue());
-                tokenDetail.add(token.getRefreshTokenValue());
-                tokenDetail.add(token.getExpiration().toString());
-                tokenDetail.add(token.getCreatedTime().toString());
-                tokenDetail.add(token.getExpirationTime().toString());
-                list.add(tokenDetail);
-            }
-        }
-        return list;
-    }
-
-    @GetMapping("/blackList")
-    public List<List<String>> blackList() {
-        List<List<String>> list = new ArrayList<>();
-        if (blackListTokenRedisRepo.count() != 0L) {
-            Iterator<BlackListToken> iterator = blackListTokenRedisRepo.findAll().iterator();
-            while (iterator.hasNext()) {
-                BlackListToken token = iterator.next();
-                List<String> tokenDetail = new ArrayList<>();
-                tokenDetail.add(token.getBlackListToken());
-                tokenDetail.add(token.getExpiration().toString());
-                list.add(tokenDetail);
-            }
-        }
-        return list;
-    }
+	@GetMapping("/blackList")
+	public List<List<String>> blackList() {
+		List<List<String>> list = new ArrayList<>();
+		if (blackListTokenRedisRepo.count() != 0L) {
+			Iterator<BlackListToken> iterator = blackListTokenRedisRepo.findAll().iterator();
+			while (iterator.hasNext()) {
+				BlackListToken token = iterator.next();
+				List<String> tokenDetail = new ArrayList<>();
+				tokenDetail.add(token.getBlackListToken());
+				tokenDetail.add(token.getExpiration().toString());
+				list.add(tokenDetail);
+			}
+		}
+		return list;
+	}
 }

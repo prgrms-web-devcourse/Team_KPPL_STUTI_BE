@@ -1,13 +1,20 @@
 package prgrms.project.stuti.domain.member.controller.dto;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Builder;
 
 @Builder
 public record MemberSaveRequest(
-    String email,
-    String nickname,
+	@NotNull
+	String email,
+	@NotNull
+	String nickname,
+	@NotNull
 	String field,
-    String career,
+	@NotNull
+	String career,
+	@NotNull
 	String MBTI
 ) {
 

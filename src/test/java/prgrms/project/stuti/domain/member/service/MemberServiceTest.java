@@ -37,7 +37,7 @@ class MemberServiceTest {
 			.email("test@test.com")
 			.nickname("test")
 			.field("BACKEND")
-			.career("CODER")
+			.career("JUNIOR")
 			.MBTI("ENFJ")
 			.build();
 
@@ -65,7 +65,7 @@ class MemberServiceTest {
 			.email(testEamil)
 			.nickname("test")
 			.field("BACKEND")
-			.career("CODER")
+			.career("JUNIOR")
 			.MBTI("ENFJ")
 			.build();
 
@@ -86,7 +86,7 @@ class MemberServiceTest {
 			() -> assertThat(member.getEmail().getAddress()).isEqualTo("test@test.com"),
 			() -> assertThat(member.getNickName()).isEqualTo("test"),
 			() -> assertThat(member.getField()).isEqualTo(Field.BACKEND),
-			() -> assertThat(member.getCareer()).isEqualTo(Career.CODER),
+			() -> assertThat(member.getCareer()).isEqualTo(Career.JUNIOR),
 			() -> assertThat(member.getMbti()).isEqualTo(Mbti.ENFJ),
 			() -> assertThat(member.getProfileImageUrl()).isEqualTo("test.s3.com")
 		);

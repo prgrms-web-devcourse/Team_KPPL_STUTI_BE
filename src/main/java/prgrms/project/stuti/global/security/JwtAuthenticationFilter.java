@@ -22,6 +22,7 @@ import prgrms.project.stuti.global.cache.model.BlackListToken;
 import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
+import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.TokenGenerator;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
@@ -39,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String token = tokenService.resolveToken((HttpServletRequest) request);
+		String token = tokenService.resolveToken((HttpServletRequest)request);
 
 		// 토큰이 있는지, 유효한지 검증
 		if (token != null && tokenService.verifyToken(token)) {
@@ -50,12 +51,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String email = tokenService.getUid(token);
 			String[] roles = tokenService.getRole(token);
 
-			setAuthenticationToSecurityCotextHolder(email, roles);
+			setAuthenticationToSecurityContextHolder(email, roles);
 
 		} else if (token != null) {
 			// 토큰이 유효하지 않은경우
 			// refresh token 을 redis 에서 찾은 후 존재하는 경우 accessToken 을 재발급하여 제공한다.
 			Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(token);
+
 			if (optionalRefreshToken.isPresent()) {
 				RefreshToken refreshToken = optionalRefreshToken.get();
 				String email = tokenService.getUid(refreshToken.getRefreshTokenValue());
@@ -63,26 +65,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 				// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
 				String newAccessToken = tokenGenerator.generateAccessToken(email, role);
-				setAuthenticationToSecurityCotextHolder(email, role);
+				setAuthenticationToSecurityContextHolder(email, role);
 				tokenService.addAccessTokenToCookie(response, newAccessToken, TokenType.JWT_TYPE);
 			}
 		}
 		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.
 		filterChain.doFilter(request, response);
-
 	}
 
 	private void checkBlackList(String token) {
 		Optional<BlackListToken> blackListToken = blackListTokenService.findById(
 			tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST));
 		if (blackListToken.isPresent()) {
-			log.error("logout error - attack detected");
-			throw new IllegalArgumentException("logout error"); // login 으로 전달
+			TokenException.BLACKLIST_DETECTION.get();
 		}
 	}
 
-
-	private void setAuthenticationToSecurityCotextHolder(String email, String[] roles) {
+	private void setAuthenticationToSecurityContextHolder(String email, String[] roles) {
 		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		Arrays.stream(roles).forEach(role -> {
 			authorities.add(new SimpleGrantedAuthority(role));
@@ -90,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		UsernamePasswordAuthenticationToken authenticationToken =
 			new UsernamePasswordAuthenticationToken(email, null, authorities);
-		// SecurityContextHolder에 설정한다. - 이곳을 통해 thread 당 해당 유저의 정보를 확인
+
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 	}
 }

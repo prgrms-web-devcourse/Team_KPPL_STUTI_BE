@@ -13,6 +13,7 @@ public class TemporaryMember {
 
     @Id
     String email;
+
     String imageUrl;
     String nickname;
 

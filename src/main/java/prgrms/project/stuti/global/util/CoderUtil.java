@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CoderUtil {
 
-    public static String encode(String value) {
-        return URLEncoder.encode(value, StandardCharsets.UTF_8);
-    }
+	public static String encode(String value) {
+		return URLEncoder.encode(value, StandardCharsets.UTF_8);
+	}
 
-    public static String decode(String value) {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8);
-    }
+	public static String decode(String value) {
+		return URLDecoder.decode(value, StandardCharsets.UTF_8);
+	}
 }

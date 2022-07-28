@@ -40,7 +40,7 @@ import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.Tokens;
 
 @WebMvcTest(controllers = AuthenticationController.class)
-class AuthenticationControllerTest extends TestConfig{
+class AuthenticationControllerTest extends TestConfig {
 	@Autowired
 	protected MockMvc mockMvc;
 
@@ -69,7 +69,7 @@ class AuthenticationControllerTest extends TestConfig{
 			.email("test@test.com")
 			.nickname("test")
 			.field("BACKEND")
-			.career("CODER")
+			.career("JUNIOR")
 			.MBTI("ENFJ")
 			.build();
 
@@ -86,10 +86,11 @@ class AuthenticationControllerTest extends TestConfig{
 
 		Tokens tokens = new Tokens("accessToken", "refreshToken");
 
-
 		given(temporaryMemberService.findById(memberSaveRequest.email())).willReturn(Optional.of(temporaryMember));
-		given(memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember)).willReturn(memberResponse);
-		given(tokenGenerator.generateTokens(memberSaveRequest.email(), MemberRole.ROLE_USER.stringValue)).willReturn(tokens);
+		given(memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember)).willReturn(
+			memberResponse);
+		given(tokenGenerator.generateTokens(memberSaveRequest.email(), MemberRole.ROLE_USER.stringValue)).willReturn(
+			tokens);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(

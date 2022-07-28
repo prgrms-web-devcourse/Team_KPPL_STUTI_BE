@@ -47,34 +47,34 @@ class ImageUploaderTest {
 	}
 
 	@Test
-	@DisplayName("이미지 파일을 입력된 사이즈에 맞게 리사이징하고 업로드한다.")
+	@DisplayName("이미지 파일을 업로드한다.")
 	void testUpload() throws IOException {
+		//given
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
+		//when
 		String imageFileUrl = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
-
-		assertThat(imageFileUrl).isNotNull();
-
 		String fullPath = rootPath + File.separator + imageFileUrl;
 		imageFile = new File(fullPath);
 
+		//then
 		assertThat(imageFile).isFile();
 	}
 
 	@Test
 	@DisplayName("여러개의 이미지 파일을 업로드한다.")
 	void testUploadAll() throws IOException {
+		//given
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 		MultipartFile testMultipartFile2 = getMockMultipartFile(testImageFile);
 
+		//when
 		List<String> imageFileUrls = imageUploader
 			.uploadAll(List.of(testMultipartFile, testMultipartFile2), ImageDirectory.STUDY_GROUP);
 
-		assertThat(imageFileUrls).isNotNull();
-		assertThat(imageFileUrls.size()).isNotZero();
-
 		List<String> fullPaths = imageFileUrls.stream().map(i -> rootPath + File.separator + i).toList();
 
+		//then
 		for (String fullPath : fullPaths) {
 			imageFile = new File(fullPath);
 
@@ -87,22 +87,21 @@ class ImageUploaderTest {
 	@Test
 	@DisplayName("업로드된 이미지파일 중 첫 번째 이미지 파일을 썸네일로 만든다.")
 	void testCreateThumbnail() throws IOException {
+		//given
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
 		String imageFileUrl = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
 
-		assertThat(imageFileUrl).isNotNull();
-
 		String fullPath = rootPath + File.separator + imageFileUrl;
 		imageFile = new File(fullPath);
 
-		assertThat(imageFile).isFile();
-
+		//when
 		String thumbnailFileUrl = imageUploader.createThumbnail(imageFileUrl);
 
 		String thumbnailFullPath = rootPath + File.separator + thumbnailFileUrl;
 		File thumbnailImageFile = new File(thumbnailFullPath);
 
+		//then
 		assertThat(thumbnailImageFile).isFile();
 
 		Files.deleteIfExists(Paths.get(rootPath, thumbnailFileUrl));
@@ -111,19 +110,18 @@ class ImageUploaderTest {
 	@Test
 	@DisplayName("업로드된 이미지 파일을 삭제한다.")
 	void testDelete() throws IOException {
+		//given
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
 		String imageFileUrl = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
 
-		assertThat(imageFileUrl).isNotNull();
-
 		String fullPath = rootPath + File.separator + imageFileUrl;
 		imageFile = new File(fullPath);
 
-		assertThat(imageFile).isFile();
-
+		//when
 		imageUploader.delete(imageFileUrl);
 
+		//then
 		assertThat(imageFile.isFile()).isFalse();
 	}
 

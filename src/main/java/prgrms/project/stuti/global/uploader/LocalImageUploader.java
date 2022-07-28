@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import prgrms.project.stuti.global.error.exception.FileException;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
+import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
 
 @Service
 public record LocalImageUploader(ResourceLoader resourceLoader) implements ImageUploader {
@@ -78,6 +79,24 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		}
 
 		return imageFilePaths;
+	}
+
+	@Override
+	public void createThumbnail(ThumbnailCreateDto createDto) {
+		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
+
+		try {
+			URL rootPath = resource.getURL();
+			File imageFile = new File(getImageFilePath(rootPath.getPath(), createDto.imageUrl()));
+			int width = createDto.width();
+			int height = createDto.height();
+			String fullPath = imageFile.getParent() + File.separator;
+			File directory = ImageFileUtils.makeDirectory(fullPath);
+
+			ImageFileUtils.createThumbnail(directory, imageFile, width, height);
+		} catch (IOException ex) {
+			FileException.FAILED_TO_UPLOAD.accept(ex);
+		}
 	}
 
 	private String getDirectoryPath(String rootPath, String directory) {

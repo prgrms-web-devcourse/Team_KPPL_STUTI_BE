@@ -22,8 +22,11 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import net.coobird.thumbnailator.name.Rename;
+
 import prgrms.project.stuti.global.uploader.dto.ImageUploadAllDto;
 import prgrms.project.stuti.global.uploader.dto.ImageUploadDto;
+import prgrms.project.stuti.global.uploader.dto.ThumbnailCreateDto;
 
 @SpringBootTest
 class ImageUploaderTest {
@@ -36,7 +39,7 @@ class ImageUploaderTest {
 
 	private String rootPath;
 	private File testImageFile;
-	private File imageFile;
+	private File thumbnailFile;
 	private final int width = 200;
 	private final int height = 200;
 
@@ -51,7 +54,7 @@ class ImageUploaderTest {
 
 	@AfterEach
 	void cleanup() throws IOException {
-		Files.deleteIfExists(Paths.get(imageFile.getAbsolutePath()));
+		Files.deleteIfExists(Paths.get(thumbnailFile.getAbsolutePath()));
 	}
 
 	@Test
@@ -59,17 +62,17 @@ class ImageUploaderTest {
 	void testUpload() throws IOException {
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 		ImageUploadDto uploadDto = new ImageUploadDto(testMultipartFile, width, height);
-		
+
 		String imageFilePath = imageUploader.upload(uploadDto, ImageDirectory.STUDY_GROUP);
 
 		assertThat(imageFilePath).isNotNull();
 
 		String fullPath = rootPath + File.separator + imageFilePath;
-		imageFile = new File(fullPath);
+		thumbnailFile = new File(fullPath);
 
-		assertThat(imageFile).isFile();
+		assertThat(thumbnailFile).isFile();
 
-		BufferedImage bufferedImage = ImageIO.read(imageFile);
+		BufferedImage bufferedImage = ImageIO.read(thumbnailFile);
 
 		assertThat(bufferedImage.getWidth()).isEqualTo(width);
 		assertThat(bufferedImage.getHeight()).isEqualTo(height);
@@ -80,7 +83,8 @@ class ImageUploaderTest {
 	void testUploadAll() throws IOException {
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 		MultipartFile testMultipartFile2 = getMockMultipartFile(testImageFile);
-		ImageUploadAllDto uploadAllDto = new ImageUploadAllDto(List.of(testMultipartFile, testMultipartFile2), width, height);
+		ImageUploadAllDto uploadAllDto = new ImageUploadAllDto(List.of(testMultipartFile, testMultipartFile2), width,
+			height);
 
 		List<String> imageFilePaths = imageUploader.uploadAll(uploadAllDto, ImageDirectory.STUDY_GROUP);
 
@@ -90,16 +94,43 @@ class ImageUploaderTest {
 		List<String> fullPaths = imageFilePaths.stream().map(i -> rootPath + File.separator + i).toList();
 
 		for (String fullPath : fullPaths) {
-			imageFile = new File(fullPath);
-			assertThat(imageFile).isFile();
+			thumbnailFile = new File(fullPath);
+			assertThat(thumbnailFile).isFile();
 
-			BufferedImage bufferedImage = ImageIO.read(imageFile);
+			BufferedImage bufferedImage = ImageIO.read(thumbnailFile);
 
 			assertThat(bufferedImage.getWidth()).isEqualTo(width);
 			assertThat(bufferedImage.getHeight()).isEqualTo(height);
 
-			Files.deleteIfExists(Paths.get(imageFile.getAbsolutePath()));
+			Files.deleteIfExists(Paths.get(thumbnailFile.getAbsolutePath()));
 		}
+	}
+
+	@Test
+	@DisplayName("업로드된 이미지파일 중 첫 번째 이미지 파일을 썸네일로 만든다.")
+	void testCreateThumbnail() throws IOException {
+		int thumbnailHeight = 100;
+		int thumbnailWidth = 100;
+		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
+		ImageUploadDto uploadDto = new ImageUploadDto(testMultipartFile, width, height);
+
+		String imageFilePath = imageUploader.upload(uploadDto, ImageDirectory.STUDY_GROUP);
+
+		assertThat(imageFilePath).isNotNull();
+
+		imageUploader.createThumbnail(new ThumbnailCreateDto(imageFilePath, thumbnailWidth, thumbnailHeight));
+
+		String thumbnailPath = rootPath + File.separator + Rename.SUFFIX_DOT_THUMBNAIL.apply(imageFilePath, null);
+		thumbnailFile = new File(thumbnailPath);
+
+		assertThat(thumbnailFile).isFile();
+
+		BufferedImage bufferedImage = ImageIO.read(thumbnailFile);
+
+		assertThat(bufferedImage.getWidth()).isEqualTo(thumbnailWidth);
+		assertThat(bufferedImage.getHeight()).isEqualTo(thumbnailHeight);
+
+		Files.deleteIfExists(Paths.get(rootPath, imageFilePath));
 	}
 
 	private MultipartFile getMockMultipartFile(File testFile) throws IOException {

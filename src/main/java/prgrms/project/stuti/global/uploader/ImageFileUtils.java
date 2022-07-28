@@ -47,4 +47,15 @@ public class ImageFileUtils {
 			FileException.FAILED_TO_RESIZE.accept(ex);
 		}
 	}
+
+	public static void createThumbnail(File directory, File imageFile, int width, int height) {
+		try {
+			Thumbnails.of(imageFile)
+				.outputQuality(OUTPUT_QUALITY)
+				.forceSize(width, height)
+				.toFiles(directory, Rename.SUFFIX_DOT_THUMBNAIL);
+		} catch (IOException ex) {
+			FileException.FAILED_TO_RESIZE.accept(ex);
+		}
+	}
 }

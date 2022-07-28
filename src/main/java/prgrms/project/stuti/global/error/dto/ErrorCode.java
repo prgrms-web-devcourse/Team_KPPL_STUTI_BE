@@ -10,7 +10,7 @@ public enum ErrorCode {
 	//common
 	EMPTY_INPUT_VALUE("C001", "Empty request value", HttpStatus.BAD_REQUEST),
 
-	//thumbnailFile
+	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
 	UNSUPPORTED_EXTENSION("F002", "Unsupported file extension", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
 	OVER_MAX_SIZE("F003", "Over max size", HttpStatus.PAYLOAD_TOO_LARGE),

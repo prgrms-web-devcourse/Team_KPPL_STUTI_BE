@@ -19,6 +19,7 @@ public class ImageFileUtils {
 
 	private static final double OUTPUT_QUALITY = 0.9;
 	private static final int THUMBNAIL_WIDTH = 320;
+
 	public static String rename(String extension) {
 		return UUID.randomUUID() + "." + extension;
 	}
@@ -40,7 +41,6 @@ public class ImageFileUtils {
 	}
 
 	public static String createThumbnail(File imageFile) {
-
 		String originName = imageFile.getName();
 		String thumbnailName = Rename.PREFIX_DOT_THUMBNAIL.apply(originName, null);
 		String thumbnailFullPath = imageFile.getAbsolutePath().replace(originName, thumbnailName);

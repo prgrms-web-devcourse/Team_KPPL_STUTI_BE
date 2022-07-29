@@ -70,7 +70,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		String name = (String)attributes.get("name");
 		String picture = (String)attributes.get("picture");
 
-		Optional<Member> optionalMember = memberService.getUser(new Email(email));
+		Optional<Member> optionalMember = memberService.getMember(new Email(email));
 		// 최초 로그인이라면 추가 회원가입 처리를 한다.
 		if (optionalMember.isEmpty()) {
 			Optional<TemporaryMember> optionalTemporaryMember = temporaryMemberService.findById(email);

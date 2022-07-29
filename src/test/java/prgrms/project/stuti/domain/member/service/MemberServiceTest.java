@@ -3,7 +3,6 @@ package prgrms.project.stuti.domain.member.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 
 @SpringBootTest
@@ -76,7 +74,7 @@ class MemberServiceTest {
 		memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
 
 		// when
-		Member member = memberService.getUser(new Email(testEamil)).get();
+		Member member = memberService.getMember(new Email(testEamil)).get();
 
 		// then
 		assertAll(

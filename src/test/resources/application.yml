@@ -9,6 +9,10 @@ spring:
     username: sa
     password:
 
+  redis:
+    host: localhost
+    port: 6379
+
   h2:
     console:
       enabled: true
@@ -23,3 +27,9 @@ spring:
 
   flyway:
     enabled: false
+
+app:
+  cors:
+    allowed-origins: 'http://localhost:3000'
+  oauth:
+    domain: "http://localhost:3000"

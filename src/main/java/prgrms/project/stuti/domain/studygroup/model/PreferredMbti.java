@@ -30,7 +30,7 @@ public class PreferredMbti {
 	private Long id;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "mbti", length = 4, nullable = false)
+	@Column(name = "MBTI", length = 4, nullable = false)
 	private Mbti mbti;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -47,7 +47,7 @@ public class PreferredMbti {
 		return new ToStringBuilder(this,
 			ToStringStyle.SHORT_PREFIX_STYLE)
 			.append("id", id)
-			.append("mbti", mbti)
+			.append("MBTI", mbti)
 			.append("studyGroup", studyGroup)
 			.toString();
 	}

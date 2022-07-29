@@ -40,7 +40,7 @@ public class MemberService {
 			.field(memberDto.field())
 			.career(memberDto.career())
 			.profileImageUrl(temporaryMember.getImageUrl())
-			.mbti(memberDto.mbti())
+			.mbti(memberDto.MBTI())
 			.memberRole(MemberRole.ROLE_MEMBER)
 			.build());
 	}

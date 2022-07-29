@@ -86,7 +86,7 @@ class AuthenticationControllerTest extends TestConfig {
 					fieldWithPath("nickname").type(STRING).description("닉네임"),
 					fieldWithPath("field").type(STRING).description("개발 분야"),
 					fieldWithPath("career").type(STRING).description("개발 경력"),
-					fieldWithPath("mbti").type(STRING).description("mbti")
+					fieldWithPath("MBTI").type(STRING).description("MBTI")
 				),
 				responseHeaders(
 					headerWithName(HttpHeaders.LOCATION).description("main 으로 redirect"),

@@ -10,15 +10,15 @@ public record MemberDto(
 	String nickname,
 	Field field,
 	Career career,
-	Mbti mbti
+	Mbti MBTI
 ) {
 	@Builder
-	public MemberDto(String email, String nickname, Field field, Career career, Mbti mbti) {
+	public MemberDto(String email, String nickname, Field field, Career career, Mbti MBTI) {
 		this.email = email;
 		this.nickname = nickname;
 		this.field = field;
 		this.career = career;
-		this.mbti = mbti;
+		this.MBTI = MBTI;
 	}
 }
 

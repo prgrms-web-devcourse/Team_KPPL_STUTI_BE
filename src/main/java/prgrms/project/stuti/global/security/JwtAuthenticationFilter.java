@@ -82,14 +82,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 	}
 
-	private void setAuthenticationToSecurityContextHolder(String email, String[] roles) {
+	private void setAuthenticationToSecurityContextHolder(String memberId, String[] roles) {
 		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		Arrays.stream(roles).forEach(role -> {
 			authorities.add(new SimpleGrantedAuthority(role));
 		});
 
 		UsernamePasswordAuthenticationToken authenticationToken =
-			new UsernamePasswordAuthenticationToken(email, null, authorities);
+			new UsernamePasswordAuthenticationToken(memberId, null, authorities);
 
 		SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 	}

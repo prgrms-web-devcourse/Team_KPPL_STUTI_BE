@@ -9,7 +9,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Optional;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,16 +27,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
-import prgrms.project.stuti.domain.member.controller.mapper.MemberMapper;
-import prgrms.project.stuti.domain.member.model.MemberRole;
-import prgrms.project.stuti.domain.member.service.MemberService;
-import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.cache.model.TemporaryMember;
-import prgrms.project.stuti.global.cache.service.BlackListTokenService;
-import prgrms.project.stuti.global.cache.service.RefreshTokenService;
-import prgrms.project.stuti.global.cache.service.TemporaryMemberService;
-import prgrms.project.stuti.global.token.TokenGenerator;
-import prgrms.project.stuti.global.token.TokenService;
+import prgrms.project.stuti.domain.member.service.AuthenticationFacade;
+import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.global.token.Tokens;
 
 @WebMvcTest(controllers = AuthenticationController.class)
@@ -48,20 +40,10 @@ class AuthenticationControllerTest extends TestConfig {
 	protected ObjectMapper objectMapper;
 
 	@MockBean
-	MemberService memberService;
-	@MockBean
-	TokenService tokenService;
-	@MockBean
-	BlackListTokenService blackListTokenService;
-	@MockBean
-	RefreshTokenService refreshTokenService;
-	@MockBean
-	TemporaryMemberService temporaryMemberService;
-	@MockBean
-	TokenGenerator tokenGenerator;
+	AuthenticationFacade authenticationFacade;
 
 	@Test
-	@WithMockUser(roles = "USER")
+	@WithMockUser(roles = "MEMBER")
 	@DisplayName("/api/v1/signup 에서 회원가입")
 	void postMember() throws Exception {
 		// given
@@ -73,24 +55,15 @@ class AuthenticationControllerTest extends TestConfig {
 			.MBTI("ENFJ")
 			.build();
 
-		TemporaryMember temporaryMember = TemporaryMember.builder()
-			.email("test@test.com")
-			.imageUrl("test.s3.com")
-			.nickname("test")
-			.expiration(500000L)
-			.build();
-
-		MemberResponse memberResponse = MemberResponse.builder()
+		MemberIdResponse memberIdResponse = MemberIdResponse.builder()
 			.memberId(1L)
 			.build();
 
-		Tokens tokens = new Tokens("accessToken", "refreshToken");
+		HttpServletResponse response = null;
 
-		given(temporaryMemberService.findById(memberSaveRequest.email())).willReturn(Optional.of(temporaryMember));
-		given(memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember)).willReturn(
-			memberResponse);
-		given(tokenGenerator.generateTokens(memberResponse.memberId().toString(),
-			MemberRole.ROLE_USER.stringValue)).willReturn(tokens);
+
+		given(authenticationFacade.signupMember(memberSaveRequest)).willReturn(memberIdResponse);
+		given(authenticationFacade.makeTokens(memberIdResponse.memberId())).willReturn(new Tokens());
 
 		// when
 		ResultActions resultActions = mockMvc.perform(

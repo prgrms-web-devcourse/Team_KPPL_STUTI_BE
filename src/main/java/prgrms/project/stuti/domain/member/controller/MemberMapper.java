@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.member.controller.mapper;
+package prgrms.project.stuti.domain.member.controller;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

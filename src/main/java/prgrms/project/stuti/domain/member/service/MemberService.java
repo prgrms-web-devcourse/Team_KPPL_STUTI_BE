@@ -14,9 +14,7 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.domain.member.service.converter.MemberConverter;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
-import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 
 @Slf4j
@@ -37,17 +35,15 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberResponse signup(MemberDto memberDto, TemporaryMember temporaryMember) {
-		Member member = memberRepository.save(Member.builder()
+	public Member signup(MemberDto memberDto, TemporaryMember temporaryMember) {
+		return memberRepository.save(Member.builder()
 			.email(memberDto.email())
 			.nickName(memberDto.nickname())
 			.field(Field.valueOf(memberDto.field()))
 			.career(memberDto.career())
 			.profileImageUrl(temporaryMember.getImageUrl())
 			.mbti(Mbti.valueOf(memberDto.MBTI()))
-			.memberRole(MemberRole.ROLE_USER)
+			.memberRole(MemberRole.ROLE_MEMBER)
 			.build());
-
-		return MemberConverter.toMemberResponse(member.getId());
 	}
 }

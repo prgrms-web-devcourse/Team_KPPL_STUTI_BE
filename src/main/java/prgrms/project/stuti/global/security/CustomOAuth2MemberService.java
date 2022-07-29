@@ -41,7 +41,7 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
 
 		// 생성된 OAuth 유저에 User 권한을 부여한 후 반환한다.
 		return new DefaultOAuth2User(
-			Collections.singleton(new SimpleGrantedAuthority(MemberRole.ROLE_USER.stringValue)),
+			Collections.singleton(new SimpleGrantedAuthority(MemberRole.ROLE_MEMBER.name())),
 			memberAttribute, "email"
 		);
 	}

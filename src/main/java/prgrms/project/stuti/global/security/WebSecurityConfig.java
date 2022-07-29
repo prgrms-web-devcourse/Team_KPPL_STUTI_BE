@@ -68,7 +68,7 @@ public class WebSecurityConfig {
 					.permitAll()
 
 					.antMatchers(GET, "/redis/**")
-					.hasAnyAuthority(MemberRole.ROLE_USER.stringValue)
+					.hasAnyAuthority(MemberRole.ROLE_MEMBER.name())
 
 					.anyRequest().authenticated()
 			)

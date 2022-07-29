@@ -1,9 +1,11 @@
 package prgrms.project.stuti.domain.member.controller;
 
+import static org.springframework.http.HttpHeaders.*;
+
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -16,73 +18,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
+import prgrms.project.stuti.domain.member.service.AuthenticationFacade;
+import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
-import prgrms.project.stuti.domain.member.controller.mapper.MemberMapper;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.domain.member.model.MemberRole;
-import prgrms.project.stuti.domain.member.service.MemberService;
-import prgrms.project.stuti.global.cache.model.TemporaryMember;
-import prgrms.project.stuti.global.cache.service.BlackListTokenService;
-import prgrms.project.stuti.global.cache.service.RefreshTokenService;
-import prgrms.project.stuti.global.cache.service.TemporaryMemberService;
-import prgrms.project.stuti.global.error.exception.TokenException;
-import prgrms.project.stuti.global.token.TokenGenerator;
-import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.token.Tokens;
+import prgrms.project.stuti.global.util.CoderUtil;
 
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-	private final MemberService memberService;
-	private final TokenService tokenService;
-	private final BlackListTokenService blackListTokenService;
-	private final RefreshTokenService refreshTokenService;
-	private final TemporaryMemberService temporaryMemberService;
-	private final TokenGenerator tokenGenerator;
+	private final AuthenticationFacade authenticationFacade;
 
 	@PostMapping("/signup")
-	public ResponseEntity<MemberResponse> singup(
-		HttpServletResponse response,
-		@Valid @RequestBody MemberSaveRequest memberSaveRequest
-	) {
-		Optional<TemporaryMember> optionalMember = temporaryMemberService.findById(memberSaveRequest.email());
+	public ResponseEntity<MemberIdResponse> singup(HttpServletResponse response,
+		@Valid @RequestBody MemberSaveRequest memberSaveRequest) {
 
-		if (optionalMember.isEmpty()) {
-			TokenException.TOKEN_EXPIRATION.get();
-		}
+		MemberIdResponse memberIdResponse = authenticationFacade.signupMember(memberSaveRequest);
+		Tokens tokens = authenticationFacade.makeTokens(memberIdResponse.memberId());
 
-		TemporaryMember temporaryMember = optionalMember.get();
-		MemberResponse memberResponse = memberService.signup(MemberMapper.toMemberDto(memberSaveRequest),
-			temporaryMember);
-
-		// 생성된 refreshToken 저장 후
-		Tokens tokens = tokenGenerator.generateTokens(memberResponse.memberId().toString(),
-			MemberRole.ROLE_USER.stringValue);
-		refreshTokenService.save(tokens, tokenService.getRefreshPeriod());
-
-		// 생성된 accessToken 쿠키 전달
-		String accessToken = tokens.getAccessToken();
-		tokenService.addAccessTokenToCookie(response, accessToken, TokenType.JWT_TYPE);
+		Cookie cookie = setCookie(tokens.getAccessToken(), TokenType.JWT_TYPE, authenticationFacade.accessTokenPeriod());
+		response.addCookie(cookie);
 
 		return ResponseEntity
 			.created(URI.create("/api/v1/main"))
-			.body(memberResponse);
+			.body(memberIdResponse);
 	}
 
 	@GetMapping("/logout")
 	public String logout(HttpServletRequest request) {
-		String token = tokenService.resolveToken(request);
-
-		if (token != null) {
-			long expiration = tokenService.getExpiration(token);
-
-			refreshTokenService.findAndDelete(token);
-			blackListTokenService.logout(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST), expiration);
-		}
+		authenticationFacade.logout(request);
 
 		return "redirect:/main";
 	}
@@ -92,6 +60,15 @@ public class AuthenticationController {
 		// 테스트 용도입니다.
 		return ResponseEntity
 			.ok()
-			.body(memberService.getUsers());
+			.body(authenticationFacade.getUsers());
+	}
+
+	private Cookie setCookie(String accessToken, TokenType tokenType, long period) {
+		Cookie cookie = new Cookie(AUTHORIZATION, CoderUtil.encode(tokenType.getTypeValue() + accessToken));
+		cookie.setSecure(true);
+		cookie.setHttpOnly(true);
+		cookie.setMaxAge((int)period);
+
+		return cookie;
 	}
 }

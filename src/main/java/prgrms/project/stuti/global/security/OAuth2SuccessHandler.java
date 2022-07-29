@@ -72,9 +72,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 		Optional<Member> optionalMember = memberService.getUser(new Email(email));
 		// 최초 로그인이라면 추가 회원가입 처리를 한다.
-		if (!optionalMember.isPresent()) {
+		if (optionalMember.isEmpty()) {
+			Optional<TemporaryMember> optionalTemporaryMember = temporaryMemberService.findById(email);
 			TemporaryMember temporaryMember = new TemporaryMember(email, name, picture, signupTime);
-			temporaryMemberService.save(temporaryMember);
+
+			// temporarymember 가 없으면 생성
+			if(optionalTemporaryMember.isEmpty()){
+				temporaryMemberService.save(temporaryMember);
+			}else{
+				// 있으면 기존의 회원가입시도가 있었으므로 그냥 가지고 온다.
+				temporaryMember = optionalTemporaryMember.get();
+			}
 
 			String temporaryMemberEmail = temporaryMember.getEmail();
 
@@ -87,7 +95,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			// 이미 회원가입 한 유저의 경우 토큰을 refreshToken 저장 후
 			// accessToken 은 쿠키로 담아 main 으로 redirect 한다.
 			Long memberId = optionalMember.get().getId();
-			Tokens tokens = tokenGenerator.generateTokens(memberId.toString(), MemberRole.ROLE_USER.stringValue);
+			Tokens tokens = tokenGenerator.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
 			saveRefreshTokenToRedis(tokens);
 			addAccessTokenToCookie(response, tokens.getAccessToken(), TokenType.JWT_TYPE);
 

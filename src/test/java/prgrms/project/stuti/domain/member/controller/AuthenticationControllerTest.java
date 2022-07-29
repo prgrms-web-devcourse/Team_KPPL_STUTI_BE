@@ -27,12 +27,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
+import prgrms.project.stuti.domain.member.model.Career;
+import prgrms.project.stuti.domain.member.model.Field;
+import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.service.AuthenticationFacade;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.global.token.Tokens;
 
 @WebMvcTest(controllers = AuthenticationController.class)
 class AuthenticationControllerTest extends TestConfig {
+
 	@Autowired
 	protected MockMvc mockMvc;
 
@@ -44,26 +48,23 @@ class AuthenticationControllerTest extends TestConfig {
 
 	@Test
 	@WithMockUser(roles = "MEMBER")
-	@DisplayName("/api/v1/signup 에서 회원가입")
+	@DisplayName("/api/v1/signup 에서 회원가입한다")
 	void postMember() throws Exception {
 		// given
 		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
 			.email("test@test.com")
 			.nickname("test")
-			.field("BACKEND")
-			.career("JUNIOR")
-			.MBTI("ENFJ")
+			.field(Field.ANDROID)
+			.career(Career.JUNIOR)
+			.MBTI(Mbti.ENFJ)
 			.build();
 
 		MemberIdResponse memberIdResponse = MemberIdResponse.builder()
 			.memberId(1L)
 			.build();
 
-		HttpServletResponse response = null;
-
-
 		given(authenticationFacade.signupMember(memberSaveRequest)).willReturn(memberIdResponse);
-		given(authenticationFacade.makeTokens(memberIdResponse.memberId())).willReturn(new Tokens());
+		given(authenticationFacade.makeTokens(memberIdResponse.memberId())).willReturn(new Tokens("access", "refresh"));
 
 		// when
 		ResultActions resultActions = mockMvc.perform(
@@ -85,7 +86,7 @@ class AuthenticationControllerTest extends TestConfig {
 					fieldWithPath("nickname").type(STRING).description("닉네임"),
 					fieldWithPath("field").type(STRING).description("개발 분야"),
 					fieldWithPath("career").type(STRING).description("개발 경력"),
-					fieldWithPath("MBTI").type(STRING).description("MBTI")
+					fieldWithPath("mbti").type(STRING).description("mbti")
 				),
 				responseHeaders(
 					headerWithName(HttpHeaders.LOCATION).description("main 으로 redirect"),

@@ -1,17 +1,14 @@
 package prgrms.project.stuti.global.token;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
-@NoArgsConstructor
-@Getter
-public class Tokens {
-
-    private String accessToken;
-    private String refreshToken;
-
-    public Tokens(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-    }
+public record Tokens(
+	String accessToken,
+	String refreshToken
+) {
+	@Builder
+	public Tokens(String accessToken, String refreshToken) {
+		this.accessToken = accessToken;
+		this.refreshToken = refreshToken;
+	}
 }

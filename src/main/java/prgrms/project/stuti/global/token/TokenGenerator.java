@@ -17,30 +17,25 @@ public class TokenGenerator {
 	private final String issuer;
 	private final long tokenPeriod;
 	private final long refreshPeriod;
-
-	private String secretKey;
-	private byte[] keyBytes;
-	private Key key;
+	private final String secretKey;
+	private final byte[] keyBytes;
+	private final Key key;
 
 	public TokenGenerator(JwtProperties jwtProperties) {
 		this.issuer = jwtProperties.getIssuer();
 		this.tokenPeriod = jwtProperties.getTokenExpiry();
 		this.refreshPeriod = jwtProperties.getRefreshTokenExpiry();
-		this.secretKey = jwtProperties.getTokenSecret();
-		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		this.secretKey = Base64.getEncoder().encodeToString(jwtProperties.getTokenSecret().getBytes());
 		this.keyBytes = secretKey.getBytes();
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public Tokens generateTokens(String uid, String role) {
+	public Tokens generateTokens(String uid, String roles) {
 		Claims claims = Jwts.claims().setSubject(uid);
-		claims.put("role", role);
+		claims.put("roles", roles);
 		Date now = new Date();
 
-		return new Tokens(
-			generateAccessToken(claims, now),
-			generateRefreshToken(claims, now)
-		);
+		return new Tokens(generateAccessToken(claims, now), generateRefreshToken(claims, now));
 	}
 
 	public String generateAccessToken(Claims claims, Date now) {
@@ -53,9 +48,9 @@ public class TokenGenerator {
 			.compact();
 	}
 
-	public String generateAccessToken(String uid, String[] role) {
+	public String generateAccessToken(String uid, String[] roles) {
 		Claims claims = Jwts.claims().setSubject(uid);
-		claims.put("role", role);
+		claims.put("roles", roles);
 		Date now = new Date();
 
 		return this.generateAccessToken(claims, now);

@@ -11,8 +11,4 @@ public enum Career {
 	Career(String careerValue) {
 		this.careerValue = careerValue;
 	}
-
-	public static Career toCareer(String value) {
-		return Career.valueOf(value);
-	}
 }

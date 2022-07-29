@@ -11,20 +11,20 @@ import lombok.Getter;
 @RedisHash(value = "temporaryMember")
 public class TemporaryMember {
 
-    @Id
-    String email;
+	@Id
+	String email;
 
-    String imageUrl;
-    String nickname;
+	String imageUrl;
+	String nickname;
 
-    @TimeToLive
-    private Long expiration;
+	@TimeToLive
+	private Long expiration;
 
-    @Builder
-    public TemporaryMember(String email, String imageUrl, String nickname, Long expiration) {
-        this.email = email;
-        this.imageUrl = imageUrl;
-        this.nickname = nickname;
-        this.expiration = expiration;
-    }
+	@Builder
+	public TemporaryMember(String email, String imageUrl, String nickname, Long expiration) {
+		this.email = email;
+		this.imageUrl = imageUrl;
+		this.nickname = nickname;
+		this.expiration = expiration;
+	}
 }

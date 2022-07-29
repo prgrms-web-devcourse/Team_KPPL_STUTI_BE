@@ -10,14 +10,14 @@ import lombok.Getter;
 @RedisHash(value = "blackListToken")
 public class BlackListToken {
 
-    @Id
-    private String blackListToken;
+	@Id
+	private String blackListToken;
 
-    @TimeToLive
-    private Long expiration;
+	@TimeToLive
+	private Long expiration;
 
-    public BlackListToken(String blackListToken, Long expiration) {
-        this.blackListToken = blackListToken;
-        this.expiration = expiration;
-    }
+	public BlackListToken(String blackListToken, Long expiration) {
+		this.blackListToken = blackListToken;
+		this.expiration = expiration;
+	}
 }

@@ -12,15 +12,15 @@ import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
 @RequiredArgsConstructor
 public class BlackListTokenService {
 
-    private final BlackListTokenRepository blackListTokenRepository;
+	private final BlackListTokenRepository blackListTokenRepository;
 
-    public Optional<BlackListToken> findById(String id) {
-        return blackListTokenRepository.findById(id);
-    }
+	public Optional<BlackListToken> findById(String id) {
+		return blackListTokenRepository.findById(id);
+	}
 
-    public void logout(String accessTokenWithType, long expiration) {
-        BlackListToken blackListToken = new BlackListToken(accessTokenWithType, expiration);
-        blackListTokenRepository.save(blackListToken);
-    }
+	public void logout(String accessTokenWithType, long expiration) {
+		BlackListToken blackListToken = new BlackListToken(accessTokenWithType, expiration);
+		blackListTokenRepository.save(blackListToken);
+	}
 
 }

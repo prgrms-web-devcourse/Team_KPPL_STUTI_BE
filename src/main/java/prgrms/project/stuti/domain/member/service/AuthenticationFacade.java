@@ -13,7 +13,6 @@ import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
-import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
 import prgrms.project.stuti.global.cache.service.RefreshTokenService;
@@ -34,26 +33,27 @@ public class AuthenticationFacade {
 	private final TemporaryMemberService temporaryMemberService;
 	private final TokenGenerator tokenGenerator;
 
-	public MemberIdResponse signupMember(MemberSaveRequest memberSaveRequest){
+	public MemberIdResponse signupMember(MemberSaveRequest memberSaveRequest) {
 		Optional<TemporaryMember> optionalMember = temporaryMemberService.findById(memberSaveRequest.email());
 
 		if (optionalMember.isEmpty()) {
 			TokenException.TOKEN_EXPIRATION.get();
 		}
-
 		TemporaryMember temporaryMember = optionalMember.get();
 		Member member = memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
+
 		return MemberConverter.toMemberResponse(member.getId());
 	}
 
-	public Tokens makeTokens(Long memberId){
+	public Tokens makeTokens(Long memberId) {
 		Tokens tokens = tokenGenerator.generateTokens(memberId.toString(),
 			MemberRole.ROLE_MEMBER.name());
 		refreshTokenService.save(memberId, tokens, tokenService.getRefreshPeriod());
+
 		return tokens;
 	}
 
-	public long accessTokenPeriod(){
+	public long accessTokenPeriod() {
 		return tokenService.getAccessTokenPeriod();
 	}
 
@@ -62,13 +62,7 @@ public class AuthenticationFacade {
 
 		if (accessToken != null) {
 			long expiration = tokenService.getExpiration(accessToken);
-
-			Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findById(accessToken);
-
-			if(optionalRefreshToken.isPresent()){
-				refreshTokenService.delete(optionalRefreshToken.get());
-			}
-
+			refreshTokenService.findById(accessToken).ifPresent((refreshTokenService::delete));
 			blackListTokenService.logout(tokenService.tokenWithType(accessToken, TokenType.JWT_BLACKLIST), expiration);
 		}
 	}

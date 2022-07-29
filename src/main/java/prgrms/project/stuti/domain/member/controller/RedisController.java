@@ -60,7 +60,6 @@ public class RedisController {
 		return list;
 	}
 
-
 	@GetMapping("/temporaryList")
 	public List<List<String>> temporaryList() {
 		List<List<String>> list = new ArrayList<>();

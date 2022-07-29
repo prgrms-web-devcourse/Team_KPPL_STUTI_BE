@@ -7,7 +7,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -29,7 +28,7 @@ public class Member extends BaseTimeEntity {
 	private Long id;
 
 	@Column(name = "email", length = 40, unique = true, nullable = false)
-	private Email email;
+	private String email;
 
 	@Column(name = "nick_name", length = 30, unique = true, nullable = false)
 	private String nickName;
@@ -58,17 +57,16 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "member_role", length = 16, nullable = false)
 	private MemberRole memberRole;
 
-	@Column
-	@NotNull
+	@Column(name = "is_deleted", nullable = false)
 	private boolean isDeleted;
 
 	@Builder
-	public Member(String email, String nickName, Field field, String career, String profileImageUrl, String githubUrl,
+	public Member(String email, String nickName, Field field, Career career, String profileImageUrl, String githubUrl,
 		Mbti mbti, String blogUrl, MemberRole memberRole) {
-		this.email = new Email(email);
+		this.email = new Email(email).getAddress();
 		this.nickName = nickName;
 		this.field = field;
-		this.career = Career.toCareer(career);
+		this.career = career;
 		this.profileImageUrl = profileImageUrl;
 		this.mbti = mbti;
 		this.githubUrl = githubUrl;

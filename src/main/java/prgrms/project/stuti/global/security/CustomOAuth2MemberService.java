@@ -3,7 +3,6 @@ package prgrms.project.stuti.global.security;
 import java.util.Collections;
 import java.util.Map;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -19,7 +18,6 @@ import prgrms.project.stuti.domain.member.model.MemberRole;
 
 @Slf4j
 @Service
-@Primary
 @RequiredArgsConstructor
 public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 

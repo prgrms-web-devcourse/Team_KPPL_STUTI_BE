@@ -1,5 +1,6 @@
 package prgrms.project.stuti.domain.member.controller;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -32,6 +33,11 @@ public class AuthenticationController {
 
 	private final AuthenticationFacade authenticationFacade;
 
+	@GetMapping("/main")
+	public String main() {
+		return "hello";
+	}
+
 	@PostMapping("/signup")
 	public ResponseEntity<MemberIdResponse> singup(HttpServletResponse response,
 		@Valid @RequestBody MemberSaveRequest memberSaveRequest) {
@@ -39,7 +45,7 @@ public class AuthenticationController {
 		MemberIdResponse memberIdResponse = authenticationFacade.signupMember(memberSaveRequest);
 		Tokens tokens = authenticationFacade.makeTokens(memberIdResponse.memberId());
 
-		Cookie cookie = setCookie(tokens.getAccessToken(), TokenType.JWT_TYPE,
+		Cookie cookie = setCookie(tokens.accessToken(), TokenType.JWT_TYPE,
 			authenticationFacade.accessTokenPeriod());
 		response.addCookie(cookie);
 
@@ -49,10 +55,9 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/logout")
-	public String logout(HttpServletRequest request, HttpServletResponse response) {
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		authenticationFacade.logout(request);
-
-		return "redirect:/main";
+		response.sendRedirect("/api/v1/main");
 	}
 
 	@GetMapping("/users")

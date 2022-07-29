@@ -9,8 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.domain.member.model.Email;
-import prgrms.project.stuti.domain.member.model.Field;
-import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
@@ -26,7 +24,7 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public Optional<Member> getUser(Email email) {
-		return memberRepository.findByEmail(email);
+		return memberRepository.findByEmail(email.getAddress());
 	}
 
 	@Transactional(readOnly = true)
@@ -39,10 +37,10 @@ public class MemberService {
 		return memberRepository.save(Member.builder()
 			.email(memberDto.email())
 			.nickName(memberDto.nickname())
-			.field(Field.valueOf(memberDto.field()))
+			.field(memberDto.field())
 			.career(memberDto.career())
 			.profileImageUrl(temporaryMember.getImageUrl())
-			.mbti(Mbti.valueOf(memberDto.MBTI()))
+			.mbti(memberDto.mbti())
 			.memberRole(MemberRole.ROLE_MEMBER)
 			.build());
 	}

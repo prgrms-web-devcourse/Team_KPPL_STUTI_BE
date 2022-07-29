@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 			)
 			.authorizeRequests(
 				authorizeRequests -> authorizeRequests
-					.antMatchers("/api/**", "/login", "/logout", "/signup") // 개발 서버용
+					.antMatchers("/api/**") // 개발 서버용
 					.permitAll()
 
 					.antMatchers(GET, "/redis/**")

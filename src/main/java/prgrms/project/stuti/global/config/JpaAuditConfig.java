@@ -10,8 +10,6 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import prgrms.project.stuti.global.security.MemberIdAuthenticationToken;
-
 @Configuration
 @EnableJpaAuditing
 public class JpaAuditConfig {
@@ -26,8 +24,10 @@ public class JpaAuditConfig {
 				return Optional.empty();
 			}
 
-			MemberIdAuthenticationToken userToken = (MemberIdAuthenticationToken) authentication.getPrincipal();
-			Long memberId = userToken.getPrincipal();
+			Long memberId = (Long)authentication.getPrincipal();
+			if (memberId == null) {
+				memberId = -1L;
+			}
 
 			return Optional.ofNullable(memberId);
 		};

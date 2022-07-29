@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import prgrms.project.stuti.global.cache.model.BlackListToken;
 import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
 import prgrms.project.stuti.global.cache.service.RefreshTokenService;
@@ -43,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		boolean isLogout = request.getServletPath().equals("/api/v1/logout");
 
 		// 토큰이 있는지, 유효한지 검증
-		if (!isLogout &&accessToken != null && tokenService.verifyToken(accessToken)) {
+		if (!isLogout && accessToken != null && tokenService.verifyToken(accessToken)) {
 			// 블랙리스트에 존재하는 토큰인지 체크
 			checkBlackList(accessToken);
 
@@ -59,10 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// 토큰이 유효하지 않은경우
 			// refresh token 을 redis 에서 찾은 후 존재하는 경우 accessToken 을 재발급하여 제공한다.
 			// refresh token 도 존재하지 않은경우 재로그인이 필요하다.
-			Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findById(accessToken);
-
-			if (optionalRefreshToken.isPresent()) {
-				RefreshToken refreshToken = optionalRefreshToken.get();
+			refreshTokenService.findById(accessToken).ifPresent(refreshToken -> {
 				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
 				Long memberId = refreshToken.getMemberId();
 
@@ -81,25 +76,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 				setAuthenticationToSecurityContextHolder(memberId, role);
 				tokenService.addAccessTokenToCookie(response, newAccessToken, TokenType.JWT_TYPE);
-			}
+			});
 		}
 		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.
 		filterChain.doFilter(request, response);
 	}
 
 	private void checkBlackList(String token) {
-		Optional<BlackListToken> blackListToken = blackListTokenService.findById(
-			tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST));
-		if (blackListToken.isPresent()) {
-			TokenException.BLACKLIST_DETECTION.get();
-		}
+		blackListTokenService.findById(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST))
+			.ifPresent(blackListToken -> TokenException.BLACKLIST_DETECTION.get());
 	}
 
 	private void setAuthenticationToSecurityContextHolder(Long memberId, String[] roles) {
 		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		Arrays.stream(roles).forEach(role -> {
-			authorities.add(new SimpleGrantedAuthority(role));
-		});
+		Arrays.stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
 
 		MemberIdAuthenticationToken authenticationToken =
 			new MemberIdAuthenticationToken(memberId, null, authorities);

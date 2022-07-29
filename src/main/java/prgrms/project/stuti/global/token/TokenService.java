@@ -33,9 +33,9 @@ public class TokenService {
 		this.refreshTokenPeriod = jwtProperties.getRefreshTokenExpiry();
 		this.accessTokenPeriod = jwtProperties.getTokenExpiry();
 		this.secretKey = jwtProperties.getTokenSecret();
-		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-		keyBytes = secretKey.getBytes();
-		key = Keys.hmacShaKeyFor(keyBytes);
+		this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+		this.keyBytes = secretKey.getBytes();
+		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
 	public boolean verifyToken(String token) {
@@ -60,7 +60,7 @@ public class TokenService {
 				.build()
 				.parseClaimsJws(token)
 				.getBody()
-				.get("role")
+				.get("roles")
 		};
 	}
 
@@ -81,6 +81,7 @@ public class TokenService {
 			.getBody()
 			.getExpiration();
 		Long now = new Date().getTime();
+
 		return (expiration.getTime() - now);
 	}
 

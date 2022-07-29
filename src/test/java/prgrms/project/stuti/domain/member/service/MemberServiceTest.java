@@ -26,20 +26,17 @@ class MemberServiceTest {
 
 	@Autowired
 	MemberService memberService;
-	@Autowired
-	MemberRepository memberRepository;
 
 	@Test
 	@DisplayName("회원가입을 한다.")
-	@Disabled
 	void testSignup() {
 		// given
 		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
 			.email("test@test.com")
 			.nickname("test")
-			.field("BACKEND")
-			.career("JUNIOR")
-			.MBTI("ENFJ")
+			.field(Field.ANDROID)
+			.career(Career.JUNIOR)
+			.MBTI(Mbti.ENFJ)
 			.build();
 
 		TemporaryMember temporaryMember = TemporaryMember.builder()
@@ -64,9 +61,9 @@ class MemberServiceTest {
 		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
 			.email(testEamil)
 			.nickname("test")
-			.field("BACKEND")
-			.career("JUNIOR")
-			.MBTI("ENFJ")
+			.field(Field.ANDROID)
+			.career(Career.JUNIOR)
+			.MBTI(Mbti.ENFJ)
 			.build();
 
 		TemporaryMember temporaryMember = TemporaryMember.builder()
@@ -83,9 +80,9 @@ class MemberServiceTest {
 
 		// then
 		assertAll(
-			() -> assertThat(member.getEmail().getAddress()).isEqualTo("test@test.com"),
+			() -> assertThat(member.getEmail()).isEqualTo("test@test.com"),
 			() -> assertThat(member.getNickName()).isEqualTo("test"),
-			() -> assertThat(member.getField()).isEqualTo(Field.BACKEND),
+			() -> assertThat(member.getField()).isEqualTo(Field.ANDROID),
 			() -> assertThat(member.getCareer()).isEqualTo(Career.JUNIOR),
 			() -> assertThat(member.getMbti()).isEqualTo(Mbti.ENFJ),
 			() -> assertThat(member.getProfileImageUrl()).isEqualTo("test.s3.com")

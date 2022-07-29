@@ -12,13 +12,13 @@ import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
 @RequiredArgsConstructor
 public class TemporaryMemberService {
 
-    private final TemporaryMemberRepository temporaryMemberRepository;
+	private final TemporaryMemberRepository temporaryMemberRepository;
 
-    public void save(TemporaryMember temporaryMember){
-        temporaryMemberRepository.save(temporaryMember);
-    }
+	public void save(TemporaryMember temporaryMember) {
+		temporaryMemberRepository.save(temporaryMember);
+	}
 
-    public Optional<TemporaryMember> findById(String id) {
-        return temporaryMemberRepository.findById(id);
-    }
+	public Optional<TemporaryMember> findById(String id) {
+		return temporaryMemberRepository.findById(id);
+	}
 }

@@ -1,6 +1,5 @@
 package prgrms.project.stuti.domain.member.model;
 
-import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 
 import java.util.regex.Pattern;
@@ -25,7 +24,7 @@ public class Email {
 		this.address = lowerCasedEmail;
 	}
 
-	private void validateEmailPattern(String email) {
+	private final void validateEmailPattern(String email) {
 		boolean matches = Pattern.matches(EMAIL_REGEX, email);
 		if (!matches) {
 			MemberException.INVALID_EMAIL.get();

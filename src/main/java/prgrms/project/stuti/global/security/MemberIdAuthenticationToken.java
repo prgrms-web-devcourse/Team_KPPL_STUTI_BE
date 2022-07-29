@@ -39,7 +39,6 @@ public class MemberIdAuthenticationToken extends AbstractAuthenticationToken {
 		return new MemberIdAuthenticationToken(principal, credentials, authorities);
 	}
 
-
 	@Override
 	public Object getCredentials() {
 		return this.credentials;

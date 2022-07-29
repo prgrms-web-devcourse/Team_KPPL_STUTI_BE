@@ -67,7 +67,7 @@ public class AuthenticationFacade {
 		}
 	}
 
-	public List<Member> getUsers() {
+	public List<Member> getMembers() {
 		return memberService.members();
 	}
 }

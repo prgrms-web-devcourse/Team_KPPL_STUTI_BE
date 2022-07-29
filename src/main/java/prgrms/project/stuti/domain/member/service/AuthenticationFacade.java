@@ -13,6 +13,7 @@ import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
+import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
 import prgrms.project.stuti.global.cache.service.RefreshTokenService;
@@ -48,7 +49,7 @@ public class AuthenticationFacade {
 	public Tokens makeTokens(Long memberId){
 		Tokens tokens = tokenGenerator.generateTokens(memberId.toString(),
 			MemberRole.ROLE_MEMBER.name());
-		refreshTokenService.save(tokens, tokenService.getRefreshPeriod());
+		refreshTokenService.save(memberId, tokens, tokenService.getRefreshPeriod());
 		return tokens;
 	}
 
@@ -57,13 +58,18 @@ public class AuthenticationFacade {
 	}
 
 	public void logout(HttpServletRequest request) {
-		String token = tokenService.resolveToken(request);
+		String accessToken = tokenService.resolveToken(request);
 
-		if (token != null) {
-			long expiration = tokenService.getExpiration(token);
+		if (accessToken != null) {
+			long expiration = tokenService.getExpiration(accessToken);
 
-			refreshTokenService.findAndDelete(token);
-			blackListTokenService.logout(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST), expiration);
+			Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findById(accessToken);
+
+			if(optionalRefreshToken.isPresent()){
+				refreshTokenService.delete(optionalRefreshToken.get());
+			}
+
+			blackListTokenService.logout(tokenService.tokenWithType(accessToken, TokenType.JWT_BLACKLIST), expiration);
 		}
 	}
 

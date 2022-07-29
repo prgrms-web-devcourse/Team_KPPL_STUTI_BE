@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
@@ -16,18 +17,21 @@ public class RefreshToken {
     private String accessTokenValue;
 
     private String refreshTokenValue;
+    private Long memberId;
     private Date createdTime;
     private Date expirationTime;
 
     @TimeToLive
     private Long expiration;
 
-    public RefreshToken(String accessTokenValue, String refreshTokenValue, Date createdTime,
-        Date expirationTime) {
+    @Builder
+    public RefreshToken(String accessTokenValue, String refreshTokenValue, Long memberId, Date createdTime,
+        Date expirationTime, Long expiration) {
         this.accessTokenValue = accessTokenValue;
         this.refreshTokenValue = refreshTokenValue;
+        this.memberId = memberId;
         this.createdTime = createdTime;
         this.expirationTime = expirationTime;
-        this.expiration = expirationTime.getTime() - createdTime.getTime();
+        this.expiration = expiration;
     }
 }

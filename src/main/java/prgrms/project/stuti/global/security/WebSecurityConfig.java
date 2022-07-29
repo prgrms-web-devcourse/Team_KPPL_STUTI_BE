@@ -17,8 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.MemberRole;
-import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
+import prgrms.project.stuti.global.cache.service.RefreshTokenService;
 import prgrms.project.stuti.global.token.TokenGenerator;
 import prgrms.project.stuti.global.token.TokenService;
 
@@ -30,7 +30,7 @@ public class WebSecurityConfig {
 	private final CustomOAuth2MemberService oAuth2UserService;
 	private final OAuth2SuccessHandler successHandler;
 	private final TokenService tokenService;
-	private final RefreshTokenRepository refreshTokenRepository;
+	private final RefreshTokenService refreshTokenService;
 	private final TokenGenerator tokenGenerator;
 	private final BlackListTokenService blackListTokenService;
 
@@ -85,7 +85,7 @@ public class WebSecurityConfig {
 			//                }
 			//            )
 			.addFilterBefore(
-				new JwtAuthenticationFilter(tokenService, tokenGenerator, refreshTokenRepository,
+				new JwtAuthenticationFilter(tokenService, tokenGenerator, refreshTokenService,
 					blackListTokenService),
 				UsernamePasswordAuthenticationFilter.class);
 

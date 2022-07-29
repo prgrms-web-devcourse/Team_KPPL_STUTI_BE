@@ -1,7 +1,5 @@
 package prgrms.project.stuti.domain.member.controller;
 
-import static org.springframework.http.HttpHeaders.*;
-
 import java.net.URI;
 import java.util.List;
 
@@ -10,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +39,8 @@ public class AuthenticationController {
 		MemberIdResponse memberIdResponse = authenticationFacade.signupMember(memberSaveRequest);
 		Tokens tokens = authenticationFacade.makeTokens(memberIdResponse.memberId());
 
-		Cookie cookie = setCookie(tokens.getAccessToken(), TokenType.JWT_TYPE, authenticationFacade.accessTokenPeriod());
+		Cookie cookie = setCookie(tokens.getAccessToken(), TokenType.JWT_TYPE,
+			authenticationFacade.accessTokenPeriod());
 		response.addCookie(cookie);
 
 		return ResponseEntity
@@ -49,7 +49,7 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/logout")
-	public String logout(HttpServletRequest request) {
+	public String logout(HttpServletRequest request, HttpServletResponse response) {
 		authenticationFacade.logout(request);
 
 		return "redirect:/main";
@@ -64,7 +64,7 @@ public class AuthenticationController {
 	}
 
 	private Cookie setCookie(String accessToken, TokenType tokenType, long period) {
-		Cookie cookie = new Cookie(AUTHORIZATION, CoderUtil.encode(tokenType.getTypeValue() + accessToken));
+		Cookie cookie = new Cookie(HttpHeaders.AUTHORIZATION, CoderUtil.encode(tokenType.getTypeValue() + accessToken));
 		cookie.setSecure(true);
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge((int)period);

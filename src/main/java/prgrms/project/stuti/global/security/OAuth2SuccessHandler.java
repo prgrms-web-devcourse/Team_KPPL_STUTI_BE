@@ -29,6 +29,7 @@ import prgrms.project.stuti.domain.member.service.MemberService;
 import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.cache.service.RefreshTokenService;
 import prgrms.project.stuti.global.cache.service.TemporaryMemberService;
 import prgrms.project.stuti.global.token.TokenGenerator;
 import prgrms.project.stuti.global.token.TokenService;
@@ -45,6 +46,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final TokenService tokenService;
 	private final MemberService memberService;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final RefreshTokenService refreshTokenService;
 	private final TemporaryMemberService temporaryMemberService;
 	private RedirectStrategy redirectStratgy = new DefaultRedirectStrategy();
 
@@ -74,7 +76,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		// 최초 로그인이라면 추가 회원가입 처리를 한다.
 		if (optionalMember.isEmpty()) {
 			Optional<TemporaryMember> optionalTemporaryMember = temporaryMemberService.findById(email);
-			TemporaryMember temporaryMember = new TemporaryMember(email, name, picture, signupTime);
+			TemporaryMember temporaryMember = TemporaryMember.builder()
+				.email(email)
+				.nickname(name)
+				.imageUrl(picture)
+				.expiration(signupTime)
+				.build();
 
 			// temporarymember 가 없으면 생성
 			if(optionalTemporaryMember.isEmpty()){
@@ -90,29 +97,42 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			String param2 = "&name=" + CoderUtil.encode(name);
 			String targetURI = domain + signupPath + param1 + param2;
 			// 추가 회원가입을 하기 위해 redirect 한다.
+			// db 저장후 refreshtoken 저장 한 후 accesstoken 은 쿠키로 전달한다.
 			redirectStratgy.sendRedirect(request, response, targetURI);
 		} else {
-			// 이미 회원가입 한 유저의 경우 토큰을 refreshToken 저장 후
+			// 이미 회원가입을 한 유저의 경우
+			// 1. memberId 로 refreshtoken 이 존재하는지 확인한다.
+			// 2. 존재한다면 refreshtoken 을 가지고 accesstoken 을 만든다.
+			// 3. 존재하지 않으면 refreshtoken 을 만들고 accesstoken 을 만든다.
+			// 4. 쿠키에 accesstoken 을 담아 전달한다.
+
+			// 이미 회원가입 한 유저의 경우
+			// 토큰을 refreshToken 저장 후
 			// accessToken 은 쿠키로 담아 main 으로 redirect 한다.
 			Long memberId = optionalMember.get().getId();
+
 			Tokens tokens = tokenGenerator.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
-			saveRefreshTokenToRedis(tokens);
+
+			saveRefreshTokenToRedis(memberId, tokens.getAccessToken(), tokens.getRefreshToken());
+
 			addAccessTokenToCookie(response, tokens.getAccessToken(), TokenType.JWT_TYPE);
 
 			redirectStratgy.sendRedirect(request, response, domain + loginSuccessPath);
 		}
 	}
 
-	private void saveRefreshTokenToRedis(Tokens tokens) {
+	private void saveRefreshTokenToRedis(Long memberId, String accessToken, String refreshTokenValue) {
 		Date now = new Date();
-		RefreshToken refreshToken = new RefreshToken(
-			tokens.getAccessToken(),
-			tokens.getRefreshToken(),
-			now,
-			new Date(now.getTime() + tokenService.getRefreshPeriod())
-		);
+		RefreshToken refreshToken = RefreshToken.builder()
+			.accessTokenValue(accessToken)
+			.memberId(memberId)
+			.refreshTokenValue(refreshTokenValue)
+			.createdTime(now)
+			.expirationTime(new Date(now.getTime() + tokenService.getRefreshPeriod()))
+			.expiration(tokenService.getRefreshPeriod())
+			.build();
 
-		refreshTokenRepository.save(refreshToken);
+		refreshTokenService.save(refreshToken);
 	}
 
 	private void addAccessTokenToCookie(HttpServletResponse response, String accessToken, TokenType tokenType) {

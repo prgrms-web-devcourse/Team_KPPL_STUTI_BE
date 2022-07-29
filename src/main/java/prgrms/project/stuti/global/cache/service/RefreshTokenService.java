@@ -16,23 +16,30 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public void findAndDelete(String accessToken) {
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
-        if (optionalRefreshToken.isPresent()) {
-            RefreshToken refreshToken = optionalRefreshToken.get();
-            refreshTokenRepository.delete(refreshToken);
-        }
+    public Optional<RefreshToken> findById(String accessToken) {
+        return refreshTokenRepository.findById(accessToken);
     }
 
-    public void save(Tokens tokens, long refreshPeriod) {
-        Date now = new Date();
-        RefreshToken refreshToken = new RefreshToken(
-            tokens.getAccessToken(),
-            tokens.getRefreshToken(),
-            now,
-            new Date(now.getTime() + refreshPeriod)
-        );
+    public void save(RefreshToken refreshToken) {
         refreshTokenRepository.save(refreshToken);
+    }
+
+    public void save(Long memberId, Tokens tokens, long refreshPeriod) {
+        Date now = new Date();
+        RefreshToken refreshToken = RefreshToken.builder()
+            .accessTokenValue(tokens.getAccessToken())
+            .memberId(memberId)
+            .refreshTokenValue(tokens.getRefreshToken())
+            .createdTime(now)
+            .expirationTime(new Date(now.getTime() + refreshPeriod))
+            .expiration(refreshPeriod)
+            .build();
+
+        refreshTokenRepository.save(refreshToken);
+    }
+
+    public void delete(RefreshToken refreshToken){
+        refreshTokenRepository.delete(refreshToken);
     }
 
 }

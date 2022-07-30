@@ -42,7 +42,7 @@ public class AuthenticationFacade {
 		TemporaryMember temporaryMember = optionalMember.get();
 		Member member = memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
 
-		return MemberConverter.toMemberResponse(member.getId());
+		return MemberConverter.toMemberIdResponse(member.getId());
 	}
 
 	public Tokens makeTokens(Long memberId) {
@@ -67,7 +67,7 @@ public class AuthenticationFacade {
 		}
 	}
 
-	public List<Member> getUsers() {
-		return memberService.getUsers();
+	public List<Member> getMembers() {
+		return memberService.members();
 	}
 }

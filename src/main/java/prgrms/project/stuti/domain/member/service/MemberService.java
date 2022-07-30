@@ -23,12 +23,17 @@ public class MemberService {
 	private final MemberRepository memberRepository;
 
 	@Transactional(readOnly = true)
-	public Optional<Member> getUser(Email email) {
+	public Optional<Member> getMember(Email email) {
 		return memberRepository.findByEmail(email.getAddress());
 	}
 
 	@Transactional(readOnly = true)
-	public List<Member> getUsers() {
+	public Optional<Member> getMember(Long id) {
+		return memberRepository.findById(id);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Member> members() {
 		return memberRepository.findAll();
 	}
 

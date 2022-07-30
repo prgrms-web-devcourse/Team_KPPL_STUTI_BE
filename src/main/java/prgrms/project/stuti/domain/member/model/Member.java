@@ -44,6 +44,7 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "profile_image_url", length = 150, unique = true, nullable = false)
 	private String profileImageUrl;
 
+	@Enumerated(value = EnumType.STRING)
 	@Column(name = "MBTI", length = 5, nullable = false)
 	private Mbti mbti;
 

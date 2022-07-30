@@ -61,11 +61,11 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/users")
-	public ResponseEntity<List<Member>> getUsers() {
+	public ResponseEntity<List<Member>> users() {
 		// 테스트 용도입니다.
 		return ResponseEntity
 			.ok()
-			.body(authenticationFacade.getUsers());
+			.body(authenticationFacade.getMembers());
 	}
 
 	private Cookie setCookie(String accessToken, TokenType tokenType, long period) {

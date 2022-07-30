@@ -1,8 +1,8 @@
 package prgrms.project.stuti.global.error;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MultipartException;
@@ -16,12 +16,12 @@ import prgrms.project.stuti.global.error.exception.BusinessException;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex,
+	@ExceptionHandler(BindException.class)
+	protected ResponseEntity<ErrorResponse> handleBindException(BindException ex,
 		BindingResult bindingResult) {
-		log.info("Got MethodArgumentNotValidException: {}", ex.getMessage(), ex);
+		log.info("Got BindException: {}", ex.getMessage(), ex);
 
-		return ErrorResponseMapper.toErrorResponse(ErrorCode.EMPTY_INPUT_VALUE, bindingResult);
+		return ErrorResponseMapper.toErrorResponse(ErrorCode.INVALID_METHOD_ARGUMENT, bindingResult);
 	}
 
 	@ExceptionHandler(BusinessException.class)

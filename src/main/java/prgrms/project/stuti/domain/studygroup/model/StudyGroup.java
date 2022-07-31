@@ -1,8 +1,7 @@
 package prgrms.project.stuti.domain.studygroup.model;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -52,19 +51,15 @@ public class StudyGroup extends BaseEntity {
 	@Column(name = "number_of_recruits", nullable = false)
 	private int numberOfRecruits;
 
-	@Column(name = "start_date", nullable = false)
-	private LocalDateTime startDate;
-
-	@Column(name = "end_date", nullable = false)
-	private LocalDateTime endDate;
+	@Embedded
+	private StudyPeriod studyPeriod;
 
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;
 
 	@Builder
-	public StudyGroup(String imageUrl, String title, Topic topic, boolean isOnline,
-		Region region, int numberOfMembers, int numberOfRecruits, LocalDateTime startDate, LocalDateTime endDate,
-		String description) {
+	public StudyGroup(String imageUrl, String title, Topic topic, boolean isOnline, Region region, int numberOfMembers,
+		int numberOfRecruits, StudyPeriod studyPeriod, String description) {
 		this.imageUrl = imageUrl;
 		this.title = title;
 		this.topic = topic;
@@ -72,8 +67,7 @@ public class StudyGroup extends BaseEntity {
 		this.region = region;
 		this.numberOfMembers = numberOfMembers;
 		this.numberOfRecruits = numberOfRecruits;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.studyPeriod = studyPeriod;
 		this.description = description;
 	}
 
@@ -89,8 +83,7 @@ public class StudyGroup extends BaseEntity {
 			.append("region", region)
 			.append("numberOfMembers", numberOfMembers)
 			.append("numberOfRecruits", numberOfRecruits)
-			.append("startDate", startDate)
-			.append("endDate", endDate)
+			.append("studyPeriod", studyPeriod)
 			.append("description", description)
 			.toString();
 	}

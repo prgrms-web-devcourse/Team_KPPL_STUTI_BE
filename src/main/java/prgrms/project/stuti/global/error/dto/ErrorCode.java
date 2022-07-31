@@ -11,6 +11,9 @@ public enum ErrorCode {
 	INVALID_METHOD_ARGUMENT("C001", "Invalid method argument", HttpStatus.BAD_REQUEST),
 	UNKNOWN_SERVER_ERROR("S001", "Unknown server error", HttpStatus.INTERNAL_SERVER_ERROR),
 
+	//study group
+	INVALID_STUDY_PERIOD("SG001", "Invalid study period", HttpStatus.BAD_REQUEST),
+
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
 	UNSUPPORTED_EXTENSION("F002", "Unsupported file extension", HttpStatus.UNSUPPORTED_MEDIA_TYPE),

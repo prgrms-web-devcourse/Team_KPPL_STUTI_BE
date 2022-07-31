@@ -120,7 +120,7 @@ class MemberControllerTest extends TestConfig {
 			.blogUrl("edit.blog")
 			.build();
 
-		given(memberService.putMember(memberId, memberPutRequest)).willReturn(memberResponse);
+		given(memberService.putMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest))).willReturn(memberResponse);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(put("/api/v1/members/{memberId}", 1)

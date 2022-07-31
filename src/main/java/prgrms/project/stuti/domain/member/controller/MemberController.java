@@ -39,7 +39,7 @@ public class MemberController {
 		MemberResponse memberResponse;
 
 		try{
-			memberResponse = memberService.putMember(memberId, memberPutRequest);
+			memberResponse = memberService.putMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
 		}catch (DataIntegrityViolationException ex){
 			throw SqlDuplicatedException.SQL_DUPLICATED_EXCEPTION.get();
 		}

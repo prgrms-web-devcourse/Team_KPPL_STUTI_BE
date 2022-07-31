@@ -1,8 +1,5 @@
 package prgrms.project.stuti.domain.member.service;
 
-import static prgrms.project.stuti.global.error.dto.ErrorCode.*;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,12 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
 import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
+import prgrms.project.stuti.domain.member.service.dto.MemberPutDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.error.exception.MemberException;
@@ -35,7 +32,7 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public MemberResponse getMember(Long id) {
-		Member member = memberRepository.findById(id).orElseThrow(MemberException.NOT_FOUNT_MEMBER::get);
+		Member member = memberRepository.findById(id).orElseThrow(MemberException.NOT_FOUNT_MEMBER);
 		return MemberConverter.toMemberResponse(member);
 	}
 
@@ -53,10 +50,10 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberResponse putMember(Long memberId, MemberPutRequest memberPutRequest) throws
+	public MemberResponse putMember(Long memberId, MemberPutDto memberPutDto) throws
 		DataIntegrityViolationException {
-		Member member = memberRepository.findById(memberId).orElseThrow(MemberException.NOT_FOUNT_MEMBER::get);
-		member.change(memberPutRequest);
+		Member member = memberRepository.findById(memberId).orElseThrow(MemberException.NOT_FOUNT_MEMBER);
+		member.change(memberPutDto);
 
 		return MemberConverter.toMemberResponse(member);
 	}

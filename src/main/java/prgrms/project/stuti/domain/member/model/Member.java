@@ -44,6 +44,10 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "profile_image_url", length = 150, unique = true, nullable = false)
 	private String profileImageUrl;
 
+	@Enumerated(value = EnumType.STRING)
+	@Column(name = "MBTI", length = 5, nullable = false)
+	private Mbti mbti;
+
 	@Column(name = "github_url", length = 100)
 	private String githubUrl;
 
@@ -54,17 +58,22 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "member_role", length = 16, nullable = false)
 	private MemberRole memberRole;
 
+	@Column(name = "is_deleted", nullable = false)
+	private boolean isDeleted;
+
 	@Builder
-	public Member(String email, String nickName, Career career, Field field, String profileImageUrl, String githubUrl,
-		String blogUrl, MemberRole memberRole) {
-		this.email = email;
+	public Member(String email, String nickName, Field field, Career career, String profileImageUrl, String githubUrl,
+		Mbti mbti, String blogUrl, MemberRole memberRole) {
+		this.email = new Email(email).getAddress();
 		this.nickName = nickName;
+		this.field = field;
 		this.career = career;
 		this.profileImageUrl = profileImageUrl;
+		this.mbti = mbti;
 		this.githubUrl = githubUrl;
 		this.blogUrl = blogUrl;
-		this.field = field;
 		this.memberRole = memberRole;
+		this.isDeleted = false;
 	}
 
 	@Override
@@ -74,6 +83,7 @@ public class Member extends BaseTimeEntity {
 			.append("id", id)
 			.append("email", email)
 			.append("nickName", nickName)
+			.append("field", field)
 			.append("career", career)
 			.append("profileImageUrl", profileImageUrl)
 			.append("githubUrl", githubUrl)

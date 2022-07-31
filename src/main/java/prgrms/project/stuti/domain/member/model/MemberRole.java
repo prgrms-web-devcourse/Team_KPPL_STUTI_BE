@@ -1,5 +1,7 @@
 package prgrms.project.stuti.domain.member.model;
 
 public enum MemberRole {
-	TEST
+	ROLE_MEMBER,
+	ROLE_ADMIN,
+	ROLE_MANAGER,
 }

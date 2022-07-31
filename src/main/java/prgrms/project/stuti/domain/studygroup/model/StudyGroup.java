@@ -11,6 +11,7 @@ import javax.persistence.Id;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,6 +31,9 @@ public class StudyGroup extends BaseEntity {
 
 	@Column(name = "image_url", length = 150, unique = true)
 	private String imageUrl;
+
+	@Column(name = "thumbnail_url", length = 150, unique = true)
+	private String thumbnailUrl;
 
 	@Column(name = "title", length = 100, nullable = false)
 	private String title;
@@ -57,18 +61,23 @@ public class StudyGroup extends BaseEntity {
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;
 
+	@Column(name = "is_deleted", nullable = false)
+	private boolean isDeleted;
+
 	@Builder
-	public StudyGroup(String imageUrl, String title, Topic topic, boolean isOnline, Region region, int numberOfMembers,
+	public StudyGroup(String imageUrl, String thumbnailUrl, String title, Topic topic, boolean isOnline, Region region,
 		int numberOfRecruits, StudyPeriod studyPeriod, String description) {
 		this.imageUrl = imageUrl;
+		this.thumbnailUrl = thumbnailUrl;
 		this.title = title;
 		this.topic = topic;
 		this.isOnline = isOnline;
 		this.region = region;
-		this.numberOfMembers = numberOfMembers;
+		this.numberOfMembers = NumberUtils.INTEGER_ZERO;
 		this.numberOfRecruits = numberOfRecruits;
 		this.studyPeriod = studyPeriod;
 		this.description = description;
+		this.isDeleted = false;
 	}
 
 	@Override
@@ -77,6 +86,7 @@ public class StudyGroup extends BaseEntity {
 			ToStringStyle.SHORT_PREFIX_STYLE)
 			.append("id", id)
 			.append("imageUrl", imageUrl)
+			.append("thumbnailUrl", thumbnailUrl)
 			.append("title", title)
 			.append("topic", topic)
 			.append("isOnline", isOnline)
@@ -85,6 +95,7 @@ public class StudyGroup extends BaseEntity {
 			.append("numberOfRecruits", numberOfRecruits)
 			.append("studyPeriod", studyPeriod)
 			.append("description", description)
+			.append("isDeleted", isDeleted)
 			.toString();
 	}
 }

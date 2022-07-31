@@ -17,7 +17,7 @@ public record StudyGroupCreateDto(
 	Topic topic,
 	boolean isOnline,
 	Region region,
-	List<Mbti> preferredMbtis,
+	List<Mbti> preferredMBTIs,
 	int numberOfRecruits,
 	LocalDateTime startDateTime,
 	LocalDateTime endDateTime,

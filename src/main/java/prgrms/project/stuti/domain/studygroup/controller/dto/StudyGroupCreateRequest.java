@@ -39,7 +39,7 @@ public record StudyGroupCreateRequest(
 	Region region,
 
 	@NotNull
-	List<Mbti> preferredMbtis,
+	List<Mbti> preferredMBTIs,
 
 	@NotNull
 	@Positive
@@ -71,7 +71,7 @@ public record StudyGroupCreateRequest(
 			.append("topic", topic)
 			.append("isOnline", isOnline)
 			.append("region", region)
-			.append("preferredMBTIs", preferredMbtis)
+			.append("preferredMBTIs", preferredMBTIs)
 			.append("startDateTime", startDateTime)
 			.append("endDateTime", endDateTime)
 			.append("description", description)

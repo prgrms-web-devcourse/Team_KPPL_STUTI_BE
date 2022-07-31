@@ -18,7 +18,7 @@ public class StudyGroupMapper {
 			.topic(createRequest.topic())
 			.isOnline(createRequest.isOnline())
 			.region(createRequest.isOnline() ? Region.ONLINE : createRequest.region())
-			.preferredMbtis(createRequest.preferredMbtis())
+			.preferredMBTIs(createRequest.preferredMBTIs())
 			.numberOfRecruits(createRequest.numberOfRecruits())
 			.startDateTime(createRequest.startDateTime())
 			.endDateTime(createRequest.endDateTime())

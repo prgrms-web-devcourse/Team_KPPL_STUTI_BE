@@ -138,7 +138,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 
 	enum Field {
 		TITLE("title"), TOPIC("topic"), IS_ONLINE("isOnline"),
-		REGION("region"), PREFERRED_MBTIS("preferredMbtis"),
+		REGION("region"), PREFERRED_MBTIS("preferredMBTIs"),
 		NUMBER_OF_RECRUITS("numberOfRecruits"), START_DATE_TIME("startDateTime"),
 		END_DATE_TIME("endDateTime"), DESCRIPTION("description"), IMAGE_FILE("imageFile"),
 		STUDY_GROUP_ID("studyGroupId");

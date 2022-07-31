@@ -78,7 +78,7 @@ class StudyGroupServiceTest {
 			.topic(Topic.AI)
 			.isOnline(false)
 			.region(Region.SEOUL)
-			.preferredMbtis(List.of(Mbti.ENFJ, Mbti.ENFP))
+			.preferredMBTIs(List.of(Mbti.ENFJ, Mbti.ENFP))
 			.numberOfRecruits(5)
 			.startDateTime(LocalDateTime.now().plusDays(10))
 			.endDateTime(LocalDateTime.now().plusMonths(3))

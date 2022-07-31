@@ -38,7 +38,7 @@ public class StudyGroupService {
 		String thumbnailUrl = imageUploader.createThumbnail(imageUrl);
 
 		StudyGroup studyGroup = saveStudyGroup(createDto, imageUrl, thumbnailUrl);
-		savePreferredMbtis(createDto.preferredMbtis(), studyGroup);
+		savePreferredMbtis(createDto.preferredMBTIs(), studyGroup);
 		saveStudyLeader(createDto.memberId(), studyGroup);
 
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());

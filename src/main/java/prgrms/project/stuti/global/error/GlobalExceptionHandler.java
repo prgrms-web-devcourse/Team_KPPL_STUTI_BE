@@ -1,5 +1,8 @@
 package prgrms.project.stuti.global.error;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -43,5 +46,21 @@ public class GlobalExceptionHandler {
 		log.error("Got Exception: {}", ex.getMessage(), ex);
 
 		return ErrorResponseMapper.toErrorResponse(ErrorCode.UNKNOWN_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+	protected ResponseEntity<ErrorResponse> handleSqlIntegrity(SQLIntegrityConstraintViolationException ex,
+		BindingResult bindingResult) {
+		log.info("Got SQLIntegrityConstraintViolationException: {}", ex.getMessage(), ex);
+
+		return ErrorResponseMapper.toErrorResponse(ErrorCode.EMPTY_INPUT_VALUE, bindingResult);
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	protected ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex,
+		BindingResult bindingResult) {
+		log.info("Got DataIntegrityViolationException: {}", ex.getMessage(), ex);
+
+		return ErrorResponseMapper.toErrorResponse(ErrorCode.EMPTY_INPUT_VALUE, bindingResult);
 	}
 }

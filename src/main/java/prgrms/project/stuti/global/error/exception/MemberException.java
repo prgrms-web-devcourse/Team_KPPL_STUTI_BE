@@ -14,7 +14,11 @@ public class MemberException extends BusinessException {
 		super(errorCode, message, cause);
 	}
 
-	public static final Supplier<String> INVALID_EMAIL = () -> {
-		throw new TokenException(ErrorCode.INVALID_EMAIL, "이메일이 유효하지 않습니다.");
+	public static final Supplier<MemberException> INVALID_EMAIL = () -> {
+		throw new MemberException(ErrorCode.INVALID_EMAIL, "이메일이 유효하지 않습니다.");
+	};
+
+	public static final Supplier<MemberException> NOT_FOUNT_MEMBER = () -> {
+		throw new MemberException(ErrorCode.NOT_FOUNT_MEMBER, "멤버를 찾지 못했습니다.");
 	};
 }

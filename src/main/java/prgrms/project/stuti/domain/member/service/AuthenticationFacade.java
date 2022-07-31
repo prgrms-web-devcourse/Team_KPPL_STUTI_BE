@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
 import prgrms.project.stuti.global.cache.service.RefreshTokenService;
 import prgrms.project.stuti.global.cache.service.TemporaryMemberService;
+import prgrms.project.stuti.global.error.exception.SqlDuplicatedException;
 import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.TokenGenerator;
 import prgrms.project.stuti.global.token.TokenService;
@@ -38,7 +40,13 @@ public class AuthenticationFacade {
 			TokenException.TOKEN_EXPIRATION.get();
 		}
 		TemporaryMember temporaryMember = optionalMember.get();
-		Member member = memberService.signup(memberDto, temporaryMember);
+
+		Member member;
+		try{
+			member = memberService.signup(memberDto, temporaryMember);
+		}catch (DataIntegrityViolationException ex){
+			throw SqlDuplicatedException.SQL_DUPLICATED_EXCEPTION.get();
+		}
 
 		return MemberConverter.toMemberIdResponse(member.getId());
 	}

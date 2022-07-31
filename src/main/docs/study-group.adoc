@@ -1,0 +1,5 @@
+== 스터디 그룹
+
+=== 생성
+operation::post-study-group[snippets='http-request,request-parts,request-parameters,response-headers,response-fields,response-body']
+'''

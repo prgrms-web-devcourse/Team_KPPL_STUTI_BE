@@ -55,7 +55,7 @@ public class Member extends BaseTimeEntity {
 	private MemberRole memberRole;
 
 	@Builder
-	public Member(String email, String nickName, Career career, String profileImageUrl, String githubUrl,
+	public Member(String email, String nickName, Career career, Field field, String profileImageUrl, String githubUrl,
 		String blogUrl, MemberRole memberRole) {
 		this.email = email;
 		this.nickName = nickName;
@@ -63,6 +63,7 @@ public class Member extends BaseTimeEntity {
 		this.profileImageUrl = profileImageUrl;
 		this.githubUrl = githubUrl;
 		this.blogUrl = blogUrl;
+		this.field = field;
 		this.memberRole = memberRole;
 	}
 

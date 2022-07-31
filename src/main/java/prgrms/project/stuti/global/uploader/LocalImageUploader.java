@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -43,10 +42,8 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 
 			return getImageFileUrl(imageDirectory.getDirectory(), imageFile.getName());
 		} catch (IOException ex) {
-			FileException.FAILED_TO_UPLOAD.accept(ex);
+			throw FileException.failedToUpload(ex);
 		}
-
-		return StringUtils.EMPTY;
 	}
 
 	@Override
@@ -67,7 +64,7 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 
 				imageFileUrls.add(getImageFileUrl(imageDirectory.getDirectory(), imageFile.getName()));
 			} catch (IOException ex) {
-				FileException.FAILED_TO_UPLOAD.accept(ex);
+				throw FileException.failedToUpload(ex);
 			}
 		}
 
@@ -87,10 +84,8 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 
 			return getThumbnailFileUrl(rootPath, thumbnailFileUrl);
 		} catch (IOException ex) {
-			FileException.FAILED_TO_UPLOAD.accept(ex);
+			throw FileException.failedToCreateThumbnail(ex);
 		}
-
-		return Strings.EMPTY;
 	}
 
 	@Override
@@ -101,7 +96,7 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 			URL rootUrl = resource.getURL();
 			Files.deleteIfExists(Paths.get(rootUrl.getPath(), imageUrl));
 		} catch (IOException ex) {
-			FileException.FAILED_TO_DELETE.accept(ex);
+			throw FileException.failedToDelete(ex);
 		}
 	}
 

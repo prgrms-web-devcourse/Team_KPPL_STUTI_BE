@@ -8,7 +8,7 @@ public class FeedMapper {
 		return PostDto.builder()
 			.memberId(memberId)
 			.contents(registerPostRequest.content())
-			.files(registerPostRequest.files())
+			.imageFile(registerPostRequest.imageFile())
 			.build();
 	}
 }

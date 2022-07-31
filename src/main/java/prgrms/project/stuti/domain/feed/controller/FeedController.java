@@ -4,9 +4,11 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +23,8 @@ public class FeedController {
 
 	private final FeedService feedService;
 
-	@PostMapping("/api/v1/posts")
-	public ResponseEntity<Long> registerPost(@Valid RegisterPostRequest registerPostRequest,
+	@PostMapping(path = "/api/v1/posts", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<Long> registerPost(@Valid @ModelAttribute RegisterPostRequest registerPostRequest,
 		@AuthenticationPrincipal User authentication) {
 		Long memberId = Long.parseLong(authentication.getUsername());
 		PostDto postDto = FeedMapper.toPostDto(registerPostRequest, memberId);

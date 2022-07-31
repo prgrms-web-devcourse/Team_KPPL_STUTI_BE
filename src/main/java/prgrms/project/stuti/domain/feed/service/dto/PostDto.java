@@ -1,7 +1,5 @@
 package prgrms.project.stuti.domain.feed.service.dto;
 
-import java.util.List;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.Builder;
@@ -9,13 +7,13 @@ import lombok.Builder;
 public record PostDto(
 	Long memberId,
 	String contents,
-	List<MultipartFile> files
+	MultipartFile imageFile
 ) {
 
 	@Builder
-	public PostDto(Long memberId, String contents, List<MultipartFile> files) {
+	public PostDto(Long memberId, String contents, MultipartFile imageFile) {
 		this.memberId = memberId;
 		this.contents = contents;
-		this.files = files;
+		this.imageFile = imageFile;
 	}
 }

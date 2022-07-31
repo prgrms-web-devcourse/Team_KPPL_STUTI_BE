@@ -9,8 +9,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +61,8 @@ class AuthenticationControllerTest extends TestConfig {
 			.memberId(1L)
 			.build();
 
-		given(authenticationFacade.signupMember(memberSaveRequest)).willReturn(memberIdResponse);
+		given(authenticationFacade.signupMember(MemberMapper.toMemberDto(memberSaveRequest))).willReturn(
+			memberIdResponse);
 		given(authenticationFacade.makeTokens(memberIdResponse.memberId())).willReturn(new Tokens("access", "refresh"));
 
 		// when
@@ -75,7 +74,8 @@ class AuthenticationControllerTest extends TestConfig {
 
 		// then
 		resultActions
-			.andExpect(status().isCreated())
+			.andExpectAll(status().isCreated(),
+				content().json(objectMapper.writeValueAsString(memberIdResponse)))
 			.andDo(print())
 			.andDo(document(COMMON_DOCS_NAME,
 				requestHeaders(

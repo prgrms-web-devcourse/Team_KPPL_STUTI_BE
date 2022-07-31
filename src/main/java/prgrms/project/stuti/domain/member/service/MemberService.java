@@ -1,6 +1,5 @@
 package prgrms.project.stuti.domain.member.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -8,11 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
 import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
+import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 
 @Slf4j
@@ -28,13 +29,9 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
-	public Optional<Member> getMember(Long id) {
-		return memberRepository.findById(id);
-	}
-
-	@Transactional(readOnly = true)
-	public List<Member> members() {
-		return memberRepository.findAll();
+	public MemberResponse getMember(Long id) {
+		Member member = memberRepository.findById(id).orElseThrow(RuntimeException::new);
+		return MemberConverter.toMemberResponse(member);
 	}
 
 	@Transactional
@@ -48,5 +45,13 @@ public class MemberService {
 			.mbti(memberDto.MBTI())
 			.memberRole(MemberRole.ROLE_MEMBER)
 			.build());
+	}
+
+	@Transactional
+	public MemberResponse putMember(Long memberId, MemberPutRequest memberPutRequest) {
+		Member member = memberRepository.findById(memberId).orElseThrow(RuntimeException::new);
+		member.change(memberPutRequest);
+
+		return MemberConverter.toMemberResponse(member);
 	}
 }

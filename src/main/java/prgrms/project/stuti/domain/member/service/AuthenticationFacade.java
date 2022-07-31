@@ -1,6 +1,5 @@
 package prgrms.project.stuti.domain.member.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,10 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.member.controller.MemberMapper;
-import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
+import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.cache.service.BlackListTokenService;
@@ -33,14 +31,14 @@ public class AuthenticationFacade {
 	private final TemporaryMemberService temporaryMemberService;
 	private final TokenGenerator tokenGenerator;
 
-	public MemberIdResponse signupMember(MemberSaveRequest memberSaveRequest) {
-		Optional<TemporaryMember> optionalMember = temporaryMemberService.findById(memberSaveRequest.email());
+	public MemberIdResponse signupMember(MemberDto memberDto) {
+		Optional<TemporaryMember> optionalMember = temporaryMemberService.findById(memberDto.email());
 
 		if (optionalMember.isEmpty()) {
 			TokenException.TOKEN_EXPIRATION.get();
 		}
 		TemporaryMember temporaryMember = optionalMember.get();
-		Member member = memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
+		Member member = memberService.signup(memberDto, temporaryMember);
 
 		return MemberConverter.toMemberIdResponse(member.getId());
 	}
@@ -65,9 +63,5 @@ public class AuthenticationFacade {
 			refreshTokenService.findById(accessToken).ifPresent((refreshTokenService::delete));
 			blackListTokenService.logout(tokenService.tokenWithType(accessToken, TokenType.JWT_BLACKLIST), expiration);
 		}
-	}
-
-	public List<Member> getMembers() {
-		return memberService.members();
 	}
 }

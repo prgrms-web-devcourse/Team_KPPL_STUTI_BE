@@ -59,13 +59,20 @@ public class FeedService {
 		feed.changeContents(registerPostRequest.content());
 
 		feedImageRepository.deleteByFeedId(feed.getId());
-		if(registerPostRequest.imageFile() != null) {
+		if (registerPostRequest.imageFile() != null) {
 			String uploadUrl = imageUploader.upload(registerPostRequest.imageFile(), ImageDirectory.FEED);
 			FeedImage feedImage = new FeedImage(uploadUrl, feed);
 			feedImageRepository.save(feedImage);
 		}
 
 		return FeedConverter.toPostIdResponse(feed.getId());
+	}
+
+	@Transactional
+	public void deletePost(Long postId) {
+		feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
+		feedImageRepository.deleteByFeedId(postId);
+		feedRepository.deleteById(postId);
 	}
 
 	private boolean hasNext(Long lastPostId) {

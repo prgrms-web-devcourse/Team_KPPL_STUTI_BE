@@ -34,6 +34,7 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
+import prgrms.project.stuti.global.error.exception.FeedException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -111,7 +112,7 @@ class FeedServiceTest {
 	@Test
 	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
 	void TestGetAllPosts() {
-		for(int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
 			feedRepository.save(feed);
@@ -128,7 +129,7 @@ class FeedServiceTest {
 	@Test
 	@DisplayName("전체 포스트리스트 첫 조회시(lastPostId가 null일 때) 페이징 조회한다")
 	void TestGetAllPostsWhenLastPostIdIsNull() {
-		for(int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
 			feedRepository.save(feed);
@@ -177,6 +178,23 @@ class FeedServiceTest {
 
 		assertThat(changedFeed.getContent()).isEqualTo(registerPostRequest.content());
 		assertThat(changedImages).isEmpty();
+	}
+
+	@Test
+	@DisplayName("게시글과 게시글 이미지를 삭제한다")
+	void TestDeletePost() throws IOException {
+		PostIdResponse postIdResponse = savePost();
+
+		feedService.deletePost(postIdResponse.postId());
+		List<Feed> allPosts = feedRepository.findAll();
+
+		assertThat(allPosts).isEmpty();
+	}
+
+	@Test
+	@DisplayName("없는게시글을 삭제하려고하면 에러를 리턴한다")
+	void TestDeletePostWithUnknownPostId() {
+		assertThrows(FeedException.class, () -> feedService.deletePost(1L));
 	}
 
 	private PostIdResponse savePost() throws IOException {

@@ -23,8 +23,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.FeedConverter;
 import prgrms.project.stuti.domain.feed.service.FeedService;
-import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
@@ -90,10 +90,20 @@ class FeedControllerTest extends TestConfig {
 		when(feedService.changePost(any(), any())).thenReturn(new PostIdResponse(1L));
 
 		mockMvc.perform(
-			multipart(HttpMethod.PATCH,"/api/v1/posts/{postId}", 1L)
-				.file(file)
-				.param("content", "수정게시글입니다."))
+				multipart(HttpMethod.PATCH, "/api/v1/posts/{postId}", 1L)
+					.file(file)
+					.param("content", "수정게시글입니다."))
 			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("게시글을 삭제한다")
+	void TestDeletePost() throws Exception {
+		doNothing().when(feedService).deletePost(any());
+
+		mockMvc.perform(delete("/api/v1/posts/{postId}", 1L))
+			.andExpect(status().isNoContent())
 			.andDo(print());
 	}
 

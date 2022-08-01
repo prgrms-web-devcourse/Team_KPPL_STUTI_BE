@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.service.FeedService;
+import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class FeedController {
 		@AuthenticationPrincipal Long memberId) {
 		PostCreateDto postCreateDto = FeedMapper.toPostDto(registerPostRequest, memberId);
 		PostIdResponse postIdResponse = feedService.registerPost(postCreateDto);
-		URI returnUri = URI.create("/api/v1/post/" + postIdResponse.postid());
+		URI returnUri = URI.create("/api/v1/post/" + postIdResponse.postId());
 
 		return ResponseEntity.created(returnUri).body(postIdResponse);
 	}

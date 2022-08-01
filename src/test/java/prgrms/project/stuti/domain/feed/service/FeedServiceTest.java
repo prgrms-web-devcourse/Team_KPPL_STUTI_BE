@@ -89,7 +89,7 @@ class FeedServiceTest {
 			.build();
 
 		PostIdResponse postIdResponse = feedService.registerPost(postDto);
-		Optional<Feed> foundFeed = feedRepository.findById(postIdResponse.postid());
+		Optional<Feed> foundFeed = feedRepository.findById(postIdResponse.postId());
 
 		assertThat(foundFeed).isNotEmpty();
 		assertThat(foundFeed.get().getContent()).isEqualTo(postDto.contents());
@@ -143,7 +143,7 @@ class FeedServiceTest {
 		FeedResponse allPosts = feedService.getAllPosts(null, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
-		assertThat(allPosts.posts().get(0).postId()).isEqualTo(10L);
+		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글9");
 		assertThat(allPosts.hasNext()).isTrue();
 	}
 }

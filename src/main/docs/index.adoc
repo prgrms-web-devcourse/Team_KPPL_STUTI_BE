@@ -9,3 +9,4 @@ endif::[]
 [[title]]
 = STUTI API v1
 
+include::study-group.adoc[]

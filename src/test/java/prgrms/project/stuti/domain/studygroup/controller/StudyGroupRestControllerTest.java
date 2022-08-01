@@ -2,12 +2,13 @@ package prgrms.project.stuti.domain.studygroup.controller;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupRestControllerTest.Field.*;
 
@@ -21,10 +22,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.headers.HeaderDescriptor;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.request.RequestPartDescriptor;
@@ -35,8 +36,8 @@ import org.springframework.util.MultiValueMap;
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 
 @WebMvcTest(controllers = StudyGroupRestController.class)
 class StudyGroupRestControllerTest extends TestConfig {
@@ -58,7 +59,11 @@ class StudyGroupRestControllerTest extends TestConfig {
 		ResultActions resultActions = mockMvc.perform(multipart("/api/v1/study-groups")
 			.file("imageFile", getMultipartFileBytes())
 			.params(createParams)
-			.contentType(MediaType.MULTIPART_FORM_DATA));
+			.contentType(MediaType.MULTIPART_FORM_DATA)
+			.with(requestPostProcessor -> {
+				requestPostProcessor.setMethod("POST");
+				return requestPostProcessor;
+			}));
 
 		//then
 		resultActions
@@ -67,11 +72,11 @@ class StudyGroupRestControllerTest extends TestConfig {
 				content().json(objectMapper.writeValueAsString(idResponse)))
 			.andDo(
 				document(COMMON_DOCS_NAME,
-					requestHeaders(contentType()).and(host()),
+					requestHeaders(contentType(), host()),
 					requestParts(imageFile()),
 					requestParameters(title()).and(parametersOfCreateStudyGroup()).and(description()),
 					responseHeaders(contentType()).and(location()),
-					responseFields(studyGroupId())));
+					responseFields(studyGroupIdField())));
 	}
 
 	@Test
@@ -85,10 +90,14 @@ class StudyGroupRestControllerTest extends TestConfig {
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			multipart(HttpMethod.PATCH, "/api/v1/study-groups/{studyGroupId}", idResponse.studyGroupId())
+			multipart("/api/v1/study-groups/{studyGroupId}", idResponse.studyGroupId())
 				.file("imageFile", getMultipartFileBytes())
 				.params(updateParams)
-				.contentType(MediaType.MULTIPART_FORM_DATA));
+				.contentType(MediaType.MULTIPART_FORM_DATA)
+				.with(requestPostProcessor -> {
+					requestPostProcessor.setMethod("PATCH");
+					return requestPostProcessor;
+				}));
 
 		//then
 		resultActions
@@ -97,11 +106,36 @@ class StudyGroupRestControllerTest extends TestConfig {
 				content().json(objectMapper.writeValueAsString(idResponse)))
 			.andDo(
 				document(COMMON_DOCS_NAME,
-					requestHeaders(contentType()).and(host()),
+					requestHeaders(contentType(), host()),
 					requestParts(imageFile()),
 					requestParameters(title(), description()),
 					responseHeaders(contentType()),
-					responseFields(studyGroupId())));
+					responseFields(studyGroupIdField())));
+	}
+
+	@Test
+	@DisplayName("스터디 그룹에 가입신청을한다.")
+	void postApplyStudyGroup() throws Exception {
+		//given
+		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
+
+		given(studyGroupService.applyStudyGroup(any())).willReturn(idResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			RestDocumentationRequestBuilders.post("/api/v1/study-groups/{studyGroupId}",
+				idResponse.studyGroupId()).contentType(APPLICATION_JSON));
+
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().json(objectMapper.writeValueAsString(idResponse)))
+			.andDo(
+				document(COMMON_DOCS_NAME,
+					requestHeaders(contentType(), host()),
+					pathParameters(studyGroupIdPath()),
+					responseHeaders(contentType()),
+					responseFields(studyGroupIdField())));
 	}
 
 	private MultiValueMap<String, String> toCreateParams() {
@@ -132,10 +166,8 @@ class StudyGroupRestControllerTest extends TestConfig {
 			"image/png", "abcde".getBytes()).getBytes();
 	}
 
-	private List<HeaderDescriptor> contentType() {
-		return List.of(
-			headerWithName(HttpHeaders.CONTENT_TYPE).description("컨텐츠 타입")
-		);
+	private HeaderDescriptor contentType() {
+		return headerWithName(HttpHeaders.CONTENT_TYPE).description("컨텐츠 타입");
 	}
 
 	private HeaderDescriptor location() {
@@ -146,7 +178,11 @@ class StudyGroupRestControllerTest extends TestConfig {
 		return headerWithName(HttpHeaders.HOST).description("호스트");
 	}
 
-	private FieldDescriptor studyGroupId() {
+	private ParameterDescriptor studyGroupIdPath() {
+		return parameterWithName(STUDY_GROUP_ID.value()).description("스터디 그룹 아이디");
+	}
+
+	private FieldDescriptor studyGroupIdField() {
 		return fieldWithPath(STUDY_GROUP_ID.value()).type(NUMBER).description("스터디 그룹 아이디");
 	}
 

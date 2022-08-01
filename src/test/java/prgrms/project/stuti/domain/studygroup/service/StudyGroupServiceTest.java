@@ -5,66 +5,38 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import prgrms.project.stuti.domain.member.model.Career;
-import prgrms.project.stuti.domain.member.model.Field;
+import prgrms.project.stuti.config.ServiceTestConfig;
 import prgrms.project.stuti.domain.member.model.Mbti;
-import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.domain.member.model.MemberRole;
-import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 
-@SpringBootTest
-class StudyGroupServiceTest {
+class StudyGroupServiceTest extends ServiceTestConfig {
 
 	@Autowired
 	private StudyGroupService studyGroupService;
 
-	@Autowired
-	private MemberRepository memberRepository;
-
-	private static Member member;
-
-	@BeforeEach
-	void setup() {
-		Member testMember = Member.builder()
-			.email("test@gmail.com")
-			.nickName("nickname")
-			.field(Field.BACKEND)
-			.career(Career.JUNIOR)
-			.profileImageUrl("www.aws.s3")
-			.mbti(Mbti.ENFJ)
-			.githubUrl("www.github.com")
-			.blogUrl("www.blog.com")
-			.memberRole(MemberRole.ROLE_MEMBER)
-			.build();
-
-		member = memberRepository.save(testMember);
-	}
-
 	@Test
 	@DisplayName("새로운 스터디 그룹을 생성한다.")
 	void testCreateStudyGroup() throws IOException {
+		//given
 		StudyGroupCreateDto createDto = toCreateDto(member.getId());
+
+		//when
 		StudyGroupIdResponse idResponse = studyGroupService.createStudyGroup(createDto);
 
+		//then
 		assertNotNull(idResponse);
 		assertEquals(1L, idResponse.studyGroupId());
 	}

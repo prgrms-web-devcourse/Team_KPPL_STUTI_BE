@@ -15,7 +15,7 @@ public enum ErrorCode {
 	INVALID_STUDY_PERIOD("SG001", "Invalid study period", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_STUDY_GROUP("SG002", "Not found study group", HttpStatus.NOT_FOUND),
 	NOT_LEADER("SG003", "Not leader", HttpStatus.BAD_REQUEST),
-	EXISTING_STUDY_MEMBER("SG003", "Existing study member", HttpStatus.BAD_REQUEST),
+	EXISTING_STUDY_MEMBER("SG004", "Existing study member", HttpStatus.BAD_REQUEST),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),

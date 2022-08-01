@@ -29,8 +29,7 @@ public class FeedController {
 
 	@PostMapping(path = "/api/v1/posts", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
 	public ResponseEntity<PostIdResponse> registerPost(@Valid @ModelAttribute RegisterPostRequest registerPostRequest,
-		@AuthenticationPrincipal User authentication) {
-		Long memberId = Long.parseLong(authentication.getUsername());
+		@AuthenticationPrincipal Long memberId) {
 		PostCreateDto postCreateDto = FeedMapper.toPostDto(registerPostRequest, memberId);
 		PostIdResponse postIdResponse = feedService.registerPost(postCreateDto);
 

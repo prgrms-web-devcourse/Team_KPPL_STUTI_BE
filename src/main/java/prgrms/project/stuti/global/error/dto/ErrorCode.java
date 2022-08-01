@@ -25,7 +25,10 @@ public enum ErrorCode {
 	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.NOT_FOUND),
 	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.NOT_FOUND),
 
-	MEMBER_NOT_FOUND("M001", "Unknown member", HttpStatus.BAD_REQUEST);
+	MEMBER_NOT_FOUND("M001", "Unknown member", HttpStatus.BAD_REQUEST),
+
+	//feed
+	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

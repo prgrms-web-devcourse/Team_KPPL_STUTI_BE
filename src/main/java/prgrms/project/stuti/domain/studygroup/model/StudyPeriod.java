@@ -34,10 +34,10 @@ public class StudyPeriod {
 	}
 
 	private void validateStudyPeriod(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-		boolean isBeforeStartDateTime = isBeforeStartDateTime(startDateTime, endDateTime);
+		boolean isStartAfterEndDateTime = isStartAfterEndDateTime(startDateTime, endDateTime);
 		boolean isLessThanOneDay = isLessThanOneDay(startDateTime, endDateTime);
 
-		if (isBeforeStartDateTime || isLessThanOneDay) {
+		if (isStartAfterEndDateTime || isLessThanOneDay) {
 			throw StudyGroupException.invalidStudyPeriod(startDateTime, endDateTime);
 		}
 	}
@@ -48,8 +48,8 @@ public class StudyPeriod {
 		return diffOfDays < NumberUtils.INTEGER_ONE;
 	}
 
-	private boolean isBeforeStartDateTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-		return endDateTime.isBefore(startDateTime);
+	private boolean isStartAfterEndDateTime(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+		return startDateTime.isAfter(endDateTime);
 	}
 
 	@Override

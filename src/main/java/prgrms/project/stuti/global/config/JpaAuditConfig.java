@@ -21,7 +21,7 @@ public class JpaAuditConfig {
 
 			if (authentication == null || !authentication.isAuthenticated() || isAnonymous(
 				authentication)) {
-				return Optional.empty();
+				return Optional.of(-1L);
 			}
 
 			Long memberId = (Long)authentication.getPrincipal();

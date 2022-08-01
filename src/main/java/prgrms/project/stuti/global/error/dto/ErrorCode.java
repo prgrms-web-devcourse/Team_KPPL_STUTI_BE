@@ -22,12 +22,13 @@ public enum ErrorCode {
 	OVER_MAX_SIZE("F003", "Over max size", HttpStatus.PAYLOAD_TOO_LARGE),
 	FAILED_UPLOAD("F005", "Failed to upload image file", HttpStatus.SERVICE_UNAVAILABLE),
 	FAILED_DELETE("F006", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
-
+	
 	// Member
 	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.NOT_FOUND),
 	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.NOT_FOUND),
 	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.NOT_FOUND),
 	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.NOT_FOUND);
+
 
 	private final String code;
 	private final String message;

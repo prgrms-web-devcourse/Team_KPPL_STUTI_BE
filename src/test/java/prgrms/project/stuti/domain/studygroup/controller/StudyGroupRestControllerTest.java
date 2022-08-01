@@ -11,10 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupRestControllerTest.Field.*;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -89,11 +86,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 	}
 
 	private MockMultipartFile getMultipartFile() throws IOException {
-		File imageFile = new File(Paths.get("src", "test", "resources") + File.separator + "test.png");
-		FileInputStream inputStream = new FileInputStream(imageFile);
-		String[] split = imageFile.getName().split("\\.");
-
-		return new MockMultipartFile(split[0], imageFile.getName(), "image/" + split[1], inputStream);
+		return new MockMultipartFile("testImageFile", "testImageFile.png", "image/png", "abcde".getBytes() );
 	}
 
 	private List<HeaderDescriptor> contentType() {

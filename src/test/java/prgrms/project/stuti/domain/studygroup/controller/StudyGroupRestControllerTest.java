@@ -25,7 +25,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.headers.HeaderDescriptor;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.request.RequestPartDescriptor;
@@ -52,7 +51,6 @@ class StudyGroupRestControllerTest extends TestConfig {
 		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
 		MultiValueMap<String, String> createParams = toCreateParams();
-
 		given(studyGroupService.createStudyGroup(any())).willReturn(idResponse);
 
 		//when
@@ -85,7 +83,6 @@ class StudyGroupRestControllerTest extends TestConfig {
 		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
 		MultiValueMap<String, String> updateParams = toUpdateParams();
-
 		given(studyGroupService.updateStudyGroup(any())).willReturn(idResponse);
 
 		//when
@@ -118,18 +115,42 @@ class StudyGroupRestControllerTest extends TestConfig {
 	void postApplyStudyGroup() throws Exception {
 		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-
 		given(studyGroupService.applyStudyGroup(any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			RestDocumentationRequestBuilders.post("/api/v1/study-groups/{studyGroupId}",
+			post("/api/v1/study-groups/{studyGroupId}",
 				idResponse.studyGroupId()).contentType(APPLICATION_JSON));
 
 		resultActions
 			.andExpectAll(
 				status().isOk(),
 				content().json(objectMapper.writeValueAsString(idResponse)))
+			.andDo(
+				document(COMMON_DOCS_NAME,
+					requestHeaders(contentType(), host()),
+					pathParameters(studyGroupIdPath()),
+					responseHeaders(contentType()),
+					responseFields(studyGroupIdField())));
+	}
+
+	@Test
+	@DisplayName("스터디 그룹을 삭제한다.")
+	void deleteStudyGroup() throws Exception {
+		//given
+		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
+		given(studyGroupService.deleteStudyGroup(any())).willReturn(idResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			delete("/api/v1/study-groups/{studyGroupId}", idResponse.studyGroupId())
+				.contentType(APPLICATION_JSON));
+
+		// then
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().contentType(APPLICATION_JSON))
 			.andDo(
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),

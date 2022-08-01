@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
-import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
+import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 
 @RestController
 @RequestMapping("/api/v1/study-groups")
@@ -36,6 +37,15 @@ public class StudyGroupRestController {
 		URI uri = URI.create("/api/v1/study-groups/" + idResponse.studyGroupId());
 
 		return ResponseEntity.created(uri).body(idResponse);
+	}
+
+	@PostMapping("/{studyGroupId}")
+	public ResponseEntity<StudyGroupIdResponse> applyStudyGroup(@AuthenticationPrincipal Long memberId,
+		@PathVariable Long studyGroupId) {
+		StudyGroupApplyDto applyDto = StudyGroupMapper.toStudyGroupApplyDto(memberId, studyGroupId);
+		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(applyDto);
+
+		return ResponseEntity.ok(idResponse);
 	}
 
 	@PatchMapping("/{studyGroupId}")

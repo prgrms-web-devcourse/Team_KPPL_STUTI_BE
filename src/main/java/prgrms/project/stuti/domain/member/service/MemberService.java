@@ -27,12 +27,12 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public Optional<Member> getMember(Email email) {
-		return memberRepository.findByEmail(email.getAddress());
+		return memberRepository.findMemberByEmail(email.getAddress());
 	}
 
 	@Transactional(readOnly = true)
 	public MemberResponse getMember(Long id) {
-		Member member = memberRepository.findById(id).orElseThrow(() -> MemberException.notFoundMember(id));
+		Member member = memberRepository.findMemberById(id).orElseThrow(() -> MemberException.notFoundMember(id));
 
 		return MemberConverter.toMemberResponse(member);
 	}
@@ -54,13 +54,13 @@ public class MemberService {
 	public MemberResponse putMember(Long memberId, MemberPutDto memberPutDto) throws
 		DataIntegrityViolationException {
 		String nickname = memberPutDto.nickname();
-		memberRepository.findByNickName(nickname).ifPresent(member -> {
+		memberRepository.findMemberByNickName(nickname).ifPresent(member -> {
 			if(!member.getId().equals(memberId)){
 				throw MemberException.nicknameDuplication(nickname);
 			}
 		});
 
-		Member member = memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
+		Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 		member.change(memberPutDto);
 
 		return MemberConverter.toMemberResponse(member);

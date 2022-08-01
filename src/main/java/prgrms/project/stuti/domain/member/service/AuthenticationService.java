@@ -37,7 +37,7 @@ public class AuthenticationService {
 		TemporaryMember temporaryMember = optionalMember.get();
 
 		String email = memberDto.email();
-		memberRepository.findByEmail(email).ifPresent(member -> {
+		memberRepository.findMemberByEmail(email).ifPresent(member -> {
 			throw MemberException.registeredMember(email);
 		});
 

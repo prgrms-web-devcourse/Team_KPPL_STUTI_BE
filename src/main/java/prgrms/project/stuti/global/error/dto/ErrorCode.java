@@ -27,8 +27,10 @@ public enum ErrorCode {
 	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.NOT_FOUND),
 	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.NOT_FOUND),
 	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.NOT_FOUND),
-	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.NOT_FOUND);
+	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.NOT_FOUND),
 
+	//feed
+	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

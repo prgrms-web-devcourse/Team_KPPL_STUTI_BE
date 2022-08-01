@@ -34,7 +34,7 @@ class FeedControllerTest extends TestConfig {
 
 	@Test
 	@DisplayName("게시글을 등록한다 - 이미지 제외")
-	@WithMockUser(username = "1", roles = {"ADMIN", "USER"})
+	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
 	void TestRegisterPost() throws Exception {
 
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",

@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.service.FeedService;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
 
 @RestController
@@ -28,15 +29,15 @@ public class FeedController {
 	private final FeedService feedService;
 
 	@PostMapping(path = "/api/v1/posts", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<Long> registerPost(@Valid @ModelAttribute RegisterPostRequest registerPostRequest,
+	public ResponseEntity<PostIdResponse> registerPost(@Valid @ModelAttribute RegisterPostRequest registerPostRequest,
 		@AuthenticationPrincipal User authentication) {
 		Long memberId = Long.parseLong(authentication.getUsername());
 		PostCreateDto postCreateDto = FeedMapper.toPostDto(registerPostRequest, memberId);
-		Long postId = feedService.registerPost(postCreateDto);
+		PostIdResponse postIdResponse = feedService.registerPost(postCreateDto);
 
 		return ResponseEntity.created(
-			URI.create("/api/v1/post/" + postId)
-		).body(postId);
+			URI.create("/api/v1/post/" + postIdResponse.postid())
+		).body(postIdResponse);
 	}
 
 	@GetMapping("/api/v1/posts")

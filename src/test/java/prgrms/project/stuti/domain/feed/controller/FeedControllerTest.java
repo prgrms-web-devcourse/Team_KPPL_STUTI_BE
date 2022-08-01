@@ -20,8 +20,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import prgrms.project.stuti.config.TestConfig;
+import prgrms.project.stuti.domain.feed.service.FeedConverter;
 import prgrms.project.stuti.domain.feed.service.FeedService;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
@@ -39,7 +41,7 @@ class FeedControllerTest extends TestConfig {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
 
-		when(feedService.registerPost(any())).thenReturn(1L);
+		when(feedService.registerPost(any())).thenReturn(FeedConverter.toPostIdResponse(1L));
 
 		mockMvc.perform(
 				multipart("/api/v1/posts")

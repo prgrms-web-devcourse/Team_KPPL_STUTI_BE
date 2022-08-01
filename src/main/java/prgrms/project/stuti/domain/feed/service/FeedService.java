@@ -13,6 +13,7 @@ import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
@@ -30,7 +31,7 @@ public class FeedService {
 	private final FeedImageRepository feedImageRepository;
 
 	@Transactional
-	public Long registerPost(PostCreateDto postDto) {
+	public PostIdResponse registerPost(PostCreateDto postDto) {
 		Optional<Member> findMember = memberRepository.findById(postDto.memberId());
 		if (findMember.isEmpty()) {
 			NotFoundException.MEMBER_NOT_FOUND.get();
@@ -41,7 +42,7 @@ public class FeedService {
 		FeedImage feedImage = new FeedImage(uploadUrl, savedFeed);
 		feedImageRepository.save(feedImage);
 
-		return savedFeed.getId();
+		return FeedConverter.toPostIdResponse(savedFeed.getId());
 	}
 
 	@Transactional(readOnly = true)

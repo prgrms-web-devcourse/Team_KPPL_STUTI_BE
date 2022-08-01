@@ -24,6 +24,7 @@ import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
@@ -87,8 +88,8 @@ class FeedServiceTest {
 			.imageFile(testMultipartFile)
 			.build();
 
-		Long feedId = feedService.registerPost(postDto);
-		Optional<Feed> foundFeed = feedRepository.findById(feedId);
+		PostIdResponse postIdResponse = feedService.registerPost(postDto);
+		Optional<Feed> foundFeed = feedRepository.findById(postIdResponse.postid());
 
 		assertThat(foundFeed).isNotEmpty();
 		assertThat(foundFeed.get().getContent()).isEqualTo(postDto.contents());

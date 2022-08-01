@@ -93,6 +93,10 @@ public class StudyGroup extends BaseEntity {
 		this.description = description;
 	}
 
+	public void delete() {
+		this.isDeleted = true;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

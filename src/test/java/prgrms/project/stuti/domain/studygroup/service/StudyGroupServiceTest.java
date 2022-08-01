@@ -24,6 +24,7 @@ import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupRepository;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
@@ -107,6 +108,35 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		assertEquals(updateDescription, studyGroup.getDescription());
 	}
 
+	@Test
+	@DisplayName("회원이 스터디 그룹에 가입신청을한다.")
+	void testApplyStudyGroup() {
+		//given
+		Long memberId = member2.getId();
+		Long studyGroupId = studyGroup.getId();
+		StudyGroupApplyDto applyDto = toApplyDto(memberId, studyGroupId);
+
+		//when
+		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(applyDto);
+
+		//then
+		assertNotNull(idResponse);
+		assertEquals(studyGroupId, idResponse.studyGroupId());
+	}
+
+	@Test
+	@DisplayName("이미 가입 했거나 가입신청을한 스터디 그룹에 가입신청을 한다면 예외가 발생한다.")
+	void testExistingStudyMember() {
+		//given
+		Long memberId = member2.getId();
+		Long studyGroupId = studyGroup.getId();
+		StudyGroupApplyDto applyDto = toApplyDto(memberId, studyGroupId);
+
+		//when, then
+		studyGroupService.applyStudyGroup(applyDto);
+		assertThrows(StudyGroupException.class, () -> studyGroupService.applyStudyGroup(applyDto));
+	}
+
 	private StudyGroupCreateDto toCreateDto(Long memberId) throws IOException {
 		return StudyGroupCreateDto
 			.builder()
@@ -134,6 +164,10 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 			.imageFile(imageFile)
 			.description(updateDescription)
 			.build();
+	}
+
+	private StudyGroupApplyDto toApplyDto(Long memberId, Long studyGroupId) {
+		return new StudyGroupApplyDto(memberId, studyGroupId);
 	}
 
 	private MultipartFile getMultipartFile() throws IOException {

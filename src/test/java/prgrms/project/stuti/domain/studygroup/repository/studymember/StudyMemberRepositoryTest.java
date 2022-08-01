@@ -72,5 +72,20 @@ class StudyMemberRepositoryTest extends RepositoryTestConfig {
 		//then
 		assertFalse(isLeader);
 	}
+
+	@Test
+	@DisplayName("스터디에 이미 가입신청을 했거나 가입이 된 멤버라면 true 를 반환한다.")
+	void testExistsByMemberIdAndStudyGroupId() {
+		//given
+		Long memberId = member.getId();
+		Long studyGroupId = studyGroup.getId();
+		studyMemberRepository.save(new StudyMember(StudyMemberRole.STUDY_MEMBER, member, studyGroup));
+
+		//when
+		boolean isExists = studyMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
+
+		//then
+		assertTrue(isExists);
+	}
 }
 

@@ -23,8 +23,7 @@ import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.FeedConverter;
 import prgrms.project.stuti.domain.feed.service.FeedService;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
+import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
 @WebMvcTest(FeedController.class)
@@ -70,7 +69,7 @@ class FeedControllerTest extends TestConfig {
 			.isliked(true)
 			.build();
 		posts.add(postDto);
-		PostsResponse postsResponse = new PostsResponse(posts, true);
+		FeedResponse postsResponse = new FeedResponse(posts, true);
 
 		when(feedService.getAllPosts(any(), anyInt())).thenReturn(postsResponse);
 

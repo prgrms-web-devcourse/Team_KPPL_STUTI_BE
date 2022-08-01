@@ -4,7 +4,6 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +19,7 @@ import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.service.FeedService;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
+import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +40,9 @@ public class FeedController {
 	}
 
 	@GetMapping("/api/v1/posts")
-	public ResponseEntity<PostsResponse> getAllPosts(@RequestParam(value = "lastPostId", required = false) Long lastPostId,
+	public ResponseEntity<FeedResponse> getAllPosts(@RequestParam(value = "lastPostId", required = false) Long lastPostId,
 		@RequestParam(defaultValue = "10") int size) {
-		PostsResponse postResponse = feedService.getAllPosts(lastPostId, size);
+		FeedResponse postResponse = feedService.getAllPosts(lastPostId, size);
 
 		return ResponseEntity.ok().body(postResponse);
 	}

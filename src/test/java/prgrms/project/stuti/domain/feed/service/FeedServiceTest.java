@@ -25,7 +25,7 @@ import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
+import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -123,7 +123,7 @@ class FeedServiceTest {
 			feedImageRepository.save(feedImage);
 		}
 
-		PostsResponse allPosts = feedService.getAllPosts(8L, 2);
+		FeedResponse allPosts = feedService.getAllPosts(8L, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).postId()).isEqualTo(7L);
@@ -140,7 +140,7 @@ class FeedServiceTest {
 			feedImageRepository.save(feedImage);
 		}
 
-		PostsResponse allPosts = feedService.getAllPosts(null, 2);
+		FeedResponse allPosts = feedService.getAllPosts(null, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).postId()).isEqualTo(10L);

@@ -3,8 +3,10 @@ package prgrms.project.stuti.domain.studygroup.controller;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupMapper {
@@ -23,6 +25,18 @@ public class StudyGroupMapper {
 			.startDateTime(createRequest.startDateTime())
 			.endDateTime(createRequest.endDateTime())
 			.description(createRequest.description())
+			.build();
+	}
+
+	public static StudyGroupUpdateDto toStudyGroupUpdateDto(Long memberId, Long studyGroupId,
+		StudyGroupUpdateRequest updateRequest) {
+		return StudyGroupUpdateDto
+			.builder()
+			.memberId(memberId)
+			.studyGroupId(studyGroupId)
+			.title(updateRequest.title())
+			.imageFile(updateRequest.imageFile())
+			.description(updateRequest.description())
 			.build();
 	}
 }

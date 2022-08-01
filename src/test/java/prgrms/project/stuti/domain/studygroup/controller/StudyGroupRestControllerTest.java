@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.headers.HeaderDescriptor;
@@ -47,16 +48,19 @@ class StudyGroupRestControllerTest extends TestConfig {
 	@Test
 	@DisplayName("새로운 스터디 그룹을 생성한다.")
 	void postStudyGroup() throws Exception {
+		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
 		MultiValueMap<String, String> createParams = toCreateParams();
 
 		given(studyGroupService.createStudyGroup(any())).willReturn(idResponse);
 
+		//when
 		ResultActions resultActions = mockMvc.perform(multipart("/api/v1/study-groups")
-			.file("imageFile", getMultipartFile().getBytes())
+			.file("imageFile", getMultipartFileBytes())
 			.params(createParams)
 			.contentType(MediaType.MULTIPART_FORM_DATA));
 
+		//then
 		resultActions
 			.andExpectAll(
 				status().isCreated(),
@@ -70,7 +74,37 @@ class StudyGroupRestControllerTest extends TestConfig {
 					responseFields(studyGroupId())));
 	}
 
-	private MultiValueMap<String, String> toCreateParams() throws IOException {
+	@Test
+	@DisplayName("스터디 그룹을 업데이트한다.")
+	void patchStudyGroup() throws Exception {
+		//given
+		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
+		MultiValueMap<String, String> updateParams = toUpdateParams();
+
+		given(studyGroupService.updateStudyGroup(any())).willReturn(idResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			multipart(HttpMethod.PATCH, "/api/v1/study-groups/{studyGroupId}", idResponse.studyGroupId())
+				.file("imageFile", getMultipartFileBytes())
+				.params(updateParams)
+				.contentType(MediaType.MULTIPART_FORM_DATA));
+
+		//then
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().json(objectMapper.writeValueAsString(idResponse)))
+			.andDo(
+				document(COMMON_DOCS_NAME,
+					requestHeaders(contentType()).and(host()),
+					requestParts(imageFile()),
+					requestParameters(title(), description()),
+					responseHeaders(contentType()),
+					responseFields(studyGroupId())));
+	}
+
+	private MultiValueMap<String, String> toCreateParams() {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 		map.add(TITLE.value(), "test title");
 		map.add(TOPIC.value(), String.valueOf(Topic.AI));
@@ -85,8 +119,17 @@ class StudyGroupRestControllerTest extends TestConfig {
 		return map;
 	}
 
-	private MockMultipartFile getMultipartFile() throws IOException {
-		return new MockMultipartFile("testImageFile", "testImageFile.png", "image/png", "abcde".getBytes() );
+	private MultiValueMap<String, String> toUpdateParams() {
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+		map.add(TITLE.value(), "update title");
+		map.add(DESCRIPTION.value(), "update description");
+
+		return map;
+	}
+
+	private byte[] getMultipartFileBytes() throws IOException {
+		return new MockMultipartFile("testImageFile", "testImageFile.png",
+			"image/png", "abcde".getBytes()).getBytes();
 	}
 
 	private List<HeaderDescriptor> contentType() {

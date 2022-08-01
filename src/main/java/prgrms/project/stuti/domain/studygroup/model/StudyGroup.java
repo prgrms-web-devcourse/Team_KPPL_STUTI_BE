@@ -80,6 +80,19 @@ public class StudyGroup extends BaseEntity {
 		this.isDeleted = false;
 	}
 
+	public void updateImage(String imageUrl, String thumbnailUrl) {
+		this.imageUrl = imageUrl;
+		this.thumbnailUrl = thumbnailUrl;
+	}
+
+	public void updateTitle(String title) {
+		this.title = title;
+	}
+
+	public void updateDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -15,10 +16,12 @@ import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.PreferredMbtiRepository;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.repository.StudyMemberRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.StudyGroupException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 
@@ -44,6 +47,18 @@ public class StudyGroupService {
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());
 	}
 
+	@Transactional
+	public StudyGroupIdResponse updateStudyGroup(StudyGroupUpdateDto updateDto) {
+		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
+
+		StudyGroup studyGroup = getStudyGroup(updateDto.studyGroupId());
+
+		updateStudyGroupImage(updateDto.imageFile(), studyGroup);
+		updateTitleAndDescription(updateDto.title(), updateDto.description(), studyGroup);
+
+		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());
+	}
+
 	private StudyGroup saveStudyGroup(StudyGroupCreateDto createDto, String imageUrl, String thumbnailUrl) {
 		StudyGroup studyGroup = StudyGroupConverter.toStudyGroup(createDto, imageUrl, thumbnailUrl);
 
@@ -61,7 +76,36 @@ public class StudyGroupService {
 		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
 	}
 
+	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {
+		if (imageFile == null || imageFile.isEmpty()) return;
+
+		String imageUrl = imageUploader.upload(imageFile, ImageDirectory.STUDY_GROUP);
+		String thumbnailUrl = imageUploader.createThumbnail(imageUrl);
+
+		studyGroup.updateImage(imageUrl, thumbnailUrl);
+	}
+
+	private void updateTitleAndDescription(String title, String description, StudyGroup studyGroup) {
+		if (!title.equals(studyGroup.getTitle()) && !description.equals(studyGroup.getDescription())) {
+			studyGroup.updateTitle(title);
+			studyGroup.updateDescription(description);
+		}
+	}
+
+	private void validateLeader(Long memberId, Long studyGroupId) {
+		boolean isLeader = studyMemberRepository.isLeader(memberId, studyGroupId);
+
+		if (!isLeader) {
+			throw StudyGroupException.notLeader(memberId, studyGroupId);
+		}
+	}
+
 	private Member getMember(Long memberId) {
 		return memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
+	}
+
+	private StudyGroup getStudyGroup(Long studyGroupId) {
+		return studyGroupRepository.findById(studyGroupId)
+			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 	}
 }

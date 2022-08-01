@@ -23,7 +23,7 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.repository.StudyGroupRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
@@ -46,7 +46,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	void setup() throws IOException {
 		StudyGroupCreateDto createDto = toCreateDto(member.getId());
 		StudyGroupIdResponse idResponse = studyGroupService.createStudyGroup(createDto);
-		this.studyGroup = studyGroupRepository.findById(idResponse.studyGroupId())
+		this.studyGroup = studyGroupRepository.findStudyGroupById(idResponse.studyGroupId())
 			.orElseThrow(() -> new IllegalArgumentException("failed to find studyGroup"));
 	}
 
@@ -58,7 +58,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 
 		//when
 		StudyGroupIdResponse idResponse = studyGroupService.createStudyGroup(createDto);
-		StudyGroup studyGroup = studyGroupRepository.findById(idResponse.studyGroupId())
+		StudyGroup studyGroup = studyGroupRepository.findStudyGroupById(idResponse.studyGroupId())
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(idResponse.studyGroupId()));
 
 		//then

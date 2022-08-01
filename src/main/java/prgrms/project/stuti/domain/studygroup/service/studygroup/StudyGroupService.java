@@ -15,7 +15,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.PreferredMbtiRepository;
-import prgrms.project.stuti.domain.studygroup.repository.StudyGroupRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
@@ -130,11 +130,11 @@ public class StudyGroupService {
 	}
 
 	private Member getMember(Long memberId) {
-		return memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
+		return memberRepository.findMemberById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 	}
 
 	private StudyGroup getStudyGroup(Long studyGroupId) {
-		return studyGroupRepository.findById(studyGroupId)
+		return studyGroupRepository.findStudyGroupById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 	}
 }

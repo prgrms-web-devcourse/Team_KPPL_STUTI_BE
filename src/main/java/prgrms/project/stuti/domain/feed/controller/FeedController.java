@@ -32,10 +32,9 @@ public class FeedController {
 		@AuthenticationPrincipal Long memberId) {
 		PostCreateDto postCreateDto = FeedMapper.toPostDto(registerPostRequest, memberId);
 		PostIdResponse postIdResponse = feedService.registerPost(postCreateDto);
+		URI returnUri = URI.create("/api/v1/post/" + postIdResponse.postid());
 
-		return ResponseEntity.created(
-			URI.create("/api/v1/post/" + postIdResponse.postid())
-		).body(postIdResponse);
+		return ResponseEntity.created(returnUri).body(postIdResponse);
 	}
 
 	@GetMapping("/api/v1/posts")

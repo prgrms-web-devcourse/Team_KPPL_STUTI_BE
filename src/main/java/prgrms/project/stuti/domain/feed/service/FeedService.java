@@ -11,14 +11,14 @@ import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.NotFoundException;
-import prgrms.project.stuti.global.uploader.LocalImageUploader;
+import prgrms.project.stuti.global.uploader.ImageUploader;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 
 @Service
@@ -27,7 +27,7 @@ public class FeedService {
 
 	private final FeedRepository feedRepository;
 	private final MemberRepository memberRepository;
-	private final LocalImageUploader localImageUploader;
+	private final ImageUploader imageUploader;
 	private final FeedImageRepository feedImageRepository;
 
 	@Transactional
@@ -39,7 +39,7 @@ public class FeedService {
 		Feed feed = FeedConverter.toPost(postDto, findMember.get());
 		Feed savedFeed = feedRepository.save(feed);
 
-		String uploadUrl = localImageUploader.upload(postDto.imageFile(), ImageDirectory.FEED);
+		String uploadUrl = imageUploader.upload(postDto.imageFile(), ImageDirectory.FEED);
 		FeedImage feedImage = new FeedImage(uploadUrl, savedFeed);
 		feedImageRepository.save(feedImage);
 

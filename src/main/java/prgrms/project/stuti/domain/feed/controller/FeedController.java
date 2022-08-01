@@ -38,7 +38,8 @@ public class FeedController {
 	}
 
 	@GetMapping("/api/v1/posts")
-	public ResponseEntity<FeedResponse> getAllPosts(@RequestParam(value = "lastPostId", required = false) Long lastPostId,
+	public ResponseEntity<FeedResponse> getAllPosts(
+		@RequestParam(value = "lastPostId", required = false) Long lastPostId,
 		@RequestParam(defaultValue = "10") int size) {
 		FeedResponse postResponse = feedService.getAllPosts(lastPostId, size);
 

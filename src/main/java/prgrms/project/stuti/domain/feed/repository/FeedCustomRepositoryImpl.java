@@ -54,6 +54,7 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
 				.build();
 			postsDtos.add(postsDto);
 		}
+
 		return postsDtos;
 	}
 }

@@ -55,9 +55,10 @@ public class FeedService {
 	}
 
 	private boolean hasNext(Long lastPostId) {
-		if(lastPostId == null) {
+		if (lastPostId == null) {
 			return feedRepository.existsByIdGreaterThanEqual(1L);
 		}
+
 		return feedRepository.existsByIdLessThan(lastPostId);
 	}
 }

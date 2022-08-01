@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.FeedService;
+import prgrms.project.stuti.domain.feed.service.dto.PostDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
+import prgrms.project.stuti.domain.member.model.Mbti;
 
 @WebMvcTest(FeedController.class)
 class FeedControllerTest extends TestConfig {
@@ -34,17 +38,43 @@ class FeedControllerTest extends TestConfig {
 
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
-		List<MultipartFile> files = new ArrayList<>();
-		files.add(file);
 
 		when(feedService.registerPost(any())).thenReturn(1L);
 
 		mockMvc.perform(
-			multipart("/api/v1/posts")
-				.file(file)
-				.param("content", "게시글")
-				.with(SecurityMockMvcRequestPostProcessors.csrf()))
+				multipart("/api/v1/posts")
+					.file(file)
+					.param("content", "게시글")
+					.with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(status().isCreated())
 			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("전체 페이지를 조회한다")
+	void TestGetAllPosts() throws Exception {
+		List<PostDto> posts = new ArrayList<>();
+		PostDto postDto = PostDto.builder()
+			.postId(1L)
+			.memberId(1L)
+			.nickname("testUser")
+			.mbti(Mbti.ENFJ)
+			.profileImageUrl("testProfileImage.jpg")
+			.contents("테스트게시글")
+			.postImageUrl("testPost.jpg")
+			.createdAt(LocalDateTime.now())
+			.totalComments(1)
+			.totalLikes(1)
+			.isliked(true)
+			.build();
+		posts.add(postDto);
+		PostsResponse postsResponse = new PostsResponse(posts, true);
+
+		when(feedService.getAllPosts(any(), anyInt())).thenReturn(postsResponse);
+
+		mockMvc.perform(get("/api/v1/posts")
+				.characterEncoding(StandardCharsets.UTF_8)
+				.param("size", "1"))
+			.andExpect(status().isOk());
 	}
 }

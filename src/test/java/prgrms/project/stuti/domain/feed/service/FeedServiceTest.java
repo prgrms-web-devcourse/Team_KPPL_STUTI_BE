@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,8 +20,11 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.domain.feed.model.Feed;
+import prgrms.project.stuti.domain.feed.model.FeedImage;
+import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostsResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -38,6 +42,9 @@ class FeedServiceTest {
 
 	@Autowired
 	private MemberRepository memberRepository;
+
+	@Autowired
+	private FeedImageRepository feedImageRepository;
 
 	@Autowired
 	private FeedService feedService;
@@ -60,6 +67,12 @@ class FeedServiceTest {
 		savedMember = memberRepository.save(testMember);
 	}
 
+	@AfterEach
+	void deleteAllPost() {
+		feedImageRepository.deleteAll();
+		feedRepository.deleteAll();
+	}
+
 	@Test
 	@DisplayName("포스트를 정상적으로 등록한다")
 	void TestRegisterPost() throws IOException {
@@ -68,7 +81,7 @@ class FeedServiceTest {
 
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
-		PostDto postDto = PostDto.builder()
+		PostCreateDto postDto = PostCreateDto.builder()
 			.memberId(savedMember.getId())
 			.contents("새로운 게시글의 내용입니다.")
 			.imageFile(testMultipartFile)
@@ -84,7 +97,7 @@ class FeedServiceTest {
 	@Test
 	@DisplayName("등록되지 않은 멤버가 포스트를 등록할시에 예외가 발생한다.")
 	void TestRegisterPostByUnknownMember() {
-		PostDto postDto = PostDto.builder()
+		PostCreateDto postDto = PostCreateDto.builder()
 			.memberId(2L)
 			.contents("UnknownMember가 작성한 게시글 입니다.")
 			.build();
@@ -97,5 +110,39 @@ class FeedServiceTest {
 		String[] split = testFile.getName().split("\\.");
 
 		return new MockMultipartFile(split[0], testFile.getName(), "image/" + split[1], inputStream);
+	}
+
+	@Test
+	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
+	void TestGetAllPosts() {
+		for(int i = 0; i < 10; i++) {
+			Feed feed = new Feed("게시글" + i, savedMember);
+			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
+			feedRepository.save(feed);
+			feedImageRepository.save(feedImage);
+		}
+
+		PostsResponse allPosts = feedService.getAllPosts(8L, 2);
+
+		assertThat(allPosts.posts()).hasSize(2);
+		assertThat(allPosts.posts().get(0).postId()).isEqualTo(7L);
+		assertThat(allPosts.hasNext()).isTrue();
+	}
+
+	@Test
+	@DisplayName("전체 포스트리스트 첫 조회시(lastPostId가 null일 때) 페이징 조회한다")
+	void TestGetAllPostsWhenLastPostIdIsNull() {
+		for(int i = 0; i < 10; i++) {
+			Feed feed = new Feed("게시글" + i, savedMember);
+			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
+			feedRepository.save(feed);
+			feedImageRepository.save(feedImage);
+		}
+
+		PostsResponse allPosts = feedService.getAllPosts(null, 2);
+
+		assertThat(allPosts.posts()).hasSize(2);
+		assertThat(allPosts.posts().get(0).postId()).isEqualTo(10L);
+		assertThat(allPosts.hasNext()).isTrue();
 	}
 }

@@ -11,7 +11,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +27,7 @@ import prgrms.project.stuti.domain.studygroup.repository.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
+import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
 @Transactional

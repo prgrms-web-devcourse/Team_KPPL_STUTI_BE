@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.service;
+package prgrms.project.stuti.domain.studygroup.service.studygroup;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

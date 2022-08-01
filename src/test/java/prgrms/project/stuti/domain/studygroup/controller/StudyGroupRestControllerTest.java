@@ -35,7 +35,7 @@ import org.springframework.util.MultiValueMap;
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
+import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 
 @WebMvcTest(controllers = StudyGroupRestController.class)

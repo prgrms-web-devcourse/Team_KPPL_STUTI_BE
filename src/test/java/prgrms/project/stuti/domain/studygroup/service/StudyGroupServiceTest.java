@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -26,6 +27,7 @@ import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
@@ -137,6 +139,19 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		assertThrows(StudyGroupException.class, () -> studyGroupService.applyStudyGroup(applyDto));
 	}
 
+	@Test
+	@DisplayName("스터디 그룹을 삭제한다.")
+	void testDeleteStudyGroup() {
+	    //given
+		StudyGroupDeleteDto deleteDto = toDeleteDto(member.getId(), studyGroup.getId());
+		//when
+		studyGroupService.deleteStudyGroup(deleteDto);
+		Optional<StudyGroup> deletedStudyGroup = studyGroupRepository.findStudyGroupById(studyGroup.getId());
+
+	    //then
+		assertTrue(deletedStudyGroup.isEmpty());
+	}
+
 	private StudyGroupCreateDto toCreateDto(Long memberId) throws IOException {
 		return StudyGroupCreateDto
 			.builder()
@@ -168,6 +183,10 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 
 	private StudyGroupApplyDto toApplyDto(Long memberId, Long studyGroupId) {
 		return new StudyGroupApplyDto(memberId, studyGroupId);
+	}
+
+	private StudyGroupDeleteDto toDeleteDto(Long memberId, Long studyGroupId) {
+		return new StudyGroupDeleteDto(memberId, studyGroupId);
 	}
 
 	private MultipartFile getMultipartFile() throws IOException {

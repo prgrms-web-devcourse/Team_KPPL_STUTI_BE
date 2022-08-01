@@ -11,16 +11,17 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.member.service.AuthenticationFacade;
+import prgrms.project.stuti.domain.member.model.MemberRole;
+import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
+import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.token.Tokens;
 import prgrms.project.stuti.global.util.CoderUtil;
@@ -30,30 +31,38 @@ import prgrms.project.stuti.global.util.CoderUtil;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-	private final AuthenticationFacade authenticationFacade;
+	private final TokenService tokenService;
+	private final AuthenticationService authenticationService;
+
 	@Value("${app.oauth.domain}")
 	private String domain;
 
 	@PostMapping("/signup")
 	public ResponseEntity<MemberIdResponse> singup(HttpServletResponse response,
 		@Valid @RequestBody MemberSaveRequest memberSaveRequest) {
-
-		MemberIdResponse memberIdResponse = authenticationFacade.signupMember(
+		MemberIdResponse memberIdResponse = authenticationService.signupMember(
 			MemberMapper.toMemberDto(memberSaveRequest));
-		Tokens tokens = authenticationFacade.makeTokens(memberIdResponse.memberId());
+		Long memberId = memberIdResponse.memberId();
+
+		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
+		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
 
 		Cookie cookie = setCookie(tokens.accessToken(), TokenType.JWT_TYPE,
-			authenticationFacade.accessTokenPeriod());
+			tokenService.getAccessTokenPeriod());
 		response.addCookie(cookie);
+		URI uri = URI.create(domain + "/");
 
 		return ResponseEntity
-			.created(URI.create(domain + "/"))
+			.created(uri)
 			.body(memberIdResponse);
 	}
 
-	@GetMapping("/logout")
+	@PostMapping("/logout")
 	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		authenticationFacade.logout(request);
+		String accessToken = tokenService.resolveToken(request);
+		String accessTokenWithType = tokenService.tokenWithType(accessToken, TokenType.JWT_BLACKLIST);
+		authenticationService.logout(accessToken, tokenService.getExpiration(accessToken), accessTokenWithType);
+
 		response.sendRedirect(domain + "/");
 	}
 

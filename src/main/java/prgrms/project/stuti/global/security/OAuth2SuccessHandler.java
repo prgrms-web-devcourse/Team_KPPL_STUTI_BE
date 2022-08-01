@@ -28,9 +28,8 @@ import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.MemberService;
 import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
-import prgrms.project.stuti.global.cache.service.RefreshTokenService;
-import prgrms.project.stuti.global.cache.service.TemporaryMemberService;
-import prgrms.project.stuti.global.token.TokenGenerator;
+import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.token.Tokens;
@@ -40,12 +39,10 @@ import prgrms.project.stuti.global.util.CoderUtil;
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-
-	private final TokenGenerator tokenGenerator;
 	private final TokenService tokenService;
 	private final MemberService memberService;
-	private final RefreshTokenService refreshTokenService;
-	private final TemporaryMemberService temporaryMemberService;
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final TemporaryMemberRepository temporaryMemberRepository;
 	private RedirectStrategy redirectStratgy = new DefaultRedirectStrategy();
 
 	@Value("${app.oauth.domain}")
@@ -73,7 +70,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		Optional<Member> optionalMember = memberService.getMember(new Email(email));
 		// 최초 로그인이라면 추가 회원가입 처리를 한다.
 		if (optionalMember.isEmpty()) {
-			Optional<TemporaryMember> optionalTemporaryMember = temporaryMemberService.findById(email);
+			Optional<TemporaryMember> optionalTemporaryMember = temporaryMemberRepository.findById(email);
 			TemporaryMember temporaryMember = TemporaryMember.builder()
 				.email(email)
 				.nickname(name)
@@ -83,7 +80,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 			// temporarymember 가 없으면 생성
 			if (optionalTemporaryMember.isEmpty()) {
-				temporaryMemberService.save(temporaryMember);
+				temporaryMemberRepository.save(temporaryMember);
 			} else {
 				// 있으면 기존의 회원가입시도가 있었으므로 그냥 가지고 온다.
 				temporaryMember = optionalTemporaryMember.get();
@@ -106,7 +103,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		// 4. 쿠키에 accesstoken 을 담아 전달한다.
 
 		Long memberId = optionalMember.get().getId();
-		Tokens tokens = tokenGenerator.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
+		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
 		saveRefreshTokenToRedis(memberId, tokens.accessToken(), tokens.refreshToken());
 		addAccessTokenToCookie(response, tokens.accessToken(), TokenType.JWT_TYPE);
 
@@ -125,7 +122,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			.expiration(tokenService.getRefreshPeriod())
 			.build();
 
-		refreshTokenService.save(refreshToken);
+		refreshTokenRepository.save(refreshToken);
 	}
 
 	private void addAccessTokenToCookie(HttpServletResponse response, String accessToken, TokenType tokenType) {

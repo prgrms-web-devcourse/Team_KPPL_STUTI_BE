@@ -42,11 +42,11 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "career", length = 20, nullable = false)
 	private Career career;
 
-	@Column(name = "profile_image_url", length = 150, unique = true, nullable = false)
+	@Column(name = "profile_image_url", length = 150)
 	private String profileImageUrl;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "MBTI", length = 5, nullable = false)
+	@Column(name = "mbti", length = 5, nullable = false)
 	private Mbti mbti;
 
 	@Column(name = "github_url", length = 100)

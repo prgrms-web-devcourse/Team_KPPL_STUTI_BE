@@ -28,8 +28,10 @@ import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
-import prgrms.project.stuti.domain.member.service.AuthenticationFacade;
+import prgrms.project.stuti.domain.member.model.MemberRole;
+import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
+import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.Tokens;
 
 @WebMvcTest(controllers = AuthenticationController.class)
@@ -42,12 +44,15 @@ class AuthenticationControllerTest extends TestConfig {
 	protected ObjectMapper objectMapper;
 
 	@MockBean
-	AuthenticationFacade authenticationFacade;
+	TokenService tokenService;
+
+	@MockBean
+	AuthenticationService authenticationService;
 
 	@Test
 	@WithMockUser(roles = "MEMBER")
 	@DisplayName("/api/v1/signup 에서 회원가입한다")
-	void postMember() throws Exception {
+	void postMemberSignup() throws Exception {
 		// given
 		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
 			.email("test@test.com")
@@ -60,10 +65,12 @@ class AuthenticationControllerTest extends TestConfig {
 		MemberIdResponse memberIdResponse = MemberIdResponse.builder()
 			.memberId(1L)
 			.build();
+		Tokens tokens = new Tokens("accessToken", "RefreshToken");
 
-		given(authenticationFacade.signupMember(MemberMapper.toMemberDto(memberSaveRequest))).willReturn(
+		given(authenticationService.signupMember(MemberMapper.toMemberDto(memberSaveRequest))).willReturn(
 			memberIdResponse);
-		given(authenticationFacade.makeTokens(memberIdResponse.memberId())).willReturn(new Tokens("access", "refresh"));
+		given(tokenService.generateTokens(memberIdResponse.memberId().toString(), MemberRole.ROLE_MEMBER.name()))
+			.willReturn(tokens);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(
@@ -96,5 +103,4 @@ class AuthenticationControllerTest extends TestConfig {
 					fieldWithPath("memberId").type(NUMBER).description("생성된 멤버 id")
 				)));
 	}
-
 }

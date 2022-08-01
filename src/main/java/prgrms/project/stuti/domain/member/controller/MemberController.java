@@ -4,7 +4,6 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
 import prgrms.project.stuti.domain.member.service.MemberService;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.error.exception.SqlDuplicatedException;
 
 @RestController
 @RequestMapping("/api/v1/members")
@@ -35,17 +33,12 @@ public class MemberController {
 	@PutMapping("/{memberId}")
 	public ResponseEntity<MemberResponse> member(@PathVariable Long memberId,
 		@Valid @RequestBody MemberPutRequest memberPutRequest) {
-
-		MemberResponse memberResponse;
-
-		try{
-			memberResponse = memberService.putMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
-		}catch (DataIntegrityViolationException ex){
-			throw SqlDuplicatedException.SQL_DUPLICATED_EXCEPTION.get();
-		}
+		MemberResponse memberResponse = memberService.putMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
+		URI uri = URI.create("/api/v1/members/" + memberId.toString());
 
 		return ResponseEntity
-			.created(URI.create("/api/v1/members/" + memberId.toString()))
+			.created(uri)
 			.body(memberResponse);
+
 	}
 }

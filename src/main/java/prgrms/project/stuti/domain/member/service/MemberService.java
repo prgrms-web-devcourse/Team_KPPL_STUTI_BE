@@ -32,7 +32,8 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public MemberResponse getMember(Long id) {
-		Member member = memberRepository.findById(id).orElseThrow(MemberException.NOT_FOUNT_MEMBER);
+		Member member = memberRepository.findById(id).orElseThrow(() -> MemberException.notFoundMember(id));
+
 		return MemberConverter.toMemberResponse(member);
 	}
 
@@ -52,7 +53,14 @@ public class MemberService {
 	@Transactional
 	public MemberResponse putMember(Long memberId, MemberPutDto memberPutDto) throws
 		DataIntegrityViolationException {
-		Member member = memberRepository.findById(memberId).orElseThrow(MemberException.NOT_FOUNT_MEMBER);
+		String nickname = memberPutDto.nickname();
+		memberRepository.findByNickName(nickname).ifPresent(member -> {
+			if(!member.getId().equals(memberId)){
+				throw MemberException.nicknameDuplication(nickname);
+			}
+		});
+
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 		member.change(memberPutDto);
 
 		return MemberConverter.toMemberResponse(member);

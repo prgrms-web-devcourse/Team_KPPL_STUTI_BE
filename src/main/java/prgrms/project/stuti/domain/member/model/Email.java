@@ -27,7 +27,7 @@ public class Email {
 	private final void validateEmailPattern(String email) {
 		boolean matches = Pattern.matches(EMAIL_REGEX, email);
 		if (!matches) {
-			MemberException.INVALID_EMAIL.get();
+			throw MemberException.invalidEmail(email);
 		}
 	}
 }

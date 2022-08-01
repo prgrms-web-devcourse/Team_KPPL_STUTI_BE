@@ -9,7 +9,6 @@ public enum ErrorCode {
 
 	//common
 	EMPTY_INPUT_VALUE("C001", "Empty request value", HttpStatus.BAD_REQUEST),
-	SQL_DUPLICATED_EXCEPTION("C002", "There is duplicated field", HttpStatus.BAD_REQUEST),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
@@ -23,12 +22,12 @@ public enum ErrorCode {
 	UNKNOWN_SERVER_ERROR("s001", "Unknown server error", HttpStatus.INTERNAL_SERVER_ERROR),
 
 	// Member
-	INVALID_EMAIL("M001", "Email is invalid", HttpStatus.NOT_FOUND),
-	NOT_FOUNT_MEMBER("M002", "Member not found", HttpStatus.NOT_FOUND),
-
-	// Token
-	TOKEN_EXPIRATION("T001", "Token is expired", HttpStatus.NOT_FOUND),
-	BLACKLIST_DETECTION("T002", "AccessToken is deprived", HttpStatus.NOT_FOUND);
+	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.NOT_FOUND),
+	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.NOT_FOUND),
+	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.NOT_FOUND),
+	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.NOT_FOUND),
+	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.NOT_FOUND),
+	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.NOT_FOUND);
 
 
 	private final String code;

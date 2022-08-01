@@ -9,7 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import prgrms.project.stuti.global.error.exception.MemberException;
-import prgrms.project.stuti.global.error.exception.TokenException;
 
 class EmailTest {
 	@ParameterizedTest

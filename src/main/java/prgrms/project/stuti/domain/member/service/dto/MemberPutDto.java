@@ -24,16 +24,6 @@ public record MemberPutDto(
 	String blogUrl
 ) {
 	@Builder
-	public MemberPutDto(Long id, String email, String profileImageUrl, String nickname, Field field, Career career,
-		Mbti MBTI, String githubUrl, String blogUrl) {
-		this.id = id;
-		this.email = email;
-		this.profileImageUrl = profileImageUrl;
-		this.nickname = nickname;
-		this.field = field;
-		this.career = career;
-		this.MBTI = MBTI;
-		this.githubUrl = githubUrl;
-		this.blogUrl = blogUrl;
+	public MemberPutDto {
 	}
 }

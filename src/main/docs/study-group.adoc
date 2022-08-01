@@ -3,3 +3,7 @@
 === 생성
 operation::post-study-group[snippets='http-request,request-parts,request-parameters,response-headers,response-fields,response-body']
 '''
+
+=== 업데이트
+operation::patch-study-group[snippets='http-request,request-parts,request-parameters,response-headers,response-fields,response-body']
+'''

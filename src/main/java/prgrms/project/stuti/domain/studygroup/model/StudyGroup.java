@@ -29,10 +29,10 @@ public class StudyGroup extends BaseEntity {
 	@Column(name = "study_group_id", unique = true, nullable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "image_url", length = 150, unique = true)
+	@Column(name = "image_url", length = 150)
 	private String imageUrl;
 
-	@Column(name = "thumbnail_url", length = 150, unique = true)
+	@Column(name = "thumbnail_url", length = 150)
 	private String thumbnailUrl;
 
 	@Column(name = "title", length = 100, nullable = false)

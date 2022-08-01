@@ -2,10 +2,7 @@ package prgrms.project.stuti.global.uploader.common;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.UUID;
-
-import org.apache.logging.log4j.util.Strings;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
@@ -27,7 +24,7 @@ public class ImageFileUtils {
 	public static String getExtension(String contentType) {
 		int slashIndex = contentType.lastIndexOf("/");
 
-		return contentType.substring(slashIndex + 1).toUpperCase(Locale.ROOT);
+		return contentType.substring(slashIndex + 1).toUpperCase();
 	}
 
 	public static File makeDirectory(String fullPath) {
@@ -53,9 +50,7 @@ public class ImageFileUtils {
 
 			return thumbnailFullPath;
 		} catch (IOException ex) {
-			FileException.FAILED_TO_RESIZE.accept(ex);
+			throw FileException.failedToCreateThumbnail(ex);
 		}
-
-		return Strings.EMPTY;
 	}
 }

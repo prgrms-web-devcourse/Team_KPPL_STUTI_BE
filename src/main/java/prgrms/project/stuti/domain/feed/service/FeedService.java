@@ -1,7 +1,6 @@
 package prgrms.project.stuti.domain.feed.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +16,7 @@ import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.NotFoundException;
+import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 
@@ -32,11 +31,9 @@ public class FeedService {
 
 	@Transactional
 	public PostIdResponse registerPost(PostCreateDto postDto) {
-		Optional<Member> findMember = memberRepository.findById(postDto.memberId());
-		if (findMember.isEmpty()) {
-			NotFoundException.MEMBER_NOT_FOUND.get();
-		}
-		Feed feed = FeedConverter.toPost(postDto, findMember.get());
+		Member findMember = memberRepository.findById(postDto.memberId())
+			.orElseThrow(() -> MemberException.notFoundMember(postDto.memberId()));
+		Feed feed = FeedConverter.toPost(postDto, findMember);
 		Feed savedFeed = feedRepository.save(feed);
 
 		String uploadUrl = imageUploader.upload(postDto.imageFile(), ImageDirectory.FEED);

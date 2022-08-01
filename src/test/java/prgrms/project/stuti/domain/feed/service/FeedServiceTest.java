@@ -23,16 +23,16 @@ import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.NotFoundException;
+import prgrms.project.stuti.global.error.exception.MemberException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -103,7 +103,7 @@ class FeedServiceTest {
 			.contents("UnknownMember가 작성한 게시글 입니다.")
 			.build();
 
-		assertThrows(NotFoundException.class, () -> feedService.registerPost(postDto));
+		assertThrows(MemberException.class, () -> feedService.registerPost(postDto));
 	}
 
 	private MultipartFile getMockMultipartFile(File testFile) throws IOException {

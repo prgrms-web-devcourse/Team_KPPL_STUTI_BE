@@ -20,7 +20,7 @@ public class ImageFileValidator {
 
 	private static void validateEmptyValue(MultipartFile imageFile) {
 		if (imageFile.isEmpty()) {
-			FileException.EMPTY_FILE.get();
+			throw FileException.emptyFile();
 		}
 	}
 
@@ -29,7 +29,7 @@ public class ImageFileValidator {
 		boolean isSupported = SUPPORTED_CONTENT_TYPES.contains(contentType);
 
 		if (!isSupported) {
-			FileException.UNSUPPORTED_EXTENSION.accept(contentType);
+			throw FileException.unsupportedExtension(imageFile.getContentType());
 		}
 	}
 }

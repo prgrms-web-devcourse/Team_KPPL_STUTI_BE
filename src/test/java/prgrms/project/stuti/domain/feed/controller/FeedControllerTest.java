@@ -14,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -24,6 +25,7 @@ import prgrms.project.stuti.domain.feed.service.FeedConverter;
 import prgrms.project.stuti.domain.feed.service.FeedService;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
 @WebMvcTest(FeedController.class)
@@ -78,4 +80,21 @@ class FeedControllerTest extends TestConfig {
 				.param("size", "1"))
 			.andExpect(status().isOk());
 	}
+
+	@Test
+	@DisplayName("게시글을 수정한다")
+	void TestChangePost() throws Exception {
+		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
+			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
+
+		when(feedService.changePost(any(), any())).thenReturn(new PostIdResponse(1L));
+
+		mockMvc.perform(
+			multipart(HttpMethod.PATCH,"/api/v1/posts/{postId}", 1L)
+				.file(file)
+				.param("content", "수정게시글입니다."))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
@@ -17,6 +18,7 @@ import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
+import prgrms.project.stuti.global.error.exception.FeedException;
 import prgrms.project.stuti.global.error.exception.NotFoundException;
 import prgrms.project.stuti.global.uploader.LocalImageUploader;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
@@ -54,8 +56,23 @@ public class FeedService {
 		return FeedConverter.toFeedResponse(postsDtos, hasNext);
 	}
 
+	@Transactional
+	public PostIdResponse changePost(RegisterPostRequest registerPostRequest, Long postId) {
+		Feed feed = feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
+		feed.changeContents(registerPostRequest.content());
+
+		feedImageRepository.deleteByFeedId(feed.getId());
+		if(registerPostRequest.imageFile() != null) {
+			String uploadUrl = localImageUploader.upload(registerPostRequest.imageFile(), ImageDirectory.FEED);
+			FeedImage feedImage = new FeedImage(uploadUrl, feed);
+			feedImageRepository.save(feedImage);
+		}
+
+		return FeedConverter.toPostIdResponse(feed.getId());
+	}
+
 	private boolean hasNext(Long lastPostId) {
-		if(lastPostId == null) {
+		if (lastPostId == null) {
 			return feedRepository.existsByIdGreaterThanEqual(1L);
 		}
 		return feedRepository.existsByIdLessThan(lastPostId);

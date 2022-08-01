@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
@@ -106,13 +108,6 @@ class FeedServiceTest {
 		assertThrows(NotFoundException.class, () -> feedService.registerPost(postDto));
 	}
 
-	private MultipartFile getMockMultipartFile(File testFile) throws IOException {
-		FileInputStream inputStream = new FileInputStream(testFile);
-		String[] split = testFile.getName().split("\\.");
-
-		return new MockMultipartFile(split[0], testFile.getName(), "image/" + split[1], inputStream);
-	}
-
 	@Test
 	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
 	void TestGetAllPosts() {
@@ -145,5 +140,62 @@ class FeedServiceTest {
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).postId()).isEqualTo(10L);
 		assertThat(allPosts.hasNext()).isTrue();
+	}
+
+	@Test
+	@DisplayName("게시글 내용과 업로드 이미지가 둘다 정상 변경된다.")
+	void TestChangePost() throws IOException {
+		PostIdResponse postIdResponse = savePost();
+		List<FeedImage> originImages = feedImageRepository.findByFeedId(postIdResponse.postid());
+
+		File changeImageFile = new File(Paths.get("src", "test", "resources")
+			+ File.separator + "change.jpg");
+		MultipartFile testChangeMultipartFile = getMockMultipartFile(changeImageFile);
+		RegisterPostRequest registerPostRequest =
+			new RegisterPostRequest(testChangeMultipartFile, "게시글 내용이 변경되었습니다.");
+		PostIdResponse changePostIdResponse = feedService.changePost(registerPostRequest, postIdResponse.postid());
+
+		List<FeedImage> changedImages = feedImageRepository.findByFeedId(changePostIdResponse.postid());
+		Feed changedFeed = feedRepository.findById(changePostIdResponse.postid()).get();
+
+		assertThat(changedFeed.getContent()).isEqualTo(registerPostRequest.content());
+		assertThat(changedImages).hasSize(1);
+		assertThat(changedImages.get(0).getImageUrl()).isNotEqualTo(originImages.get(0).getImageUrl());
+	}
+
+	@Test
+	@DisplayName("업로드 이미지를 보내주지않으면 삭제로 인지하여 삭제한다")
+	void TestChangePostWithOutImages() throws IOException {
+		PostIdResponse postIdResponse = savePost();
+
+		RegisterPostRequest registerPostRequest =
+			new RegisterPostRequest(null, "게시글 내용이 변경되었습니다.");
+		PostIdResponse changePostIdResponse = feedService.changePost(registerPostRequest, postIdResponse.postid());
+
+		List<FeedImage> changedImages = feedImageRepository.findByFeedId(changePostIdResponse.postid());
+		Feed changedFeed = feedRepository.findById(changePostIdResponse.postid()).get();
+
+		assertThat(changedFeed.getContent()).isEqualTo(registerPostRequest.content());
+		assertThat(changedImages).isEmpty();
+	}
+
+	private PostIdResponse savePost() throws IOException {
+		String testFilePath = Paths.get("src", "test", "resources").toString();
+		File originalImageFile = new File(testFilePath + File.separator + "test.png");
+		MultipartFile testOriginalMultipartFile = getMockMultipartFile(originalImageFile);
+
+		PostCreateDto postDto = PostCreateDto.builder()
+			.memberId(savedMember.getId())
+			.contents("새로운 게시글의 내용입니다.")
+			.imageFile(testOriginalMultipartFile)
+			.build();
+		return feedService.registerPost(postDto);
+	}
+
+	private MultipartFile getMockMultipartFile(File testFile) throws IOException {
+		FileInputStream inputStream = new FileInputStream(testFile);
+		String[] split = testFile.getName().split("\\.");
+
+		return new MockMultipartFile(split[0], testFile.getName(), "image/" + split[1], inputStream);
 	}
 }

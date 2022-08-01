@@ -11,9 +11,6 @@ public record PostCreateDto(
 ) {
 
 	@Builder
-	public PostCreateDto(Long memberId, String contents, MultipartFile imageFile) {
-		this.memberId = memberId;
-		this.contents = contents;
-		this.imageFile = imageFile;
+	public PostCreateDto {
 	}
 }

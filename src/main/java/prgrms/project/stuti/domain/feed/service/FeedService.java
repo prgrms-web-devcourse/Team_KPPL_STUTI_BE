@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
@@ -48,7 +47,7 @@ public class FeedService {
 
 	@Transactional(readOnly = true)
 	public FeedResponse getAllPosts(Long lastPostId, int size) {
-		List<PostDto> postsDtos = feedRepository.findAllWithNoOffset(lastPostId, size);
+		List<PostDto> postsDtos = feedRepository.findAllWithNoOffset(lastPostId, size, null);
 		boolean hasNext = hasNext(lastPostId);
 
 		return FeedConverter.toFeedResponse(postsDtos, hasNext);
@@ -67,6 +66,29 @@ public class FeedService {
 		}
 
 		return FeedConverter.toPostIdResponse(feed.getId());
+	}
+
+	@Transactional
+	public void deletePost(Long postId) {
+		feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
+		feedImageRepository.deleteByFeedId(postId);
+		feedRepository.deleteById(postId);
+	}
+
+	@Transactional(readOnly = true)
+	public FeedResponse getMyPosts(Long memberId, Long lastPostId, int size) {
+		List<PostDto> myPosts = feedRepository.findAllWithNoOffset(lastPostId, size, memberId);
+		boolean hasNext = hasNextMyPost(lastPostId, memberId);
+
+		return FeedConverter.toFeedResponse(myPosts, hasNext);
+	}
+
+	private boolean hasNextMyPost(Long lastPostId, Long memberId) {
+		if(lastPostId == null) {
+			return feedRepository.existsByIdGreaterThanEqualAndMemberId(lastPostId, memberId);
+		}
+
+		return feedRepository.existsByIdLessThanAndMemberId(lastPostId, memberId);
 	}
 
 	private boolean hasNext(Long lastPostId) {

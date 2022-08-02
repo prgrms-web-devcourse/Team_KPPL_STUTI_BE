@@ -34,6 +34,7 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
+import prgrms.project.stuti.global.error.exception.FeedException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -177,6 +178,23 @@ class FeedServiceTest {
 		assertThat(changedImages).isEmpty();
 	}
 
+	@Test
+	@DisplayName("게시글과 게시글 이미지를 삭제한다")
+	void TestDeletePost() throws IOException {
+		PostIdResponse postIdResponse = savePost();
+
+		feedService.deletePost(postIdResponse.postId());
+		List<Feed> allPosts = feedRepository.findAll();
+
+		assertThat(allPosts).isEmpty();
+	}
+
+	@Test
+	@DisplayName("없는게시글을 삭제하려고하면 에러를 리턴한다")
+	void TestDeletePostWithUnknownPostId() {
+		assertThrows(FeedException.class, () -> feedService.deletePost(1L));
+	}
+
 	private PostIdResponse savePost() throws IOException {
 		String testFilePath = Paths.get("src", "test", "resources").toString();
 		File originalImageFile = new File(testFilePath + File.separator + "test.png");
@@ -188,6 +206,39 @@ class FeedServiceTest {
 			.imageFile(testOriginalMultipartFile)
 			.build();
 		return feedService.registerPost(postDto);
+	}
+
+	@Test
+	@DisplayName("내 게시글을 정상 조회힌다")
+	void testGetMyPosts() {
+		Member differentMember = Member.builder()
+			.email("differentMember@gmail.com")
+			.nickName("다른멤버")
+			.career(Career.JUNIOR)
+			.profileImageUrl("www.differentMember.com")
+			.githubUrl("www.differentMember.com")
+			.blogUrl("www.differentMember.com")
+			.memberRole(MemberRole.ROLE_MEMBER)
+			.field(Field.FRONTEND)
+			.mbti(Mbti.INTP)
+			.build();
+		memberRepository.save(differentMember);
+		for (int i = 0; i < 10; i++) {
+			Feed feed;
+			if (i % 2 == 0) {
+				feed = new Feed("게시글" + i, differentMember);
+			} else {
+				feed = new Feed("게시글" + i, savedMember);
+			}
+			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
+			feedRepository.save(feed);
+			feedImageRepository.save(feedImage);
+		}
+
+		FeedResponse myPosts = feedService.getMyPosts(savedMember.getId(), 9L, 3);
+
+		assertThat(myPosts.hasNext()).isTrue();
+		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");
 	}
 
 	private MultipartFile getMockMultipartFile(File testFile) throws IOException {

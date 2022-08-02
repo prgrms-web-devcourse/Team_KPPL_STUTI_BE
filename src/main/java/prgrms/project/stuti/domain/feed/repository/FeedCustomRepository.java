@@ -6,5 +6,5 @@ import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 
 public interface FeedCustomRepository {
 
-	List<PostDto> findAllWithNoOffset(Long lastPostId, int size);
+	List<PostDto> findAllWithNoOffset(Long lastPostId, int size, Long memberId);
 }

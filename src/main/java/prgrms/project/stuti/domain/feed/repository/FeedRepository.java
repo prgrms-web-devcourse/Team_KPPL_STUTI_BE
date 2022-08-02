@@ -9,4 +9,8 @@ public interface FeedRepository extends JpaRepository<Feed, Long>, FeedCustomRep
 	boolean existsByIdLessThan(Long lastPostId);
 
 	boolean existsByIdGreaterThanEqual(Long lastPostId);
+
+	boolean existsByIdLessThanAndMemberId(Long lastPostId, Long memberId);
+
+	boolean existsByIdGreaterThanEqualAndMemberId(Long lastPostId, Long memberId);
 }

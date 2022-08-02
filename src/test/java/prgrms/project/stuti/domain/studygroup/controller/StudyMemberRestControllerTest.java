@@ -1,7 +1,6 @@
 package prgrms.project.stuti.domain.studygroup.controller;
 
 import static org.mockito.BDDMockito.*;
-import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -10,13 +9,13 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyDomainDescriptor.*;
+import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
+import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.test.web.servlet.ResultActions;
@@ -63,14 +62,10 @@ class StudyMemberRestControllerTest extends TestConfig {
 	}
 
 	private ParameterDescriptor studyMemberIdPath() {
-		return parameterWithName("studyMemberId").description("스터디 멤버 아이디");
-	}
-
-	private HeaderDescriptor contentLength() {
-		return headerWithName(CONTENT_LENGTH).description("컨텐츠 길이");
+		return parameterWithName(STUDY_MEMBER_ID.value()).description("스터디 멤버 아이디");
 	}
 
 	private FieldDescriptor studyMemberIdField() {
-		return fieldWithPath("studyMemberId").type(NUMBER).description("스터디 멤버 아이디");
+		return fieldWithPath(STUDY_MEMBER_ID.value()).type(NUMBER).description("스터디 멤버 아이디");
 	}
 }

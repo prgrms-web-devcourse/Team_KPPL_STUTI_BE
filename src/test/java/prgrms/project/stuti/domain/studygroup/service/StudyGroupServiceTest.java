@@ -152,6 +152,17 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		assertTrue(deletedStudyGroup.isEmpty());
 	}
 
+	@Test
+	@DisplayName("리더가 아닌 회원이 스터디 그룹을 삭제하려고 접근한다면 예외가 발생한다.")
+	void testNotLeaderAccessToDeleteStudyGroup() {
+		//given
+		studyGroupService.applyStudyGroup(toApplyDto(member2.getId(), studyGroup.getId()));
+		StudyGroupDeleteDto deleteDto = toDeleteDto(member2.getId(), studyGroup.getId());
+
+		//when, then
+		assertThrows(StudyGroupException.class, () -> studyGroupService.deleteStudyGroup(deleteDto));
+	}
+
 	private StudyGroupCreateDto toCreateDto(Long memberId) throws IOException {
 		return StudyGroupCreateDto
 			.builder()

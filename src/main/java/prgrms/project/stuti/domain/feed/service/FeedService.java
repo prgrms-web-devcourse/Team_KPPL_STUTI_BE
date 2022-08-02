@@ -6,16 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
+import prgrms.project.stuti.global.error.exception.FeedException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
@@ -49,6 +52,21 @@ public class FeedService {
 		boolean hasNext = hasNext(lastPostId);
 
 		return FeedConverter.toFeedResponse(postsDtos, hasNext);
+	}
+
+	@Transactional
+	public PostIdResponse changePost(PostChangeDto postChangeDto) {
+		Feed feed = feedRepository.findById(postChangeDto.postId()).orElseThrow(FeedException::FEED_NOT_FOUND);
+		feed.changeContents(postChangeDto.contents());
+
+		feedImageRepository.deleteByFeedId(feed.getId());
+		if(postChangeDto.imageFile() != null) {
+			String uploadUrl = imageUploader.upload(postChangeDto.imageFile(), ImageDirectory.FEED);
+			FeedImage feedImage = new FeedImage(uploadUrl, feed);
+			feedImageRepository.save(feedImage);
+		}
+
+		return FeedConverter.toPostIdResponse(feed.getId());
 	}
 
 	private boolean hasNext(Long lastPostId) {

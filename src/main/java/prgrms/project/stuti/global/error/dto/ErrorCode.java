@@ -31,8 +31,10 @@ public enum ErrorCode {
 	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.BAD_REQUEST),
 	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.BAD_REQUEST),
-	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST);
+	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST),
 
+	//feed
+	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

@@ -20,6 +20,7 @@ import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyMemberIdResponse;
+import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
 class StudyMemberServiceTest extends ServiceTestConfig {
 
@@ -33,6 +34,10 @@ class StudyMemberServiceTest extends ServiceTestConfig {
 	private StudyMemberRepository studyMemberRepository;
 
 	private StudyGroup studyGroup;
+
+	private StudyMember studyLeader;
+
+	private StudyMember studyMember;
 
 	@BeforeAll
 	void setup() {
@@ -50,7 +55,9 @@ class StudyMemberServiceTest extends ServiceTestConfig {
 				.description("this is new study group")
 				.build());
 
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
+		this.studyLeader = studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
+		this.studyMember = studyMemberRepository.save(
+			new StudyMember(StudyMemberRole.STUDY_MEMBER, otherMember, studyGroup));
 	}
 
 	@Test
@@ -70,5 +77,30 @@ class StudyMemberServiceTest extends ServiceTestConfig {
 		assertEquals(applicant.getId(), newStudyMember.studyMemberId());
 		assertTrue(retrievedStudyMember.isPresent());
 		assertEquals(StudyMemberRole.STUDY_MEMBER, retrievedStudyMember.get().getStudyMemberRole());
+	}
+
+	@Test
+	@DisplayName("스터디 그룹의 리더가 스터디 멤버를 삭제한다.")
+	void testDeleteStudyMember() {
+		//given
+		Long studyMemberId = studyLeader.getId();
+
+		//when
+		studyMemberService.deleteStudyMember(member.getId(), studyGroup.getId(), studyMemberId);
+		Optional<StudyMember> retrievedStudyMember = studyMemberRepository.findStudyMemberById(studyMemberId);
+
+		//then
+		assertTrue(retrievedStudyMember.isEmpty());
+	}
+
+	@Test
+	@DisplayName("스터디 그룹의 리더가 아닌 스터디 멤버가 삭제를 하려고 접근하면 예외가 발생한다.")
+	void testNotLeaderAccessToDeleteStudyMember() {
+		//given
+		Long studyMemberId = studyMember.getId();
+
+		//when, then
+		assertThrows(StudyGroupException.class,
+			() -> studyMemberService.deleteStudyMember(otherMember.getId(), studyGroup.getId(), studyMemberId));
 	}
 }

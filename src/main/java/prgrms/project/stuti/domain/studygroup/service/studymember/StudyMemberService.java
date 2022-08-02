@@ -25,6 +25,12 @@ public class StudyMemberService {
 		return StudyMemberConverter.toStudyMemberIdResponse(studyMemberId);
 	}
 
+	@Transactional
+	public void deleteStudyMember(Long memberId, Long studyGroupId, Long studyMemberId) {
+		validateLeader(memberId, studyGroupId);
+		studyMemberRepository.deleteById(studyMemberId);
+	}
+
 	private StudyMember findStudyMember(Long studyMemberId) {
 		return studyMemberRepository.findStudyMemberById(studyMemberId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyMember(studyMemberId));

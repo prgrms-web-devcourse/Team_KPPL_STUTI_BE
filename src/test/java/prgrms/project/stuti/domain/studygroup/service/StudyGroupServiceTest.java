@@ -25,10 +25,9 @@ import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
@@ -69,6 +68,23 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	}
 
 	@Test
+	@DisplayName("스터디 그룹을 상세조회한다.")
+	void testGetStudyGroup() {
+		//given
+		Long studyGroupId = studyGroup.getId();
+
+		//when
+		StudyGroupDetailResponse detailResponse = studyGroupService.getStudyGroup(studyGroupId);
+
+		//then
+		assertAll(
+			() -> assertEquals(studyGroup.getId(), detailResponse.studyGroupId()),
+			() -> assertEquals(studyGroup.getTitle(), detailResponse.title()),
+			() -> assertEquals(studyGroup.getDescription(), detailResponse.description())
+		);
+	}
+
+	@Test
 	@DisplayName("스터디의 이미지, 제목, 설명을 업데이트한다.")
 	void testUpdateStudyGroup() throws IOException {
 		//given
@@ -91,7 +107,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 
 	@Test
 	@DisplayName("새로운 이미지를 업로드 하지 않고, 제목, 설명이 전과 같다면 업데이트하지 않는다.")
-	void testUpdateStudyGroupWithSameValueAsBefore() throws IOException {
+	void testUpdateStudyGroupWithSameValueAsBefore() {
 		//given
 		String updateTitle = studyGroup.getTitle();
 		String updateDescription = studyGroup.getDescription();
@@ -116,10 +132,9 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		//given
 		Long memberId = member2.getId();
 		Long studyGroupId = studyGroup.getId();
-		StudyGroupApplyDto applyDto = toApplyDto(memberId, studyGroupId);
 
 		//when
-		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(applyDto);
+		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(memberId, studyGroupId);
 
 		//then
 		assertNotNull(idResponse);
@@ -132,20 +147,21 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		//given
 		Long memberId = member2.getId();
 		Long studyGroupId = studyGroup.getId();
-		StudyGroupApplyDto applyDto = toApplyDto(memberId, studyGroupId);
 
 		//when, then
-		studyGroupService.applyStudyGroup(applyDto);
-		assertThrows(StudyGroupException.class, () -> studyGroupService.applyStudyGroup(applyDto));
+		studyGroupService.applyStudyGroup(memberId, studyGroupId);
+		assertThrows(StudyGroupException.class, () -> studyGroupService.applyStudyGroup(memberId, studyGroupId));
 	}
 
 	@Test
 	@DisplayName("스터디 그룹을 삭제한다.")
 	void testDeleteStudyGroup() {
 	    //given
-		StudyGroupDeleteDto deleteDto = toDeleteDto(member.getId(), studyGroup.getId());
+		Long memberId = member.getId();
+		Long studyGroupId = studyGroup.getId();
+
 		//when
-		studyGroupService.deleteStudyGroup(deleteDto);
+		studyGroupService.deleteStudyGroup(memberId, studyGroupId);
 		Optional<StudyGroup> deletedStudyGroup = studyGroupRepository.findStudyGroupById(studyGroup.getId());
 
 	    //then
@@ -156,11 +172,12 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	@DisplayName("리더가 아닌 회원이 스터디 그룹을 삭제하려고 접근한다면 예외가 발생한다.")
 	void testNotLeaderAccessToDeleteStudyGroup() {
 		//given
-		studyGroupService.applyStudyGroup(toApplyDto(member2.getId(), studyGroup.getId()));
-		StudyGroupDeleteDto deleteDto = toDeleteDto(member2.getId(), studyGroup.getId());
+		Long memberId = member2.getId();
+		Long studyGroupId = studyGroup.getId();
+		studyGroupService.applyStudyGroup(memberId, studyGroupId);
 
 		//when, then
-		assertThrows(StudyGroupException.class, () -> studyGroupService.deleteStudyGroup(deleteDto));
+		assertThrows(StudyGroupException.class, () -> studyGroupService.deleteStudyGroup(memberId, studyGroupId));
 	}
 
 	private StudyGroupCreateDto toCreateDto(Long memberId) throws IOException {
@@ -190,14 +207,6 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 			.imageFile(imageFile)
 			.description(updateDescription)
 			.build();
-	}
-
-	private StudyGroupApplyDto toApplyDto(Long memberId, Long studyGroupId) {
-		return new StudyGroupApplyDto(memberId, studyGroupId);
-	}
-
-	private StudyGroupDeleteDto toDeleteDto(Long memberId, Long studyGroupId) {
-		return new StudyGroupDeleteDto(memberId, studyGroupId);
 	}
 
 	private MultipartFile getMultipartFile() throws IOException {

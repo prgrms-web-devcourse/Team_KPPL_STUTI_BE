@@ -33,9 +33,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import prgrms.project.stuti.config.TestConfig;
+import prgrms.project.stuti.domain.member.model.Career;
+import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.LeaderResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 
 @WebMvcTest(controllers = StudyGroupRestController.class)
@@ -78,6 +82,32 @@ class StudyGroupRestControllerTest extends TestConfig {
 	}
 
 	@Test
+	@DisplayName("스터디 그룹을 상세조회한다.")
+	void getStudyGroup() throws Exception {
+		//given
+		StudyGroupDetailResponse detailResponse = toDetailResponse();
+		given(studyGroupService.getStudyGroup(any())).willReturn(detailResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			get("/api/v1/study-groups/{studyGroupId}",
+				detailResponse.studyGroupId()).contentType(APPLICATION_JSON));
+
+		//then
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().json(objectMapper.writeValueAsString(detailResponse)))
+			.andDo(
+				document(COMMON_DOCS_NAME,
+					requestHeaders(contentType(), host()),
+					pathParameters(studyGroupIdPath()),
+					responseHeaders(contentType()),
+					responseFields(toStudyGroupDetail()).andWithPrefix("leader.", toLeaderFields())
+				));
+	}
+
+	@Test
 	@DisplayName("스터디 그룹을 업데이트한다.")
 	void patchStudyGroup() throws Exception {
 		//given
@@ -115,7 +145,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 	void postApplyStudyGroup() throws Exception {
 		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.applyStudyGroup(any())).willReturn(idResponse);
+		given(studyGroupService.applyStudyGroup(any(), any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -139,7 +169,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 	void deleteStudyGroup() throws Exception {
 		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.deleteStudyGroup(any())).willReturn(idResponse);
+		given(studyGroupService.deleteStudyGroup(any(), any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -174,6 +204,36 @@ class StudyGroupRestControllerTest extends TestConfig {
 		return map;
 	}
 
+	private StudyGroupDetailResponse toDetailResponse() {
+
+		return StudyGroupDetailResponse
+			.builder()
+			.studyGroupId(1L)
+			.topic(Topic.DEV_OPS.getValue())
+			.title("test title")
+			.imageUrl("test image url")
+			.leader(
+				LeaderResponse.builder()
+					.memberId(1L)
+					.profileImageUrl("test profile image url")
+					.nickname("nickname")
+					.field("BACKEND")
+					.career(
+						Career.JUNIOR.getCareerValue())
+					.mbti(Mbti.ENFJ.name())
+					.build()
+			)
+			.preferredMBTIs(List.of("ENFJ", "INFJ"))
+			.isOnline(false)
+			.region(Region.DAEJEON.getValue())
+			.startDateTime(LocalDateTime.now().plusDays(10))
+			.endDateTime(LocalDateTime.now().plusMonths(10))
+			.numberOfMembers(5)
+			.numberOfRecruits(5)
+			.description("test description")
+			.build();
+	}
+
 	private MultiValueMap<String, String> toUpdateParams() {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 		map.add(TITLE.value(), "update title");
@@ -184,7 +244,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 
 	private byte[] getMultipartFileBytes() throws IOException {
 		return new MockMultipartFile("testImageFile", "testImageFile.png",
-			"image/png", "abcde".getBytes()).getBytes();
+			"image/png", "test".getBytes()).getBytes();
 	}
 
 	private HeaderDescriptor contentType() {
@@ -203,10 +263,6 @@ class StudyGroupRestControllerTest extends TestConfig {
 		return parameterWithName(STUDY_GROUP_ID.value()).description("스터디 그룹 아이디");
 	}
 
-	private FieldDescriptor studyGroupIdField() {
-		return fieldWithPath(STUDY_GROUP_ID.value()).type(NUMBER).description("스터디 그룹 아이디");
-	}
-
 	private ParameterDescriptor title() {
 		return parameterWithName(TITLE.value()).description("스터디 그룹 제목");
 	}
@@ -219,14 +275,46 @@ class StudyGroupRestControllerTest extends TestConfig {
 		return List.of(parameterWithName(TOPIC.value()).description("스터디 주제"),
 			parameterWithName(IS_ONLINE.value()).description("온라인 / 오프라인 여부"),
 			parameterWithName(REGION.value()).description("지역"),
-			parameterWithName(PREFERRED_MBTIS.value()).description("선호하는 MBTI"),
-			parameterWithName(NUMBER_OF_RECRUITS.value()).description("모집 인원"),
-			parameterWithName(START_DATE_TIME.value()).description("스터디 시작 일자"),
-			parameterWithName(END_DATE_TIME.value()).description("스터디 종료 일자"));
+			parameterWithName(PREFERRED_MBTIS.value()).description("선호하는 MBTI 목록"),
+			parameterWithName(NUMBER_OF_RECRUITS.value()).description("모집 인원수"),
+			parameterWithName(START_DATE_TIME.value()).description("스터디 시작일자"),
+			parameterWithName(END_DATE_TIME.value()).description("스터디 종료일자"));
 	}
 
 	private RequestPartDescriptor imageFile() {
 		return partWithName(IMAGE_FILE.value()).description("이미지 파일");
+	}
+
+	private FieldDescriptor studyGroupIdField() {
+		return fieldWithPath(STUDY_GROUP_ID.value()).type(NUMBER).description("스터디 그룹 아이디");
+	}
+
+	private List<FieldDescriptor> toStudyGroupDetail() {
+		return List.of(
+			studyGroupIdField(),
+			fieldWithPath(TOPIC.value()).type(STRING).description("스터디 주제"),
+			fieldWithPath(TITLE.value()).type(STRING).description("스터디 그룹 제목"),
+			fieldWithPath(IMAGE_URL.value()).type(STRING).description("스터디 이미지 url"),
+			fieldWithPath(PREFERRED_MBTIS.value()).type(ARRAY).description("선호하는 MBTI 목록"),
+			fieldWithPath(IS_ONLINE.value()).type(BOOLEAN).description("온라인 / 오프라인 여부"),
+			fieldWithPath(REGION.value()).type(STRING).description("지역"),
+			fieldWithPath(START_DATE_TIME.value()).type(STRING).description("스터디 시작일자"),
+			fieldWithPath(END_DATE_TIME.value()).type(STRING).description("스터디 종료일자"),
+			fieldWithPath(NUMBER_OF_MEMBERS.value()).type(NUMBER).description("스터디 멤버 인원수"),
+			fieldWithPath(NUMBER_OF_RECRUITS.value()).type(NUMBER).description("모집 인원수"),
+			fieldWithPath(DESCRIPTION.value()).type(STRING).description("스터디 그룹 설명")
+		);
+	}
+
+	private List<FieldDescriptor> toLeaderFields() {
+		return List.of(
+			fieldWithPath("memberId").type(NUMBER).description("회원 아이디"),
+			fieldWithPath("profileImageUrl").type(STRING).description("프로필 이미지 url"),
+			fieldWithPath("nickname").type(STRING).description("닉네임"),
+			fieldWithPath("field").type(STRING).description("업무분야"),
+			fieldWithPath("career").type(STRING).description("개발경력"),
+			fieldWithPath("mbti").type(STRING).description("MBTI")
+		);
 	}
 
 	enum Field {
@@ -234,7 +322,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 		REGION("region"), PREFERRED_MBTIS("preferredMBTIs"),
 		NUMBER_OF_RECRUITS("numberOfRecruits"), START_DATE_TIME("startDateTime"),
 		END_DATE_TIME("endDateTime"), DESCRIPTION("description"), IMAGE_FILE("imageFile"),
-		STUDY_GROUP_ID("studyGroupId");
+		STUDY_GROUP_ID("studyGroupId"), IMAGE_URL("imageUrl"), NUMBER_OF_MEMBERS("numberOfMembers");
 
 		private final String value;
 

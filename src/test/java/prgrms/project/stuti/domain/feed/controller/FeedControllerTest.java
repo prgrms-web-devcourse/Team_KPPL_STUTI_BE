@@ -37,7 +37,7 @@ class FeedControllerTest extends TestConfig {
 	@Test
 	@DisplayName("게시글을 등록한다 - 이미지 제외")
 	@WithMockUser(username = "1", roles = {"ADMIN", "USER"})
-	void TestRegisterPost() throws Exception {
+	void testRegisterPost() throws Exception {
 
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
@@ -55,7 +55,7 @@ class FeedControllerTest extends TestConfig {
 
 	@Test
 	@DisplayName("전체 페이지를 조회한다")
-	void TestGetAllPosts() throws Exception {
+	void testGetAllPosts() throws Exception {
 		List<PostDto> posts = new ArrayList<>();
 		PostDto postDto = PostDto.builder()
 			.postId(1L)
@@ -83,7 +83,7 @@ class FeedControllerTest extends TestConfig {
 
 	@Test
 	@DisplayName("게시글을 수정한다")
-	void TestChangePost() throws Exception {
+	void testChangePost() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
 

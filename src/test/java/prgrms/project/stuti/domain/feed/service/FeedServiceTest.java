@@ -78,7 +78,7 @@ class FeedServiceTest {
 
 	@Test
 	@DisplayName("포스트를 정상적으로 등록한다")
-	void TestRegisterPost() throws IOException {
+	void testRegisterPost() throws IOException {
 		String testFilePath = Paths.get("src", "test", "resources").toString();
 		File testImageFile = new File(testFilePath + File.separator + "test.png");
 
@@ -99,7 +99,7 @@ class FeedServiceTest {
 
 	@Test
 	@DisplayName("등록되지 않은 멤버가 포스트를 등록할시에 예외가 발생한다.")
-	void TestRegisterPostByUnknownMember() {
+	void testRegisterPostByUnknownMember() {
 		PostCreateDto postDto = PostCreateDto.builder()
 			.memberId(2L)
 			.contents("UnknownMember가 작성한 게시글 입니다.")
@@ -110,7 +110,7 @@ class FeedServiceTest {
 
 	@Test
 	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
-	void TestGetAllPosts() {
+	void testGetAllPosts() {
 		for(int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
@@ -127,7 +127,7 @@ class FeedServiceTest {
 
 	@Test
 	@DisplayName("전체 포스트리스트 첫 조회시(lastPostId가 null일 때) 페이징 조회한다")
-	void TestGetAllPostsWhenLastPostIdIsNull() {
+	void testGetAllPostsWhenLastPostIdIsNull() {
 		for(int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
@@ -144,7 +144,7 @@ class FeedServiceTest {
 
 	@Test
 	@DisplayName("게시글 내용과 업로드 이미지가 둘다 정상 변경된다.")
-	void TestChangePost() throws IOException {
+	void testChangePost() throws IOException {
 		PostIdResponse postIdResponse = savePost();
 		List<FeedImage> originImages = feedImageRepository.findByFeedId(postIdResponse.postid());
 
@@ -165,7 +165,7 @@ class FeedServiceTest {
 
 	@Test
 	@DisplayName("업로드 이미지를 보내주지않으면 삭제로 인지하여 삭제한다")
-	void TestChangePostWithOutImages() throws IOException {
+	void testChangePostWithOutImages() throws IOException {
 		PostIdResponse postIdResponse = savePost();
 
 		RegisterPostRequest registerPostRequest =

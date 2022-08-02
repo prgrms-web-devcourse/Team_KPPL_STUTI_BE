@@ -1,7 +1,8 @@
 package prgrms.project.stuti.config;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 
 @SpringBootTest
+@Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class ServiceTestConfig {
 
@@ -22,7 +24,7 @@ public abstract class ServiceTestConfig {
 
 	protected Member member;
 
-	protected Member member2;
+	protected Member otherMember;
 
 	@BeforeAll
 	void init() {
@@ -41,7 +43,7 @@ public abstract class ServiceTestConfig {
 				.build()
 		);
 
-		this.member2 = memberRepository.save(
+		this.otherMember = memberRepository.save(
 			Member
 				.builder()
 				.email("test2@gmail.com")

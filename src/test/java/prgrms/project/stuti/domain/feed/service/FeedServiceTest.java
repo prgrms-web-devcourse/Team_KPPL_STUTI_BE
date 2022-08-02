@@ -223,6 +223,7 @@ class FeedServiceTest {
 			.mbti(Mbti.INTP)
 			.build();
 		memberRepository.save(differentMember);
+		Feed savedFeed = null;
 		for (int i = 0; i < 10; i++) {
 			Feed feed;
 			if (i % 2 == 0) {
@@ -231,11 +232,11 @@ class FeedServiceTest {
 				feed = new Feed("게시글" + i, savedMember);
 			}
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
-			feedRepository.save(feed);
+			savedFeed = feedRepository.save(feed);
 			feedImageRepository.save(feedImage);
 		}
 
-		FeedResponse myPosts = feedService.getMyPosts(savedMember.getId(), 9L, 3);
+		FeedResponse myPosts = feedService.getMyPosts(savedMember.getId(), savedFeed.getId(), 3);
 
 		assertThat(myPosts.hasNext()).isTrue();
 		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");

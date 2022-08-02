@@ -107,4 +107,32 @@ class FeedControllerTest extends TestConfig {
 			.andDo(print());
 	}
 
+	@Test
+	@DisplayName("내 게시글을 조회한다")
+	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
+	void testGetMyPosts() throws Exception {
+		List<PostDto> posts = new ArrayList<>();
+		PostDto postDto = PostDto.builder()
+			.postId(1L)
+			.memberId(1L)
+			.nickname("testUser")
+			.mbti(Mbti.ENFJ)
+			.profileImageUrl("testProfileImage.jpg")
+			.contents("테스트게시글")
+			.postImageUrl("testPost.jpg")
+			.createdAt(LocalDateTime.now())
+			.totalComments(1)
+			.totalLikes(1)
+			.isliked(true)
+			.build();
+		posts.add(postDto);
+		FeedResponse postsResponse = new FeedResponse(posts, true);
+
+		when(feedService.getMyPosts(any(), any(), anyInt())).thenReturn(postsResponse);
+
+		mockMvc.perform(get("/api/v1/posts/myposts"))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
 }

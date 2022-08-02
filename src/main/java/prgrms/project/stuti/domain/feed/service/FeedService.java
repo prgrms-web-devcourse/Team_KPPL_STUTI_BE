@@ -47,7 +47,7 @@ public class FeedService {
 
 	@Transactional(readOnly = true)
 	public FeedResponse getAllPosts(Long lastPostId, int size) {
-		List<PostDto> postsDtos = feedRepository.findAllWithNoOffset(lastPostId, size);
+		List<PostDto> postsDtos = feedRepository.findAllWithNoOffset(lastPostId, size, null);
 		boolean hasNext = hasNext(lastPostId);
 
 		return FeedConverter.toFeedResponse(postsDtos, hasNext);
@@ -75,6 +75,22 @@ public class FeedService {
 		feedRepository.deleteById(postId);
 	}
 
+	@Transactional(readOnly = true)
+	public FeedResponse getMyPosts(Long memberId, Long lastPostId, int size) {
+		List<PostDto> myPosts = feedRepository.findAllWithNoOffset(lastPostId, size, memberId);
+		boolean hasNext = hasNextMyPost(lastPostId, memberId);
+
+		return FeedConverter.toFeedResponse(myPosts, hasNext);
+	}
+
+	private boolean hasNextMyPost(Long lastPostId, Long memberId) {
+		if(lastPostId == null) {
+			return feedRepository.existsByIdGreaterThanEqualAndMemberId(lastPostId, memberId);
+		}
+
+		return feedRepository.existsByIdLessThanAndMemberId(lastPostId, memberId);
+	}
+
 	private boolean hasNext(Long lastPostId) {
 		if (lastPostId == null) {
 			return feedRepository.existsByIdGreaterThanEqual(1L);
@@ -82,4 +98,6 @@ public class FeedService {
 
 		return feedRepository.existsByIdLessThan(lastPostId);
 	}
+
+
 }

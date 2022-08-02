@@ -45,7 +45,7 @@ public class FeedController {
 		@RequestParam(value = "lastPostId", required = false) Long lastPostId,
 		@RequestParam(defaultValue = "10") int size) {
 		FeedResponse postResponse = feedService.getAllPosts(lastPostId, size);
-
+		
 		return ResponseEntity.ok().body(postResponse);
 	}
 
@@ -65,5 +65,14 @@ public class FeedController {
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
 		return ResponseEntity.noContent().headers(httpHeaders).build();
+	}
+
+	@GetMapping("/api/v1/posts/myposts")
+	public ResponseEntity<FeedResponse> getMyPosts(@AuthenticationPrincipal Long memberId,
+		@RequestParam(value = "lastPostId", required = false) Long lastPostId,
+		@RequestParam(defaultValue = "10") int size) {
+		FeedResponse feedResponse = feedService.getMyPosts(memberId, lastPostId, size);
+
+		return ResponseEntity.ok().body(feedResponse);
 	}
 }

@@ -210,6 +210,39 @@ class FeedServiceTest {
 		return feedService.registerPost(postDto);
 	}
 
+	@Test
+	@DisplayName("내 게시글을 정상 조회힌다")
+	void testGetMyPosts() {
+		Member differentMember = Member.builder()
+			.email("differentMember@gmail.com")
+			.nickName("다른멤버")
+			.career(Career.JUNIOR)
+			.profileImageUrl("www.differentMember.com")
+			.githubUrl("www.differentMember.com")
+			.blogUrl("www.differentMember.com")
+			.memberRole(MemberRole.ROLE_MEMBER)
+			.field(Field.FRONTEND)
+			.mbti(Mbti.INTP)
+			.build();
+		memberRepository.save(differentMember);
+		for (int i = 0; i < 10; i++) {
+			Feed feed;
+			if (i % 2 == 0) {
+				feed = new Feed("게시글" + i, differentMember);
+			} else {
+				feed = new Feed("게시글" + i, savedMember);
+			}
+			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
+			feedRepository.save(feed);
+			feedImageRepository.save(feedImage);
+		}
+
+		FeedResponse myPosts = feedService.getMyPosts(savedMember.getId(), 9L, 3);
+
+		assertThat(myPosts.hasNext()).isTrue();
+		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");
+	}
+
 	private MultipartFile getMockMultipartFile(File testFile) throws IOException {
 		FileInputStream inputStream = new FileInputStream(testFile);
 		String[] split = testFile.getName().split("\\.");

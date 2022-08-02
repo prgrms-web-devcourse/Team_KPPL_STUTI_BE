@@ -28,6 +28,7 @@ import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRe
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
@@ -66,6 +67,23 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		//then
 		assertEquals(createDto.title(), studyGroup.getTitle());
 		assertEquals(createDto.description(), studyGroup.getDescription());
+	}
+
+	@Test
+	@DisplayName("스터디 그룹을 상세조회한다.")
+	void testGetStudyGroup() throws IOException {
+		//given
+		Long studyGroupId = studyGroup.getId();
+
+		//when
+		StudyGroupDetailResponse detailResponse = studyGroupService.getStudyGroup(studyGroupId);
+
+		//then
+		assertAll(
+			() -> assertEquals(studyGroup.getId(), detailResponse.studyGroupId()),
+			() -> assertEquals(studyGroup.getTitle(), detailResponse.title()),
+			() -> assertEquals(studyGroup.getDescription(), detailResponse.description())
+		);
 	}
 
 	@Test

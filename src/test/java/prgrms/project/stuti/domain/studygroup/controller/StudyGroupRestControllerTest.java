@@ -143,30 +143,6 @@ class StudyGroupRestControllerTest extends TestConfig {
 	}
 
 	@Test
-	@DisplayName("스터디 그룹에 가입신청을한다.")
-	void postApplyStudyGroup() throws Exception {
-		//given
-		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.applyStudyGroup(any(), any())).willReturn(idResponse);
-
-		//when
-		ResultActions resultActions = mockMvc.perform(
-			post("/api/v1/study-groups/{studyGroupId}",
-				idResponse.studyGroupId()).contentType(APPLICATION_JSON));
-
-		resultActions
-			.andExpectAll(
-				status().isOk(),
-				content().json(objectMapper.writeValueAsString(idResponse)))
-			.andDo(
-				document(COMMON_DOCS_NAME,
-					requestHeaders(contentType(), host()),
-					pathParameters(studyGroupIdPath()),
-					responseHeaders(contentType()),
-					responseFields(studyGroupIdField())));
-	}
-
-	@Test
 	@DisplayName("스터디 그룹을 삭제한다.")
 	void deleteStudyGroup() throws Exception {
 		//given

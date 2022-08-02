@@ -69,14 +69,6 @@ public class StudyGroupService {
 	}
 
 	@Transactional
-	public StudyGroupIdResponse applyStudyGroup(Long memberId, Long studyGroupId) {
-		validateExistingStudyMember(memberId, studyGroupId);
-		saveStudyGroupApplicant(memberId, studyGroupId);
-
-		return StudyGroupConverter.toStudyGroupIdResponse(studyGroupId);
-	}
-
-	@Transactional
 	public void deleteStudyGroup(Long memberId, Long studyGroupId) {
 		validateLeader(memberId, studyGroupId);
 		updateToDeleted(studyGroupId);
@@ -97,13 +89,6 @@ public class StudyGroupService {
 		Member member = findMember(memberId);
 
 		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
-	}
-
-	private void saveStudyGroupApplicant(Long memberId, Long studyGroupId) {
-		Member member = findMember(memberId);
-		StudyGroup studyGroup = findStudyGroup(studyGroupId);
-
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.APPLICANT, member, studyGroup));
 	}
 
 	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {
@@ -134,14 +119,6 @@ public class StudyGroupService {
 
 		if (!isLeader) {
 			throw StudyGroupException.notLeader(memberId, studyGroupId);
-		}
-	}
-
-	private void validateExistingStudyMember(Long memberId, Long studyGroupId) {
-		boolean isExists = studyMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
-
-		if (isExists) {
-			throw StudyGroupException.existingStudyMember(memberId, studyGroupId);
 		}
 	}
 

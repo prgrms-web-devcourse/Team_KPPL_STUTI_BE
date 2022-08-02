@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,8 +37,6 @@ class StudyMemberServiceTest extends ServiceTestConfig {
 
 	private StudyMember studyLeader;
 
-	private StudyMember studyMember;
-
 	@BeforeEach
 	void setup() {
 		this.studyGroup = studyGroupRepository.save(
@@ -57,8 +54,34 @@ class StudyMemberServiceTest extends ServiceTestConfig {
 				.build());
 
 		this.studyLeader = studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
-		this.studyMember = studyMemberRepository.save(
-			new StudyMember(StudyMemberRole.STUDY_MEMBER, otherMember, studyGroup));
+	}
+
+	@Test
+	@DisplayName("회원이 스터디 그룹에 가입신청을한다.")
+	void testApplyStudyGroup() {
+		//given
+		Long memberId = otherMember.getId();
+		Long studyGroupId = studyGroup.getId();
+
+		//when
+		StudyMemberIdResponse idResponse = studyMemberService.applyForJoinStudyGroup(memberId, studyGroupId);
+		Optional<StudyMember> studyMember = studyMemberRepository.findStudyMemberById(idResponse.studyMemberId());
+
+		//then
+		assertTrue(studyMember.isPresent());
+		assertEquals(StudyMemberRole.APPLICANT, studyMember.get().getStudyMemberRole());
+	}
+
+	@Test
+	@DisplayName("이미 가입 했거나 가입신청을한 스터디 그룹에 가입신청을 한다면 예외가 발생한다.")
+	void testExistingStudyMember() {
+		//given
+		Long memberId = member.getId();
+		Long studyGroupId = studyGroup.getId();
+
+		//when, then
+		assertThrows(StudyGroupException.class,
+			() -> studyMemberService.applyForJoinStudyGroup(memberId, studyGroupId));
 	}
 
 	@Test
@@ -98,10 +121,11 @@ class StudyMemberServiceTest extends ServiceTestConfig {
 	@DisplayName("스터디 그룹의 리더가 아닌 스터디 멤버가 삭제를 하려고 접근하면 예외가 발생한다.")
 	void testNotLeaderAccessToDeleteStudyMember() {
 		//given
-		Long studyMemberId = studyMember.getId();
+		StudyMember studyMember = studyMemberRepository.save(
+			new StudyMember(StudyMemberRole.STUDY_MEMBER, otherMember, studyGroup));
 
 		//when, then
 		assertThrows(StudyGroupException.class,
-			() -> studyMemberService.deleteStudyMember(otherMember.getId(), studyGroup.getId(), studyMemberId));
+			() -> studyMemberService.deleteStudyMember(otherMember.getId(), studyGroup.getId(), studyMember.getId()));
 	}
 }

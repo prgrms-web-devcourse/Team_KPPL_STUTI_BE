@@ -49,14 +49,6 @@ public class StudyGroupRestController {
 		return ResponseEntity.ok(detailResponse);
 	}
 
-	@PostMapping("/{studyGroupId}")
-	public ResponseEntity<StudyGroupIdResponse> applyStudyGroup(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId) {
-		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(memberId, studyGroupId);
-
-		return ResponseEntity.ok(idResponse);
-	}
-
 	@PatchMapping("/{studyGroupId}")
 	public ResponseEntity<StudyGroupIdResponse> updateStudyGroup(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId, @Valid @ModelAttribute StudyGroupUpdateRequest updateRequest) {

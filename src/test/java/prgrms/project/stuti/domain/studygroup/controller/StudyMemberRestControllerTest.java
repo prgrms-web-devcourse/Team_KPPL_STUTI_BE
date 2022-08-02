@@ -34,6 +34,30 @@ class StudyMemberRestControllerTest extends TestConfig {
 	private final Long studyMemberId = 1L;
 
 	@Test
+	@DisplayName("스터디 그룹에 가입신청을한다.")
+	void postApplyStudyGroup() throws Exception {
+		//given
+		StudyMemberIdResponse idResponse = new StudyMemberIdResponse(1L);
+		given(studyMemberService.applyForJoinStudyGroup(any(), any())).willReturn(idResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			post("/api/v1/study-groups/{studyGroupId}/study-members",
+				studyGroupId).contentType(APPLICATION_JSON));
+
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().json(objectMapper.writeValueAsString(idResponse)))
+			.andDo(
+				document(COMMON_DOCS_NAME,
+					requestHeaders(contentType(), host()),
+					pathParameters(studyGroupIdPath()),
+					responseHeaders(contentType()),
+					responseFields(studyMemberIdField())));
+	}
+
+	@Test
 	@DisplayName("스터디 가입신청을 수락한다.")
 	void acceptRequestForJoin() throws Exception {
 		//given

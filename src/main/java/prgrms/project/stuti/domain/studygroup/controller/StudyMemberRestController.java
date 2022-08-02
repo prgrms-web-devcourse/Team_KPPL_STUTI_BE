@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,14 @@ import prgrms.project.stuti.domain.studygroup.service.studymember.StudyMemberSer
 public class StudyMemberRestController {
 
 	private final StudyMemberService studyMemberService;
+
+	@PostMapping
+	public ResponseEntity<StudyMemberIdResponse> applyForJoinStudyGroup(@AuthenticationPrincipal Long memberId,
+		@PathVariable Long studyGroupId) {
+		StudyMemberIdResponse idResponse = studyMemberService.applyForJoinStudyGroup(memberId, studyGroupId);
+
+		return ResponseEntity.ok(idResponse);
+	}
 
 	@PatchMapping("/{studyMemberId}")
 	public ResponseEntity<StudyMemberIdResponse> acceptRequestForJoin(@AuthenticationPrincipal Long memberId,

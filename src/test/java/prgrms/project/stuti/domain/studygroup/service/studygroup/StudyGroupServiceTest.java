@@ -123,33 +123,6 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	}
 
 	@Test
-	@DisplayName("회원이 스터디 그룹에 가입신청을한다.")
-	void testApplyStudyGroup() {
-		//given
-		Long memberId = otherMember.getId();
-		Long studyGroupId = studyGroup.getId();
-
-		//when
-		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(memberId, studyGroupId);
-
-		//then
-		assertNotNull(idResponse);
-		assertEquals(studyGroupId, idResponse.studyGroupId());
-	}
-
-	@Test
-	@DisplayName("이미 가입 했거나 가입신청을한 스터디 그룹에 가입신청을 한다면 예외가 발생한다.")
-	void testExistingStudyMember() {
-		//given
-		Long memberId = otherMember.getId();
-		Long studyGroupId = studyGroup.getId();
-
-		//when, then
-		studyGroupService.applyStudyGroup(memberId, studyGroupId);
-		assertThrows(StudyGroupException.class, () -> studyGroupService.applyStudyGroup(memberId, studyGroupId));
-	}
-
-	@Test
 	@DisplayName("스터디 그룹을 삭제한다.")
 	void testDeleteStudyGroup() {
 		//given
@@ -170,7 +143,6 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		//given
 		Long memberId = otherMember.getId();
 		Long studyGroupId = studyGroup.getId();
-		studyGroupService.applyStudyGroup(memberId, studyGroupId);
 
 		//when, then
 		assertThrows(StudyGroupException.class, () -> studyGroupService.deleteStudyGroup(memberId, studyGroupId));

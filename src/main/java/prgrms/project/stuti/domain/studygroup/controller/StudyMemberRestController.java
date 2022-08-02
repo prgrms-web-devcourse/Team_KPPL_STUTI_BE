@@ -1,7 +1,9 @@
 package prgrms.project.stuti.domain.studygroup.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +27,13 @@ public class StudyMemberRestController {
 			studyMemberId);
 
 		return ResponseEntity.ok(idResponse);
+	}
+
+	@DeleteMapping(value = "/{studyMemberId}")
+	public ResponseEntity<Void> deleteStudyMember(@AuthenticationPrincipal Long memberId,
+		@PathVariable Long studyGroupId, @PathVariable Long studyMemberId) {
+		studyMemberService.deleteStudyMember(memberId, studyGroupId, studyMemberId);
+
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
 	}
 }

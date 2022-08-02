@@ -30,17 +30,20 @@ class StudyMemberRestControllerTest extends TestConfig {
 	@MockBean
 	private StudyMemberService studyMemberService;
 
+	private final Long studyGroupId = 1L;
+	private final Long studyMemberId = 1L;
+
 	@Test
 	@DisplayName("스터디 가입신청을 수락한다.")
 	void acceptRequestForJoin() throws Exception {
 		//given
-		StudyMemberIdResponse idResponse = toStudyMemberIdResponse(1L);
+		StudyMemberIdResponse idResponse = toStudyMemberIdResponse(studyMemberId);
 		given(studyMemberService.acceptRequestForJoin(any(), any(), any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
 			patch("/api/v1/study-groups/{studyGroupId}/study-members/{studyMemberId}",
-				1L, idResponse.studyMemberId())
+				studyGroupId, studyMemberId)
 				.contentType(APPLICATION_JSON));
 
 		//then
@@ -53,8 +56,29 @@ class StudyMemberRestControllerTest extends TestConfig {
 				requestHeaders(contentType(), host()),
 				pathParameters(studyGroupIdPath(), studyMemberIdPath()),
 				responseHeaders(contentType(), contentLength()),
-				responseFields(studyMemberIdField())
-			));
+				responseFields(studyMemberIdField())));
+	}
+
+	@Test
+	@DisplayName("스터디 멤버를 삭제한다.")
+	void deleteStudyMember() throws Exception {
+		//given
+		willDoNothing().given(studyMemberService).deleteStudyMember(any(), any(), any());
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			delete("/api/v1/study-groups/{studyGroupId}/study-members/{studyMemberId}",
+				studyGroupId, studyMemberId).contentType(APPLICATION_JSON_VALUE));
+
+		//then
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().contentType(APPLICATION_JSON))
+			.andDo(document(COMMON_DOCS_NAME,
+				requestHeaders(contentType(), host()),
+				pathParameters(studyGroupIdPath(), studyMemberIdPath()),
+				responseHeaders(contentType())));
 	}
 
 	private StudyMemberIdResponse toStudyMemberIdResponse(Long studyMemberId) {

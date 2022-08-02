@@ -19,6 +19,7 @@ import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRe
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.global.error.exception.MemberException;
@@ -50,9 +51,9 @@ public class StudyGroupService {
 
 	@Transactional
 	public StudyGroupIdResponse updateStudyGroup(StudyGroupUpdateDto updateDto) {
-		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
-
 		StudyGroup studyGroup = getStudyGroup(updateDto.studyGroupId());
+
+		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
 
 		updateStudyGroupImage(updateDto.imageFile(), studyGroup);
 		updateTitleAndDescription(updateDto.title(), updateDto.description(), studyGroup);
@@ -69,6 +70,14 @@ public class StudyGroupService {
 		saveStudyGroupApplicant(memberId, studyGroupId);
 
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroupId);
+	}
+
+	@Transactional
+	public StudyGroupIdResponse deleteStudyGroup(StudyGroupDeleteDto deleteDto) {
+		validateLeader(deleteDto.memberId(), deleteDto.studyGroupId());
+		updateToDeleted(deleteDto.studyGroupId());
+
+		return StudyGroupConverter.toStudyGroupIdResponse(deleteDto.studyGroupId());
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupCreateDto createDto, String imageUrl, String thumbnailUrl) {
@@ -111,6 +120,11 @@ public class StudyGroupService {
 			studyGroup.updateTitle(title);
 			studyGroup.updateDescription(description);
 		}
+	}
+
+	private void updateToDeleted(Long studyGroupId) {
+		StudyGroup studyGroup = getStudyGroup(studyGroupId);
+		studyGroup.delete();
 	}
 
 	private void validateLeader(Long memberId, Long studyGroupId) {

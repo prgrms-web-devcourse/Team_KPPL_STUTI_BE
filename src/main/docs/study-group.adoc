@@ -11,3 +11,7 @@ operation::patch-study-group[snippets='http-request,request-parts,request-parame
 === 스터디 신청
 operation::post-apply-study-group[snippets='http-request,path-parameters,response-headers,response-fields,response-body']
 '''
+
+=== 스터디 삭제
+operation::delete-study-group[snippets='http-request,path-parameters,response-headers,response-fields,response-body']
+'''

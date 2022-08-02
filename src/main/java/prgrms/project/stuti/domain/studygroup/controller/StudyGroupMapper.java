@@ -7,6 +7,7 @@ import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateReq
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -43,5 +44,9 @@ public class StudyGroupMapper {
 
 	public static StudyGroupApplyDto toStudyGroupApplyDto(Long memberId, Long studyGroupId) {
 		return new StudyGroupApplyDto(memberId, studyGroupId);
+	}
+
+	public static StudyGroupDeleteDto toStudyGroupDeleteDto(Long memberId, Long studyGroupId) {
+		return new StudyGroupDeleteDto(memberId, studyGroupId);
 	}
 }

@@ -29,7 +29,7 @@ public class CommonStudyGroupBooleanExpression {
 		return isEqualIdStudyGroup(studyGroupId).and(isNotDeletedStudyGroup());
 	}
 
-	private static BooleanExpression isNotDeletedStudyGroup() {
+	public static BooleanExpression isNotDeletedStudyGroup() {
 		return studyGroup.isDeleted.isFalse();
 	}
 

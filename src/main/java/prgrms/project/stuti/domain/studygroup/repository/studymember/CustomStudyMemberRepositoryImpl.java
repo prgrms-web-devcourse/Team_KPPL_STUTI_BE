@@ -5,9 +5,12 @@ import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyMember.*;
 import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroupBooleanExpression.*;
 
+import java.util.Optional;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 
 @RequiredArgsConstructor
@@ -27,5 +30,16 @@ public class CustomStudyMemberRepositoryImpl implements CustomStudyMemberReposit
 			.fetchFirst();
 
 		return result != null;
+	}
+
+	public Optional<StudyMember> findStudyMemberById(Long studyMemberId) {
+		return Optional.ofNullable(
+			jpaQueryFactory
+				.selectFrom(studyMember)
+				.join(studyMember.member, member)
+				.join(studyMember.studyGroup, studyGroup)
+				.where(studyMember.id.eq(studyMemberId), isNotDeletedMember(), isNotDeletedStudyGroup())
+				.fetchFirst()
+		);
 	}
 }

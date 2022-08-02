@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.repository.StudyGroupRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 
 class StudyMemberRepositoryTest extends RepositoryTestConfig {
 
@@ -71,6 +70,21 @@ class StudyMemberRepositoryTest extends RepositoryTestConfig {
 
 		//then
 		assertFalse(isLeader);
+	}
+
+	@Test
+	@DisplayName("스터디에 이미 가입신청을 했거나 가입이 된 멤버라면 true 를 반환한다.")
+	void testExistsByMemberIdAndStudyGroupId() {
+		//given
+		Long memberId = member.getId();
+		Long studyGroupId = studyGroup.getId();
+		studyMemberRepository.save(new StudyMember(StudyMemberRole.STUDY_MEMBER, member, studyGroup));
+
+		//when
+		boolean isExists = studyMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
+
+		//then
+		assertTrue(isExists);
 	}
 }
 

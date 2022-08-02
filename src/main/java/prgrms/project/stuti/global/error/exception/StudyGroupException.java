@@ -28,4 +28,10 @@ public class StudyGroupException extends BusinessException {
 			MessageFormat.format(
 				"스터디 그룹의 리더가 아닙니다. (memberId: {0}, studyGroupId: {1})", memberId, studyGroupId));
 	}
+
+	public static StudyGroupException existingStudyMember(Long memberId, Long studyGroupId) {
+		return new StudyGroupException(ErrorCode.EXISTING_STUDY_MEMBER,
+			MessageFormat.format(
+				"이미 존재하는 스터디 멤버입니다. (memberId: {0}, studyGroupId: {1})", memberId, studyGroupId));
+	}
 }

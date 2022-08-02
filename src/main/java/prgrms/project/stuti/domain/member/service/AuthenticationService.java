@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
@@ -28,6 +28,7 @@ public class AuthenticationService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final TemporaryMemberRepository temporaryMemberRepository;
 
+	@Transactional(readOnly = true)
 	public MemberIdResponse signupMember(MemberDto memberDto) {
 		Optional<TemporaryMember> optionalMember = temporaryMemberRepository.findById(memberDto.email());
 
@@ -40,30 +41,15 @@ public class AuthenticationService {
 		memberRepository.findMemberByEmail(email).ifPresent(member -> {
 			throw MemberException.registeredMember(email);
 		});
-
-		Member member = memberRepository.save(Member.builder()
-			.email(memberDto.email())
-			.nickName(memberDto.nickname())
-			.field(memberDto.field())
-			.career(memberDto.career())
-			.profileImageUrl(temporaryMember.getImageUrl())
-			.mbti(memberDto.MBTI())
-			.memberRole(MemberRole.ROLE_MEMBER)
-			.build());
+		Member member = memberRepository.save(MemberConverter.toMember(memberDto,temporaryMember));
 
 		return MemberConverter.toMemberIdResponse(member.getId());
 	}
 
 	public Tokens saveRefreshToken(Long memberId, Tokens tokens, long refreshPeriod) {
 		Date now = new Date();
-		RefreshToken refreshToken = RefreshToken.builder()
-			.accessTokenValue(tokens.accessToken())
-			.memberId(memberId)
-			.refreshTokenValue(tokens.refreshToken())
-			.createdTime(now)
-			.expirationTime(new Date(now.getTime() + refreshPeriod))
-			.expiration(refreshPeriod)
-			.build();
+		RefreshToken refreshToken = createRefreshToken(memberId, tokens, refreshPeriod,
+			now);
 		refreshTokenRepository.save(refreshToken);
 
 		return tokens;
@@ -77,5 +63,16 @@ public class AuthenticationService {
 			BlackListToken blackListToken = new BlackListToken(accessTokenWithType, expiration);
 			blackListTokenRepository.save(blackListToken);
 		}
+	}
+
+	private RefreshToken createRefreshToken(Long memberId, Tokens tokens, long refreshPeriod, Date now) {
+		return RefreshToken.builder()
+			.accessTokenValue(tokens.accessToken())
+			.memberId(memberId)
+			.refreshTokenValue(tokens.refreshToken())
+			.createdTime(now)
+			.expirationTime(new Date(now.getTime() + refreshPeriod))
+			.expiration(refreshPeriod)
+			.build();
 	}
 }

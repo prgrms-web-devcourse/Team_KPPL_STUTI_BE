@@ -36,13 +36,6 @@ import prgrms.project.stuti.global.token.Tokens;
 
 @WebMvcTest(controllers = AuthenticationController.class)
 class AuthenticationControllerTest extends TestConfig {
-
-	@Autowired
-	protected MockMvc mockMvc;
-
-	@Autowired
-	protected ObjectMapper objectMapper;
-
 	@MockBean
 	TokenService tokenService;
 

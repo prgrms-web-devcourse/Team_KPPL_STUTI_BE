@@ -6,10 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.annotation.Transactional;
 
 import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
@@ -56,7 +53,7 @@ class MemberServiceTest {
 	}
 
 	@Test
-	@DisplayName("회원가입 시 동일 nickname 존재시 예외발생")
+	@DisplayName("회원가입 시 동일 nickname 존재시 예외발생한다")
 	void testInvalidSignup() {
 		// given
 		saveMember("test2@test.com", "test2", "test2.s3.com");
@@ -76,9 +73,8 @@ class MemberServiceTest {
 			.build();
 
 		// when // then
-		assertThrows(DataIntegrityViolationException.class, () -> {
-			memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
-		});
+		assertThrows(MemberException.class,
+			() -> memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember));
 	}
 
 	@Test
@@ -123,7 +119,7 @@ class MemberServiceTest {
 			.build();
 
 		// when
-		MemberResponse memberResponse = memberService.putMember(memberId,
+		MemberResponse memberResponse = memberService.editMember(memberId,
 			MemberMapper.toMemberPutDto(memberPutRequest));
 
 		// then
@@ -145,7 +141,7 @@ class MemberServiceTest {
 	void testPutMember() {
 		// given
 		Member member = saveMember("test7@test.com", "test7", "test7.s3.com");
-		Member otherMember = saveMember("test8@test.com", "test8", "test8.s3.com");
+		saveMember("test8@test.com", "test8", "test8.s3.com");
 
 		Long memberId = member.getId();
 
@@ -163,7 +159,7 @@ class MemberServiceTest {
 
 		// when // then
 		assertThrows(MemberException.class, () -> {
-			memberService.putMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
+			memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
 		});
 	}
 

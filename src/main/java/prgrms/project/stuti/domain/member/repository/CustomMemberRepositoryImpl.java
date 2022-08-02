@@ -45,7 +45,7 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
 		);
 	}
 
-	public BooleanExpression isNotDeleted() {
+	private BooleanExpression isNotDeleted() {
 		return member.isDeleted.isFalse();
 	}
 }

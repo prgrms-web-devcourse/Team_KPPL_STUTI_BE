@@ -22,12 +22,12 @@ public enum ErrorCode {
 	UNKNOWN_SERVER_ERROR("s001", "Unknown server error", HttpStatus.INTERNAL_SERVER_ERROR),
 
 	// Member
-	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.NOT_FOUND),
-	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.NOT_FOUND),
-	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.NOT_FOUND),
-	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.NOT_FOUND),
-	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.NOT_FOUND),
-	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.NOT_FOUND);
+	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.BAD_REQUEST),
+	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.BAD_REQUEST),
+	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.BAD_REQUEST),
+	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.BAD_REQUEST),
+	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST);
 
 
 	private final String code;

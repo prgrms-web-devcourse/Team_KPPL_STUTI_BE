@@ -15,17 +15,17 @@ public class MemberException extends BusinessException {
 	}
 
 	public static final MemberException invalidEmail(String email) {
-		return new MemberException(ErrorCode.INVALID_EMAIL,
+		throw new MemberException(ErrorCode.INVALID_EMAIL,
 			MessageFormat.format("이메일이 유효하지 않습니다. (email: {0})", email));
 	}
 
 	public static MemberException notFoundMember(Long memberId) {
-		return new MemberException(ErrorCode.NOT_FOUND_MEMBER,
+		throw new MemberException(ErrorCode.NOT_FOUND_MEMBER,
 			MessageFormat.format("회원을 찾을 수 없습니다. (id: {0})", memberId));
 	}
 
 	public static final MemberException tokenExpiration() {
-		return new MemberException(ErrorCode.TOKEN_EXPIRATION, "token 이 만료되었습니다.");
+		throw new MemberException(ErrorCode.TOKEN_EXPIRATION, "토큰 이 만료되었습니다.");
 	}
 
 	public static final MemberException blakclistDetection() {
@@ -34,11 +34,11 @@ public class MemberException extends BusinessException {
 
 	public static final MemberException nicknameDuplication(String nickname) {
 		throw new MemberException(ErrorCode.NICKNAME_DUPLICATION,
-			MessageFormat.format("이미 존재하는 Nickname 입니다. (nickname: {0})", nickname));
+			MessageFormat.format("이미 존재하는 닉네임 입니다. (nickname: {0})", nickname));
 	}
 
 	public static final MemberException registeredMember(String email) {
 		throw new MemberException(ErrorCode.REGISTERED_MEMBER,
-			MessageFormat.format("이미 등록된 Member 입니다. (email: {0})", email));
+			MessageFormat.format("이미 등록된 회원 입니다. (email: {0})", email));
 	}
 }

@@ -2,7 +2,6 @@ package prgrms.project.stuti.domain.member.service;
 
 import java.util.Optional;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberPutDto;
@@ -38,31 +36,27 @@ public class MemberService {
 	}
 
 	@Transactional
-	public Member signup(MemberDto memberDto, TemporaryMember temporaryMember) throws DataIntegrityViolationException {
-		return memberRepository.save(Member.builder()
-			.email(memberDto.email())
-			.nickName(memberDto.nickname())
-			.field(memberDto.field())
-			.career(memberDto.career())
-			.profileImageUrl(temporaryMember.getImageUrl())
-			.mbti(memberDto.MBTI())
-			.memberRole(MemberRole.ROLE_MEMBER)
-			.build());
+	public Member signup(MemberDto memberDto, TemporaryMember temporaryMember) {
+		checkDuplicatedNickname(memberDto.nickname(), memberDto.email());
+
+		return memberRepository.save(MemberConverter.toMember(memberDto,temporaryMember));
 	}
 
 	@Transactional
-	public MemberResponse putMember(Long memberId, MemberPutDto memberPutDto) throws
-		DataIntegrityViolationException {
-		String nickname = memberPutDto.nickname();
-		memberRepository.findMemberByNickName(nickname).ifPresent(member -> {
-			if(!member.getId().equals(memberId)){
-				throw MemberException.nicknameDuplication(nickname);
-			}
-		});
-
-		Member member = memberRepository.findMemberById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
+	public MemberResponse editMember(Long memberId, MemberPutDto memberPutDto) {
+		checkDuplicatedNickname(memberPutDto.nickname(), memberPutDto.email());
+		Member member = memberRepository.findMemberById(memberId)
+			.orElseThrow(() -> MemberException.notFoundMember(memberId));
 		member.change(memberPutDto);
 
 		return MemberConverter.toMemberResponse(member);
+	}
+
+	private void checkDuplicatedNickname(String nickname, String memberPutDto) {
+		memberRepository.findMemberByNickName(nickname).ifPresent(member -> {
+			if (!member.getEmail().equals(memberPutDto)) {
+				throw MemberException.nicknameDuplication(nickname);
+			}
+		});
 	}
 }

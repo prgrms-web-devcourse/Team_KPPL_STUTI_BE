@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,9 +48,14 @@ public class AuthenticationController {
 		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
 		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
 
-		Cookie cookie = setCookie(tokens.accessToken(), TokenType.JWT_TYPE,
-			tokenService.getAccessTokenPeriod());
-		response.addCookie(cookie);
+		// Cookie cookie = setCookie(tokens.accessToken(), TokenType.JWT_TYPE,
+		// 	tokenService.getAccessTokenPeriod());
+		// response.addCookie(cookie);
+
+		ResponseCookie cookie = sameSiteNoneCookie(HttpHeaders.AUTHORIZATION,
+			CoderUtil.encode(TokenType.JWT_TYPE.getTypeValue() + tokens.accessToken()), "oauth-test-xi.vercel.app");
+		response.addHeader("Set-Cookie", cookie.toString());
+
 		URI uri = URI.create(domain + "/");
 
 		return ResponseEntity
@@ -64,6 +70,12 @@ public class AuthenticationController {
 		authenticationService.logout(accessToken, tokenService.getExpiration(accessToken), accessTokenWithType);
 
 		response.sendRedirect(domain + "/");
+	}
+
+	private ResponseCookie sameSiteNoneCookie(String name, String value, String domain) {
+		return ResponseCookie.from(name, value)
+			.path("/").secure(true).httpOnly(true)
+			.sameSite("none").domain(".naver.com").build();
 	}
 
 	private Cookie setCookie(String accessToken, TokenType tokenType, long period) {

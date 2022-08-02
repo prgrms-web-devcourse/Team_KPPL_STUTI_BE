@@ -20,6 +20,8 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.domain.member.model.Email;
@@ -43,6 +45,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final MemberService memberService;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final TemporaryMemberRepository temporaryMemberRepository;
+	private final ObjectMapper objectMapper;
 	private RedirectStrategy redirectStratgy = new DefaultRedirectStrategy();
 
 	@Value("${app.oauth.domain}")
@@ -105,9 +108,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		Long memberId = optionalMember.get().getId();
 		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
 		saveRefreshTokenToRedis(memberId, tokens.accessToken(), tokens.refreshToken());
-		addAccessTokenToCookie(response, tokens.accessToken(), TokenType.JWT_TYPE);
+		Cookie cookie = addAccessTokenToCookie(tokens.accessToken(), TokenType.JWT_TYPE);
+		response.addCookie(cookie);
 
-		redirectStratgy.sendRedirect(request, response, domain + loginSuccessPath);
+		String targetUri = domain + loginSuccessPath + "?value=" + tokens.accessToken();
+
+		redirectStratgy.sendRedirect(request, response, targetUri);
 
 	}
 
@@ -125,13 +131,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		refreshTokenRepository.save(refreshToken);
 	}
 
-	private void addAccessTokenToCookie(HttpServletResponse response, String accessToken, TokenType tokenType) {
+	private Cookie addAccessTokenToCookie(String accessToken, TokenType tokenType) {
 		Cookie cookie = new Cookie(AUTHORIZATION, CoderUtil.encode(tokenService.tokenWithType(accessToken, tokenType)));
 		cookie.setSecure(true);
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge((int)tokenService.getAccessTokenPeriod());
 		cookie.setPath(loginSuccessPath);
 
-		response.addCookie(cookie);
+		return cookie;
 	}
 }

@@ -47,20 +47,4 @@ public class GlobalExceptionHandler {
 
 		return ErrorResponseMapper.toErrorResponse(ErrorCode.UNKNOWN_SERVER_ERROR);
 	}
-
-	@ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-	protected ResponseEntity<ErrorResponse> handleSqlIntegrity(SQLIntegrityConstraintViolationException ex,
-		BindingResult bindingResult) {
-		log.info("Got SQLIntegrityConstraintViolationException: {}", ex.getMessage(), ex);
-
-		return ErrorResponseMapper.toErrorResponse(ErrorCode.EMPTY_INPUT_VALUE, bindingResult);
-	}
-
-	@ExceptionHandler(DataIntegrityViolationException.class)
-	protected ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex,
-		BindingResult bindingResult) {
-		log.info("Got DataIntegrityViolationException: {}", ex.getMessage(), ex);
-
-		return ErrorResponseMapper.toErrorResponse(ErrorCode.EMPTY_INPUT_VALUE, bindingResult);
-	}
 }

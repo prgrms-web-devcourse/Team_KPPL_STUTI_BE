@@ -33,8 +33,8 @@ public class MemberController {
 	@PutMapping("/{memberId}")
 	public ResponseEntity<MemberResponse> member(@PathVariable Long memberId,
 		@Valid @RequestBody MemberPutRequest memberPutRequest) {
-		MemberResponse memberResponse = memberService.putMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
-		URI uri = URI.create("/api/v1/members/" + memberId.toString());
+		MemberResponse memberResponse = memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
+		URI uri = URI.create("/api/v1/members/" + memberId);
 
 		return ResponseEntity
 			.created(uri)

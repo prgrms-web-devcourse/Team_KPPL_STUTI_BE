@@ -1,5 +1,6 @@
 package prgrms.project.stuti.domain.member.controller.dto;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
@@ -11,13 +12,13 @@ public record MemberPutRequest(
 	@NotNull
 	Long id,
 
-	@NotNull
+	@NotBlank
 	String email,
 
-	@NotNull
+	@NotBlank
 	String profileImageUrl,
 
-	@NotNull
+	@NotBlank
 	String nickname,
 
 	@NotNull

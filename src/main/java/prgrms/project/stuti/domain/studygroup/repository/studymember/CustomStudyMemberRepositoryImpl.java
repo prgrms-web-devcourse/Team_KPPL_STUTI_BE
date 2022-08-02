@@ -22,18 +22,25 @@ public class CustomStudyMemberRepositoryImpl implements CustomStudyMemberReposit
 			.from(studyMember)
 			.join(studyMember.member, member)
 			.join(studyMember.studyGroup, studyGroup)
-			.where(studyMember.studyMemberRole.eq(StudyMemberRole.LEADER), isNotDeletedMember(memberId),
-				isNotDeletedStudyGroup(studyGroupId))
+			.where(isLeader(), isEqualIdAndNotDeletedMember(memberId), isEqualIdAndNotDeletedStudyGroup(studyGroupId))
 			.fetchFirst();
 
 		return result != null;
 	}
 
-	public BooleanExpression isNotDeletedMember(Long memberId) {
-		return member.id.eq(memberId).and(member.isDeleted.isFalse());
+	private BooleanExpression isLeader() {
+		return studyMember.studyMemberRole.eq(StudyMemberRole.LEADER);
 	}
 
-	public BooleanExpression isNotDeletedStudyGroup(Long studyGroupId) {
+	private BooleanExpression isEqualIdAndNotDeletedMember(Long memberId) {
+		return member.id.eq(memberId).and(isNotDeletedMember());
+	}
+
+	private BooleanExpression isNotDeletedMember() {
+		return member.isDeleted.isFalse();
+	}
+
+	private BooleanExpression isEqualIdAndNotDeletedStudyGroup(Long studyGroupId) {
 		return studyGroup.id.eq(studyGroupId).and(studyGroup.isDeleted.isFalse());
 	}
 }

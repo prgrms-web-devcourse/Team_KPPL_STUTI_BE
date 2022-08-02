@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.repository.studymember;
+package prgrms.project.stuti.domain.studygroup.repository.studygroup;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import prgrms.project.stuti.config.RepositoryTestConfig;
+import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyMember;
@@ -18,13 +20,17 @@ import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.PreferredMbtiRepository;
-import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailDto;
 
-class StudyMemberRepositoryTest extends RepositoryTestConfig {
+class StudyGroupRepositoryTest extends RepositoryTestConfig {
+
+	@Autowired
+	private PreferredMbtiRepository preferredMbtiRepository;
 
 	@Autowired
 	private StudyMemberRepository studyMemberRepository;
+
 
 	@Autowired
 	private StudyGroupRepository studyGroupRepository;
@@ -47,47 +53,29 @@ class StudyMemberRepositoryTest extends RepositoryTestConfig {
 				.description("description")
 				.build()
 		);
-	}
 
-	@Test
-	@DisplayName("해당 스터디의 리더라면 true 를 반환한다.")
-	void testIsLeader() {
-		//given
+		preferredMbtiRepository.save(new PreferredMbti(Mbti.ENFJ, studyGroup));
+
 		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
-
-		//when
-		boolean isLeader = studyMemberRepository.isLeader(member.getId(), studyGroup.getId());
-
-		//then
-		assertTrue(isLeader);
 	}
 
 	@Test
-	@DisplayName("해당 스터디의 리더가 아니라면 false 를 반환한다.")
-	void testIsNotLeader() {
+	@DisplayName("스터디 그룹을 상세조회한다. 반환 타입은 dto 로 변환해서 반환한다.")
+	void testFindStudyGroupDetailById() {
 		//given
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.STUDY_MEMBER, member, studyGroup));
-
-		//when
-		boolean isLeader = studyMemberRepository.isLeader(member.getId(), studyGroup.getId());
-
-		//then
-		assertFalse(isLeader);
-	}
-
-	@Test
-	@DisplayName("스터디에 이미 가입신청을 했거나 가입이 된 멤버라면 true 를 반환한다.")
-	void testExistsByMemberIdAndStudyGroupId() {
-		//given
-		Long memberId = member.getId();
 		Long studyGroupId = studyGroup.getId();
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.STUDY_MEMBER, member, studyGroup));
 
 		//when
-		boolean isExists = studyMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
+		List<StudyGroupDetailDto> detailDtos = studyGroupRepository.findStudyGroupDetailById(studyGroupId);
 
 		//then
-		assertTrue(isExists);
+		StudyGroupDetailDto detailDto = detailDtos.get(0);
+
+		assertEquals(studyGroup.getId(), detailDto.studyGroupId());
+		assertEquals(studyGroup.getTitle(), detailDto.title());
+		assertEquals(studyGroup.getDescription(), detailDto.description());
+		assertEquals(member.getId(), detailDto.memberId());
+		assertEquals(member.getNickName(), detailDto.nickname());
+		assertEquals(member.getField(), detailDto.field());
 	}
 }
-

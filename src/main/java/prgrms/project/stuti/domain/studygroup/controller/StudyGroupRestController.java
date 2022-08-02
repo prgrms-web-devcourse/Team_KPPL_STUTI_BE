@@ -18,11 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 
@@ -53,8 +51,7 @@ public class StudyGroupRestController {
 	@PostMapping("/{studyGroupId}")
 	public ResponseEntity<StudyGroupIdResponse> applyStudyGroup(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId) {
-		StudyGroupApplyDto applyDto = StudyGroupMapper.toStudyGroupApplyDto(memberId, studyGroupId);
-		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(applyDto);
+		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(memberId, studyGroupId);
 
 		return ResponseEntity.ok(idResponse);
 	}
@@ -71,8 +68,7 @@ public class StudyGroupRestController {
 	@DeleteMapping("/{studyGroupId}")
 	public ResponseEntity<StudyGroupIdResponse> deleteStudyGroup(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId) {
-		StudyGroupDeleteDto deleteDto = StudyGroupMapper.toStudyGroupDeleteDto(memberId, studyGroupId);
-		StudyGroupIdResponse idResponse = studyGroupService.deleteStudyGroup(deleteDto);
+		StudyGroupIdResponse idResponse = studyGroupService.deleteStudyGroup(memberId, studyGroupId);
 
 		return ResponseEntity.ok(idResponse);
 	}

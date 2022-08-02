@@ -37,9 +37,9 @@ import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.service.dto.LeaderResponse;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailResponse;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.LeaderResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 
 @WebMvcTest(controllers = StudyGroupRestController.class)
@@ -145,7 +145,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 	void postApplyStudyGroup() throws Exception {
 		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.applyStudyGroup(any())).willReturn(idResponse);
+		given(studyGroupService.applyStudyGroup(any(), any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -169,7 +169,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 	void deleteStudyGroup() throws Exception {
 		//given
 		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.deleteStudyGroup(any())).willReturn(idResponse);
+		given(studyGroupService.deleteStudyGroup(any(), any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -215,7 +215,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.leader(
 				LeaderResponse.builder()
 					.memberId(1L)
-					.profileImageUrl("test profile imgae url")
+					.profileImageUrl("test profile image url")
 					.nickname("nickname")
 					.field("BACKEND")
 					.career(
@@ -244,7 +244,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 
 	private byte[] getMultipartFileBytes() throws IOException {
 		return new MockMultipartFile("testImageFile", "testImageFile.png",
-			"image/png", "abcde".getBytes()).getBytes();
+			"image/png", "test".getBytes()).getBytes();
 	}
 
 	private HeaderDescriptor contentType() {

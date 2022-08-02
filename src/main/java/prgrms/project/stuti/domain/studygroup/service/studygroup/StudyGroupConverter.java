@@ -6,11 +6,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
-import prgrms.project.stuti.domain.studygroup.service.dto.LeaderResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.LeaderResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupConverter {

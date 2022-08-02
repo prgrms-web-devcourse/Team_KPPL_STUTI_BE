@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.service.dto;
+package prgrms.project.stuti.domain.studygroup.service.response;
 
 import lombok.Builder;
 

@@ -3,7 +3,6 @@ package prgrms.project.stuti.domain.studygroup.repository.studymember;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -17,9 +16,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.repository.PreferredMbtiRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailDto;
 
 class StudyMemberRepositoryTest extends RepositoryTestConfig {
 

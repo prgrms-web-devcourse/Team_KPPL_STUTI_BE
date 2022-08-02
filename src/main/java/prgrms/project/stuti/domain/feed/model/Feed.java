@@ -40,6 +40,10 @@ public class Feed extends BaseEntity {
 		this.member = member;
 	}
 
+	public void changeContents(String content) {
+		this.content = content;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

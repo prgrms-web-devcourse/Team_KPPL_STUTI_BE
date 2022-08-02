@@ -75,7 +75,7 @@ public class StudyGroupService {
 	@Transactional
 	public StudyGroupIdResponse deleteStudyGroup(StudyGroupDeleteDto deleteDto) {
 		validateLeader(deleteDto.memberId(), deleteDto.studyGroupId());
-		updateIsDeleted(deleteDto.studyGroupId());
+		updateToDeleted(deleteDto.studyGroupId());
 
 		return StudyGroupConverter.toStudyGroupIdResponse(deleteDto.studyGroupId());
 	}
@@ -122,7 +122,7 @@ public class StudyGroupService {
 		}
 	}
 
-	private void updateIsDeleted(Long studyGroupId) {
+	private void updateToDeleted(Long studyGroupId) {
 		StudyGroup studyGroup = getStudyGroup(studyGroupId);
 		studyGroup.delete();
 	}

@@ -87,7 +87,7 @@ class FeedControllerTest extends TestConfig {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
 
-		when(feedService.changePost(any(), any())).thenReturn(new PostIdResponse(1L));
+		when(feedService.changePost(any())).thenReturn(new PostIdResponse(1L));
 
 		mockMvc.perform(
 			multipart(HttpMethod.PATCH,"/api/v1/posts/{postId}", 1L)

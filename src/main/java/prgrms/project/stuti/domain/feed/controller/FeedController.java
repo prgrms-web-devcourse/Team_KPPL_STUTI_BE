@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.service.FeedService;
+import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
@@ -36,7 +37,7 @@ public class FeedController {
 	public ResponseEntity<PostIdResponse> registerPost(@Valid @ModelAttribute RegisterPostRequest registerPostRequest,
 		@AuthenticationPrincipal User authentication) {
 		Long memberId = Long.parseLong(authentication.getUsername());
-		PostCreateDto postCreateDto = FeedMapper.toPostDto(registerPostRequest, memberId);
+		PostCreateDto postCreateDto = FeedMapper.toPostCreateDto(registerPostRequest, memberId);
 		PostIdResponse postIdResponse = feedService.registerPost(postCreateDto);
 
 		return ResponseEntity.created(
@@ -55,7 +56,8 @@ public class FeedController {
 	@PatchMapping("/api/v1/posts/{postId}")
 	public ResponseEntity<PostIdResponse> changePost(@Valid @ModelAttribute RegisterPostRequest registerPostRequest,
 		@PathVariable Long postId) {
-		PostIdResponse postIdResponse = feedService.changePost(registerPostRequest, postId);
+		PostChangeDto postChangeDto = FeedMapper.toPostChangeDto(registerPostRequest, postId);
+		PostIdResponse postIdResponse = feedService.changePost(postChangeDto);
 
 		return ResponseEntity.ok().body(postIdResponse);
 	}

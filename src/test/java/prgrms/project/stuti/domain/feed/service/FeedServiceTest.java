@@ -20,14 +20,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import prgrms.project.stuti.domain.feed.controller.dto.RegisterPostRequest;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -111,7 +111,7 @@ class FeedServiceTest {
 	@Test
 	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
 	void testGetAllPosts() {
-		for(int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
 			feedRepository.save(feed);
@@ -128,7 +128,7 @@ class FeedServiceTest {
 	@Test
 	@DisplayName("전체 포스트리스트 첫 조회시(lastPostId가 null일 때) 페이징 조회한다")
 	void testGetAllPostsWhenLastPostIdIsNull() {
-		for(int i = 0; i < 10; i++) {
+		for (int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
 			feedRepository.save(feed);
@@ -151,14 +151,13 @@ class FeedServiceTest {
 		File changeImageFile = new File(Paths.get("src", "test", "resources")
 			+ File.separator + "change.jpg");
 		MultipartFile testChangeMultipartFile = getMockMultipartFile(changeImageFile);
-		RegisterPostRequest registerPostRequest =
-			new RegisterPostRequest(testChangeMultipartFile, "게시글 내용이 변경되었습니다.");
-		PostIdResponse changePostIdResponse = feedService.changePost(registerPostRequest, postIdResponse.postid());
+		PostChangeDto postChangeDto = new PostChangeDto(postIdResponse.postid(), "게시글 내용이 변경되었습니다.", testChangeMultipartFile);
+		PostIdResponse changePostIdResponse = feedService.changePost(postChangeDto);
 
 		List<FeedImage> changedImages = feedImageRepository.findByFeedId(changePostIdResponse.postid());
 		Feed changedFeed = feedRepository.findById(changePostIdResponse.postid()).get();
 
-		assertThat(changedFeed.getContent()).isEqualTo(registerPostRequest.content());
+		assertThat(changedFeed.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages).hasSize(1);
 		assertThat(changedImages.get(0).getImageUrl()).isNotEqualTo(originImages.get(0).getImageUrl());
 	}
@@ -168,14 +167,13 @@ class FeedServiceTest {
 	void testChangePostWithOutImages() throws IOException {
 		PostIdResponse postIdResponse = savePost();
 
-		RegisterPostRequest registerPostRequest =
-			new RegisterPostRequest(null, "게시글 내용이 변경되었습니다.");
-		PostIdResponse changePostIdResponse = feedService.changePost(registerPostRequest, postIdResponse.postid());
+		PostChangeDto postChangeDto = new PostChangeDto(postIdResponse.postid(), "게시글 내용이 변경되었습니다.", null);
+		PostIdResponse changePostIdResponse = feedService.changePost(postChangeDto);
 
 		List<FeedImage> changedImages = feedImageRepository.findByFeedId(changePostIdResponse.postid());
 		Feed changedFeed = feedRepository.findById(changePostIdResponse.postid()).get();
 
-		assertThat(changedFeed.getContent()).isEqualTo(registerPostRequest.content());
+		assertThat(changedFeed.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages).isEmpty();
 	}
 

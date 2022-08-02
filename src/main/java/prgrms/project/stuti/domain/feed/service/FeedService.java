@@ -12,6 +12,7 @@ import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
@@ -57,13 +58,13 @@ public class FeedService {
 	}
 
 	@Transactional
-	public PostIdResponse changePost(RegisterPostRequest registerPostRequest, Long postId) {
-		Feed feed = feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
-		feed.changeContents(registerPostRequest.content());
+	public PostIdResponse changePost(PostChangeDto postChangeDto) {
+		Feed feed = feedRepository.findById(postChangeDto.postId()).orElseThrow(FeedException::FEED_NOT_FOUND);
+		feed.changeContents(postChangeDto.contents());
 
 		feedImageRepository.deleteByFeedId(feed.getId());
-		if(registerPostRequest.imageFile() != null) {
-			String uploadUrl = localImageUploader.upload(registerPostRequest.imageFile(), ImageDirectory.FEED);
+		if(postChangeDto.imageFile() != null) {
+			String uploadUrl = localImageUploader.upload(postChangeDto.imageFile(), ImageDirectory.FEED);
 			FeedImage feedImage = new FeedImage(uploadUrl, feed);
 			feedImageRepository.save(feedImage);
 		}

@@ -48,6 +48,9 @@ public class FeedService {
 	@Transactional(readOnly = true)
 	public FeedResponse getAllPosts(Long lastPostId, int size) {
 		List<PostDto> postsDtos = feedRepository.findAllWithNoOffset(lastPostId, size, null);
+		if (!postsDtos.isEmpty()) {
+			lastPostId = getLastPostId(postsDtos);
+		}
 		boolean hasNext = hasNext(lastPostId);
 
 		return FeedConverter.toFeedResponse(postsDtos, hasNext);
@@ -59,7 +62,7 @@ public class FeedService {
 		feed.changeContents(postChangeDto.contents());
 
 		feedImageRepository.deleteByFeedId(feed.getId());
-		if(postChangeDto.imageFile() != null) {
+		if (postChangeDto.imageFile() != null) {
 			String uploadUrl = imageUploader.upload(postChangeDto.imageFile(), ImageDirectory.FEED);
 			FeedImage feedImage = new FeedImage(uploadUrl, feed);
 			feedImageRepository.save(feedImage);
@@ -78,14 +81,17 @@ public class FeedService {
 	@Transactional(readOnly = true)
 	public FeedResponse getMyPosts(Long memberId, Long lastPostId, int size) {
 		List<PostDto> myPosts = feedRepository.findAllWithNoOffset(lastPostId, size, memberId);
+		if (!myPosts.isEmpty()) {
+			lastPostId = getLastPostId(myPosts);
+		}
 		boolean hasNext = hasNextMyPost(lastPostId, memberId);
 
 		return FeedConverter.toFeedResponse(myPosts, hasNext);
 	}
 
 	private boolean hasNextMyPost(Long lastPostId, Long memberId) {
-		if(lastPostId == null) {
-			return feedRepository.existsByIdGreaterThanEqualAndMemberId(lastPostId, memberId);
+		if (lastPostId == null) {
+			return false;
 		}
 
 		return feedRepository.existsByIdLessThanAndMemberId(lastPostId, memberId);
@@ -93,9 +99,14 @@ public class FeedService {
 
 	private boolean hasNext(Long lastPostId) {
 		if (lastPostId == null) {
-			return feedRepository.existsByIdGreaterThanEqual(1L);
+			return false;
 		}
 
 		return feedRepository.existsByIdLessThan(lastPostId);
+	}
+
+	private Long getLastPostId(List<PostDto> postDtos) {
+		int lastIndex = postDtos.size() - 1;
+		return postDtos.get(lastIndex).postId();
 	}
 }

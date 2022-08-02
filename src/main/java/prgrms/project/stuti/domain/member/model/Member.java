@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import prgrms.project.stuti.domain.member.service.dto.MemberPutDto;
 import prgrms.project.stuti.global.base.BaseTimeEntity;
 
 @Entity
@@ -41,11 +42,11 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "career", length = 20, nullable = false)
 	private Career career;
 
-	@Column(name = "profile_image_url", length = 150, unique = true, nullable = false)
+	@Column(name = "profile_image_url", length = 150)
 	private String profileImageUrl;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "MBTI", length = 5, nullable = false)
+	@Column(name = "mbti", length = 5, nullable = false)
 	private Mbti mbti;
 
 	@Column(name = "github_url", length = 100)
@@ -90,5 +91,17 @@ public class Member extends BaseTimeEntity {
 			.append("blogUrl", blogUrl)
 			.append("memberRole", memberRole)
 			.toString();
+	}
+
+	public void change(MemberPutDto memberPutDto) {
+		this.email = memberPutDto.email();
+		this.nickName = memberPutDto.nickname();
+		this.field = memberPutDto.field();
+		this.career = memberPutDto.career();
+		this.profileImageUrl = memberPutDto.profileImageUrl();
+		this.mbti = memberPutDto.MBTI();
+		this.githubUrl = memberPutDto.githubUrl();
+		this.blogUrl = memberPutDto.blogUrl();
+		this.isDeleted = false;
 	}
 }

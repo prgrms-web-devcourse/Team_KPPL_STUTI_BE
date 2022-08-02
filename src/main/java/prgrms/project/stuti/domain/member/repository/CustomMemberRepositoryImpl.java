@@ -25,6 +25,26 @@ public class CustomMemberRepositoryImpl implements CustomMemberRepository {
 		);
 	}
 
+	@Override
+	public Optional<Member> findMemberByEmail(String email) {
+		return Optional.ofNullable(
+			jpaQueryFactory
+				.selectFrom(member)
+				.where(member.email.eq(email), isNotDeleted())
+				.fetchOne()
+		);
+	}
+
+	@Override
+	public Optional<Member> findMemberByNickName(String nickname) {
+		return Optional.ofNullable(
+			jpaQueryFactory
+				.selectFrom(member)
+				.where(member.nickName.eq(nickname), isNotDeleted())
+				.fetchOne()
+		);
+	}
+
 	private BooleanExpression isNotDeleted() {
 		return member.isDeleted.isFalse();
 	}

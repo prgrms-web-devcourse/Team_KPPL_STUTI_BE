@@ -6,7 +6,6 @@ public record MemberIdResponse(
 	Long memberId
 ) {
 	@Builder
-	public MemberIdResponse(Long memberId) {
-		this.memberId = memberId;
+	public MemberIdResponse {
 	}
 }

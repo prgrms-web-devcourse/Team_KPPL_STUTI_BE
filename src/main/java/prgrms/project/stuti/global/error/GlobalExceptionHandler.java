@@ -1,5 +1,8 @@
 package prgrms.project.stuti.global.error;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;

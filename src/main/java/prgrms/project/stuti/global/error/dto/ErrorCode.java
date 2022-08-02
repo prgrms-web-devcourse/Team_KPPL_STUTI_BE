@@ -21,14 +21,17 @@ public enum ErrorCode {
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
 	UNSUPPORTED_EXTENSION("F002", "Unsupported file extension", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
 	OVER_MAX_SIZE("F003", "Over max size", HttpStatus.PAYLOAD_TOO_LARGE),
+	FAILED_RESIZE("F004", "Failed to resize image file", HttpStatus.SERVICE_UNAVAILABLE),
 	FAILED_UPLOAD("F005", "Failed to upload image file", HttpStatus.SERVICE_UNAVAILABLE),
 	FAILED_DELETE("F006", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
-	
+
 	// Member
-	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.NOT_FOUND),
-	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.NOT_FOUND),
-	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.NOT_FOUND),
-	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.NOT_FOUND),
+	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.BAD_REQUEST),
+	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.BAD_REQUEST),
+	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.BAD_REQUEST),
+	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.BAD_REQUEST),
+	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST),
 
 	//feed
 	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST);

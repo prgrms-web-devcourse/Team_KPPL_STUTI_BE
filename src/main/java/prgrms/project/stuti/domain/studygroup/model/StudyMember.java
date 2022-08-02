@@ -15,7 +15,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
@@ -32,7 +31,7 @@ public class StudyMember extends BaseEntity {
 	private Long id;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "study_member_role", length = 10, nullable = false)
+	@Column(name = "study_member_role", length = 16, nullable = false)
 	private StudyMemberRole studyMemberRole;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -43,7 +42,6 @@ public class StudyMember extends BaseEntity {
 	@JoinColumn(name = "study_group_id")
 	private StudyGroup studyGroup;
 
-	@Builder
 	public StudyMember(StudyMemberRole studyMemberRole, Member member, StudyGroup studyGroup) {
 		this.studyMemberRole = studyMemberRole;
 		this.member = member;

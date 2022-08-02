@@ -8,7 +8,14 @@ import lombok.Getter;
 public enum ErrorCode {
 
 	//common
-	EMPTY_INPUT_VALUE("C001", "Empty request value", HttpStatus.BAD_REQUEST),
+	INVALID_METHOD_ARGUMENT("C001", "Invalid method argument", HttpStatus.BAD_REQUEST),
+	UNKNOWN_SERVER_ERROR("S001", "Unknown server error", HttpStatus.INTERNAL_SERVER_ERROR),
+
+	//study group
+	INVALID_STUDY_PERIOD("SG001", "Invalid study period", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_STUDY_GROUP("SG002", "Not found study group", HttpStatus.NOT_FOUND),
+	NOT_LEADER("SG003", "Not leader", HttpStatus.BAD_REQUEST),
+	EXISTING_STUDY_MEMBER("SG004", "Existing study member", HttpStatus.BAD_REQUEST),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
@@ -17,9 +24,6 @@ public enum ErrorCode {
 	FAILED_RESIZE("F004", "Failed to resize image file", HttpStatus.SERVICE_UNAVAILABLE),
 	FAILED_UPLOAD("F005", "Failed to upload image file", HttpStatus.SERVICE_UNAVAILABLE),
 	FAILED_DELETE("F006", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
-
-	//server
-	UNKNOWN_SERVER_ERROR("s001", "Unknown server error", HttpStatus.INTERNAL_SERVER_ERROR),
 
 	// Member
 	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.BAD_REQUEST),

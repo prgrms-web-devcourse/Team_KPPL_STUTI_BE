@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.service;
+package prgrms.project.stuti.domain.studygroup.service.studygroup;
 
 import java.util.List;
 
@@ -15,9 +15,11 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.PreferredMbtiRepository;
-import prgrms.project.stuti.domain.studygroup.repository.StudyGroupRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.global.error.exception.MemberException;
@@ -42,21 +44,40 @@ public class StudyGroupService {
 
 		StudyGroup studyGroup = saveStudyGroup(createDto, imageUrl, thumbnailUrl);
 		savePreferredMbtis(createDto.preferredMBTIs(), studyGroup);
-		saveStudyLeader(createDto.memberId(), studyGroup);
+		saveStudyGroupLeader(createDto.memberId(), studyGroup);
 
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());
 	}
 
 	@Transactional
 	public StudyGroupIdResponse updateStudyGroup(StudyGroupUpdateDto updateDto) {
-		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
-
 		StudyGroup studyGroup = getStudyGroup(updateDto.studyGroupId());
+
+		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
 
 		updateStudyGroupImage(updateDto.imageFile(), studyGroup);
 		updateTitleAndDescription(updateDto.title(), updateDto.description(), studyGroup);
 
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());
+	}
+
+	@Transactional
+	public StudyGroupIdResponse applyStudyGroup(StudyGroupApplyDto applyDto) {
+		Long memberId = applyDto.memberId();
+		Long studyGroupId = applyDto.studyGroupId();
+
+		validateExistingStudyMember(memberId, studyGroupId);
+		saveStudyGroupApplicant(memberId, studyGroupId);
+
+		return StudyGroupConverter.toStudyGroupIdResponse(studyGroupId);
+	}
+
+	@Transactional
+	public StudyGroupIdResponse deleteStudyGroup(StudyGroupDeleteDto deleteDto) {
+		validateLeader(deleteDto.memberId(), deleteDto.studyGroupId());
+		updateToDeleted(deleteDto.studyGroupId());
+
+		return StudyGroupConverter.toStudyGroupIdResponse(deleteDto.studyGroupId());
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupCreateDto createDto, String imageUrl, String thumbnailUrl) {
@@ -70,14 +91,23 @@ public class StudyGroupService {
 			preferredMbtis.stream().map(mbti -> new PreferredMbti(mbti, studyGroup)).toList());
 	}
 
-	private void saveStudyLeader(Long memberId, StudyGroup studyGroup) {
+	private void saveStudyGroupLeader(Long memberId, StudyGroup studyGroup) {
 		Member member = getMember(memberId);
 
 		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
 	}
 
+	private void saveStudyGroupApplicant(Long memberId, Long studyGroupId) {
+		Member member = getMember(memberId);
+		StudyGroup studyGroup = getStudyGroup(studyGroupId);
+
+		studyMemberRepository.save(new StudyMember(StudyMemberRole.APPLICANT, member, studyGroup));
+	}
+
 	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {
-		if (imageFile == null || imageFile.isEmpty()) return;
+		if (imageFile == null || imageFile.isEmpty()) {
+			return;
+		}
 
 		String imageUrl = imageUploader.upload(imageFile, ImageDirectory.STUDY_GROUP);
 		String thumbnailUrl = imageUploader.createThumbnail(imageUrl);
@@ -92,6 +122,11 @@ public class StudyGroupService {
 		}
 	}
 
+	private void updateToDeleted(Long studyGroupId) {
+		StudyGroup studyGroup = getStudyGroup(studyGroupId);
+		studyGroup.delete();
+	}
+
 	private void validateLeader(Long memberId, Long studyGroupId) {
 		boolean isLeader = studyMemberRepository.isLeader(memberId, studyGroupId);
 
@@ -100,12 +135,20 @@ public class StudyGroupService {
 		}
 	}
 
+	private void validateExistingStudyMember(Long memberId, Long studyGroupId) {
+		boolean isExists = studyMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
+
+		if (isExists) {
+			throw StudyGroupException.existingStudyMember(memberId, studyGroupId);
+		}
+	}
+
 	private Member getMember(Long memberId) {
-		return memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
+		return memberRepository.findMemberById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 	}
 
 	private StudyGroup getStudyGroup(Long studyGroupId) {
-		return studyGroupRepository.findById(studyGroupId)
+		return studyGroupRepository.findStudyGroupById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 	}
 }

@@ -22,6 +22,8 @@ public abstract class ServiceTestConfig {
 
 	protected Member member;
 
+	protected Member member2;
+
 	@BeforeAll
 	void init() {
 		this.member = memberRepository.save(
@@ -35,6 +37,21 @@ public abstract class ServiceTestConfig {
 				.blogUrl("blog.com")
 				.mbti(Mbti.ENFJ)
 				.profileImageUrl("www.s3.com")
+				.memberRole(MemberRole.ROLE_MEMBER)
+				.build()
+		);
+
+		this.member2 = memberRepository.save(
+			Member
+				.builder()
+				.email("test2@gmail.com")
+				.nickName("nickname2")
+				.career(Career.JUNIOR)
+				.field(Field.ANDROID)
+				.githubUrl("github2.com")
+				.blogUrl("blog2.com")
+				.mbti(Mbti.ENFJ)
+				.profileImageUrl("www.s3.com2")
 				.memberRole(MemberRole.ROLE_MEMBER)
 				.build()
 		);

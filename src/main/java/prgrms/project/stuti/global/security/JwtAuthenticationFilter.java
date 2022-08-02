@@ -17,10 +17,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.global.cache.model.RefreshToken;
-import prgrms.project.stuti.global.cache.service.BlackListTokenService;
-import prgrms.project.stuti.global.cache.service.RefreshTokenService;
-import prgrms.project.stuti.global.error.exception.TokenException;
-import prgrms.project.stuti.global.token.TokenGenerator;
+import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
+import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 
@@ -29,9 +28,8 @@ import prgrms.project.stuti.global.token.TokenType;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenService tokenService;
-	private final TokenGenerator tokenGenerator;
-	private final RefreshTokenService refreshTokenService;
-	private final BlackListTokenService blackListTokenService;
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final BlackListTokenRepository blackListTokenRepository;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -57,14 +55,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// 토큰이 유효하지 않은경우
 			// refresh token 을 redis 에서 찾은 후 존재하는 경우 accessToken 을 재발급하여 제공한다.
 			// refresh token 도 존재하지 않은경우 재로그인이 필요하다.
-			refreshTokenService.findById(accessToken).ifPresent(refreshToken -> {
+			refreshTokenRepository.findById(accessToken).ifPresent(refreshToken -> {
 				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
 				Long memberId = refreshToken.getMemberId();
 
 				// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
-				String newAccessToken = tokenGenerator.generateAccessToken(memberId.toString(), role);
+				String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
 
-				refreshTokenService.save(RefreshToken.builder()
+				refreshTokenRepository.save(RefreshToken.builder()
 					.accessTokenValue(newAccessToken)
 					.memberId(memberId)
 					.refreshTokenValue(refreshToken.getRefreshTokenValue())
@@ -72,7 +70,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 					.expirationTime(refreshToken.getExpirationTime())
 					.expiration(refreshToken.getExpiration())
 					.build());
-				refreshTokenService.delete(refreshToken);
+				refreshTokenRepository.delete(refreshToken);
 
 				setAuthenticationToSecurityContextHolder(memberId, role);
 				tokenService.addAccessTokenToCookie(response, newAccessToken, TokenType.JWT_TYPE);
@@ -83,8 +81,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	}
 
 	private void checkBlackList(String token) {
-		blackListTokenService.findById(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST))
-			.ifPresent(blackListToken -> TokenException.BLACKLIST_DETECTION.get());
+		blackListTokenRepository.findById(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST))
+			.ifPresent(blackListToken -> MemberException.blakclistDetection());
 	}
 
 	private void setAuthenticationToSecurityContextHolder(Long memberId, String[] roles) {

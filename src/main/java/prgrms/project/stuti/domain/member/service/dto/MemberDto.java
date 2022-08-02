@@ -13,12 +13,7 @@ public record MemberDto(
 	Mbti MBTI
 ) {
 	@Builder
-	public MemberDto(String email, String nickname, Field field, Career career, Mbti MBTI) {
-		this.email = email;
-		this.nickname = nickname;
-		this.field = field;
-		this.career = career;
-		this.MBTI = MBTI;
+	public MemberDto {
 	}
 }
 

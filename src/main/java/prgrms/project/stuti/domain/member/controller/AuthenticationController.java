@@ -2,26 +2,27 @@ package prgrms.project.stuti.domain.member.controller;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.member.service.AuthenticationFacade;
+import prgrms.project.stuti.domain.member.model.MemberRole;
+import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
-import prgrms.project.stuti.domain.member.model.Member;
+import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.token.Tokens;
 import prgrms.project.stuti.global.util.CoderUtil;
@@ -31,41 +32,50 @@ import prgrms.project.stuti.global.util.CoderUtil;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-	private final AuthenticationFacade authenticationFacade;
+	private final TokenService tokenService;
+	private final AuthenticationService authenticationService;
 
-	@GetMapping("/main")
-	public String main() {
-		return "hello";
-	}
+	@Value("${app.oauth.domain}")
+	private String domain;
 
 	@PostMapping("/signup")
 	public ResponseEntity<MemberIdResponse> singup(HttpServletResponse response,
 		@Valid @RequestBody MemberSaveRequest memberSaveRequest) {
+		MemberIdResponse memberIdResponse = authenticationService.signupMember(
+			MemberMapper.toMemberDto(memberSaveRequest));
+		Long memberId = memberIdResponse.memberId();
 
-		MemberIdResponse memberIdResponse = authenticationFacade.signupMember(memberSaveRequest);
-		Tokens tokens = authenticationFacade.makeTokens(memberIdResponse.memberId());
+		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
+		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
 
-		Cookie cookie = setCookie(tokens.accessToken(), TokenType.JWT_TYPE,
-			authenticationFacade.accessTokenPeriod());
-		response.addCookie(cookie);
+		// Cookie cookie = setCookie(tokens.accessToken(), TokenType.JWT_TYPE,
+		// 	tokenService.getAccessTokenPeriod());
+		// response.addCookie(cookie);
+
+		ResponseCookie cookie = sameSiteNoneCookie(HttpHeaders.AUTHORIZATION,
+			CoderUtil.encode(TokenType.JWT_TYPE.getTypeValue() + tokens.accessToken()), "oauth-test-xi.vercel.app");
+		response.addHeader("Set-Cookie", cookie.toString());
+
+		URI uri = URI.create(domain + "/");
 
 		return ResponseEntity
-			.created(URI.create("/api/v1/main"))
+			.created(uri)
 			.body(memberIdResponse);
 	}
 
-	@GetMapping("/logout")
+	@PostMapping("/logout")
 	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		authenticationFacade.logout(request);
-		response.sendRedirect("/api/v1/main");
+		String accessToken = tokenService.resolveToken(request);
+		String accessTokenWithType = tokenService.tokenWithType(accessToken, TokenType.JWT_BLACKLIST);
+		authenticationService.logout(accessToken, tokenService.getExpiration(accessToken), accessTokenWithType);
+
+		response.sendRedirect(domain + "/");
 	}
 
-	@GetMapping("/users")
-	public ResponseEntity<List<Member>> users() {
-		// 테스트 용도입니다.
-		return ResponseEntity
-			.ok()
-			.body(authenticationFacade.getMembers());
+	private ResponseCookie sameSiteNoneCookie(String name, String value, String domain) {
+		return ResponseCookie.from(name, value)
+			.path("/").secure(true).httpOnly(true)
+			.sameSite("none").domain(".naver.com").build();
 	}
 
 	private Cookie setCookie(String accessToken, TokenType tokenType, long period) {

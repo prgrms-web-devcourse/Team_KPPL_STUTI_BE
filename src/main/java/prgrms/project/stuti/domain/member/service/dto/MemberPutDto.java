@@ -5,7 +5,7 @@ import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record MemberResponse (
+public record MemberPutDto(
 	Long id,
 	String email,
 	String profileImageUrl,
@@ -15,8 +15,8 @@ public record MemberResponse (
 	Mbti MBTI,
 	String githubUrl,
 	String blogUrl
-){
+) {
 	@Builder
-	public MemberResponse {
+	public MemberPutDto {
 	}
 }

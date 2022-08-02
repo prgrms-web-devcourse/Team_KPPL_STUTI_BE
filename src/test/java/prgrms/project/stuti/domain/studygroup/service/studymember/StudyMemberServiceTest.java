@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ class StudyMemberServiceTest extends ServiceTestConfig {
 
 	private StudyMember studyMember;
 
-	@BeforeAll
+	@BeforeEach
 	void setup() {
 		this.studyGroup = studyGroupRepository.save(
 			StudyGroup

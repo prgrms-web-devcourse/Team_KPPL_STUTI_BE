@@ -19,9 +19,9 @@ import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRe
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
@@ -77,11 +77,9 @@ public class StudyGroupService {
 	}
 
 	@Transactional
-	public StudyGroupIdResponse deleteStudyGroup(Long memberId, Long studyGroupId) {
+	public void deleteStudyGroup(Long memberId, Long studyGroupId) {
 		validateLeader(memberId, studyGroupId);
 		updateToDeleted(studyGroupId);
-
-		return StudyGroupConverter.toStudyGroupIdResponse(studyGroupId);
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupCreateDto createDto, String imageUrl, String thumbnailUrl) {

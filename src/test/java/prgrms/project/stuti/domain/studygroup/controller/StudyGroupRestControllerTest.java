@@ -170,12 +170,11 @@ class StudyGroupRestControllerTest extends TestConfig {
 	@DisplayName("스터디 그룹을 삭제한다.")
 	void deleteStudyGroup() throws Exception {
 		//given
-		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.deleteStudyGroup(any(), any())).willReturn(idResponse);
+		doNothing().when(studyGroupService).deleteStudyGroup(any(), any());
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			delete("/api/v1/study-groups/{studyGroupId}", idResponse.studyGroupId())
+			delete("/api/v1/study-groups/{studyGroupId}", 1L)
 				.contentType(APPLICATION_JSON));
 
 		// then
@@ -187,8 +186,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
 					pathParameters(studyGroupIdPath()),
-					responseHeaders(contentType()),
-					responseFields(studyGroupIdField())));
+					responseHeaders(contentType())));
 	}
 
 	private MultiValueMap<String, String> toCreateParams() {

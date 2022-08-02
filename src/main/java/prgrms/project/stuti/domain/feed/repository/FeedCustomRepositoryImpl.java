@@ -23,13 +23,18 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<PostDto> findAllWithNoOffset(Long lastPostId, int size) {
+	public List<PostDto> findAllWithNoOffset(Long lastPostId, int size, Long memberId) {
 
 		BooleanBuilder dynamicLtId = new BooleanBuilder();
 
 		if (lastPostId != null) {
 			dynamicLtId.and(feed.id.lt(lastPostId));
 		}
+
+		if(memberId != null) {
+			dynamicLtId.and(feed.member.id.eq(memberId));
+		}
+
 		List<Tuple> fetch = jpaQueryFactory
 			.select(feed, feedImage)
 			.from(feed)

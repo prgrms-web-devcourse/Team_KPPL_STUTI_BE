@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +31,12 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 	@Autowired
 	private StudyMemberRepository studyMemberRepository;
 
-
 	@Autowired
 	private StudyGroupRepository studyGroupRepository;
 
 	private StudyGroup studyGroup;
 
-	@BeforeAll
+	@BeforeEach
 	void setup() {
 		this.studyGroup = studyGroupRepository.save(
 			StudyGroup

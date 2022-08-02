@@ -4,12 +4,12 @@ import static prgrms.project.stuti.domain.member.model.QMember.*;
 import static prgrms.project.stuti.domain.studygroup.model.QPreferredMbti.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyMember.*;
+import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroupBooleanExpression.*;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 		return Optional.ofNullable(
 			jpaQueryFactory
 				.selectFrom(studyGroup)
-				.where(studyGroup.id.eq(studyGroupId), isNotDeleted())
+				.where(isEqualIdAndNotDeletedStudyGroup(studyGroupId))
 				.fetchOne()
 		);
 	}
@@ -47,23 +47,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 			.join(studyMember.studyGroup, studyGroup)
 			.join(studyMember.member, member)
 			.join(preferredMbti).on(preferredMbti.studyGroup.id.eq(studyGroupId))
-			.where(isLeader(), isNotDeletedMember(), isEqualIdAndNotDeletedStudyGroup(studyGroupId))
+			.where(hasStudyMemberRole(StudyMemberRole.LEADER), isNotDeletedMember(), isEqualIdAndNotDeletedStudyGroup(studyGroupId))
 			.fetch();
-	}
-
-	private BooleanExpression isLeader() {
-		return studyMember.studyMemberRole.eq(StudyMemberRole.LEADER);
-	}
-
-	private BooleanExpression isNotDeletedMember() {
-		return member.isDeleted.isFalse();
-	}
-
-	public BooleanExpression isEqualIdAndNotDeletedStudyGroup(Long studyGroupId) {
-		return studyGroup.id.eq(studyGroupId).and(studyGroup.isDeleted.isFalse());
-	}
-
-	private BooleanExpression isNotDeleted() {
-		return studyGroup.isDeleted.isFalse();
 	}
 }

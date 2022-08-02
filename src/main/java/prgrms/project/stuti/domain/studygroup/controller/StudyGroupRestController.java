@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 
@@ -39,6 +41,13 @@ public class StudyGroupRestController {
 		URI uri = URI.create("/api/v1/study-groups/" + idResponse.studyGroupId());
 
 		return ResponseEntity.created(uri).body(idResponse);
+	}
+
+	@GetMapping("/{studyGroupId}")
+	public ResponseEntity<StudyGroupDetailResponse> getStudyGroup(@PathVariable Long studyGroupId) {
+		StudyGroupDetailResponse detailResponse = studyGroupService.getStudyGroup(studyGroupId);
+
+		return ResponseEntity.ok(detailResponse);
 	}
 
 	@PostMapping("/{studyGroupId}")

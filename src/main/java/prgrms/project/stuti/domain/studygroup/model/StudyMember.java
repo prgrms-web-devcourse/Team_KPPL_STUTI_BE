@@ -48,6 +48,10 @@ public class StudyMember extends BaseEntity {
 		this.studyGroup = studyGroup;
 	}
 
+	public void updateStudyMemberRole(StudyMemberRole studyMemberRole) {
+		this.studyMemberRole = studyMemberRole;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

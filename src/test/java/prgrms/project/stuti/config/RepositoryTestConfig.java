@@ -23,6 +23,8 @@ public abstract class RepositoryTestConfig {
 
 	protected Member member;
 
+	protected Member otherMember;
+
 	@BeforeEach
 	void init() {
 		this.member = memberRepository.save(
@@ -36,6 +38,21 @@ public abstract class RepositoryTestConfig {
 				.blogUrl("blog321.com")
 				.mbti(Mbti.ENFJ)
 				.profileImageUrl("www.s3.com.321123")
+				.memberRole(MemberRole.ROLE_MEMBER)
+				.build()
+		);
+
+		this.otherMember = memberRepository.save(
+			Member
+				.builder()
+				.email("ttt123@gmail.com")
+				.nickName("nickname111")
+				.career(Career.JUNIOR)
+				.field(Field.ANDROID)
+				.githubUrl("github.com")
+				.blogUrl("blog.com")
+				.mbti(Mbti.ENFJ)
+				.profileImageUrl("www.image.com")
 				.memberRole(MemberRole.ROLE_MEMBER)
 				.build()
 		);

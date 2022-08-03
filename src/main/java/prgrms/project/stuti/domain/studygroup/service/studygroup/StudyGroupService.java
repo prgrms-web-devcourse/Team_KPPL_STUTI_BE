@@ -19,9 +19,9 @@ import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRe
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
@@ -69,19 +69,9 @@ public class StudyGroupService {
 	}
 
 	@Transactional
-	public StudyGroupIdResponse applyStudyGroup(Long memberId, Long studyGroupId) {
-		validateExistingStudyMember(memberId, studyGroupId);
-		saveStudyGroupApplicant(memberId, studyGroupId);
-
-		return StudyGroupConverter.toStudyGroupIdResponse(studyGroupId);
-	}
-
-	@Transactional
-	public StudyGroupIdResponse deleteStudyGroup(Long memberId, Long studyGroupId) {
+	public void deleteStudyGroup(Long memberId, Long studyGroupId) {
 		validateLeader(memberId, studyGroupId);
 		updateToDeleted(studyGroupId);
-
-		return StudyGroupConverter.toStudyGroupIdResponse(studyGroupId);
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupCreateDto createDto, String imageUrl, String thumbnailUrl) {
@@ -99,13 +89,6 @@ public class StudyGroupService {
 		Member member = findMember(memberId);
 
 		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
-	}
-
-	private void saveStudyGroupApplicant(Long memberId, Long studyGroupId) {
-		Member member = findMember(memberId);
-		StudyGroup studyGroup = findStudyGroup(studyGroupId);
-
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.APPLICANT, member, studyGroup));
 	}
 
 	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {
@@ -136,14 +119,6 @@ public class StudyGroupService {
 
 		if (!isLeader) {
 			throw StudyGroupException.notLeader(memberId, studyGroupId);
-		}
-	}
-
-	private void validateExistingStudyMember(Long memberId, Long studyGroupId) {
-		boolean isExists = studyMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
-
-		if (isExists) {
-			throw StudyGroupException.existingStudyMember(memberId, studyGroupId);
 		}
 	}
 

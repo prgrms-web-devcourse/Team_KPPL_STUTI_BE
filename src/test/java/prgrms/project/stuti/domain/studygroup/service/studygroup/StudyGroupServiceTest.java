@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.service;
+package prgrms.project.stuti.domain.studygroup.service.studygroup;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -9,8 +9,6 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,13 +24,11 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
-import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
-@Transactional
 class StudyGroupServiceTest extends ServiceTestConfig {
 
 	@Autowired
@@ -127,36 +123,9 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	}
 
 	@Test
-	@DisplayName("회원이 스터디 그룹에 가입신청을한다.")
-	void testApplyStudyGroup() {
-		//given
-		Long memberId = member2.getId();
-		Long studyGroupId = studyGroup.getId();
-
-		//when
-		StudyGroupIdResponse idResponse = studyGroupService.applyStudyGroup(memberId, studyGroupId);
-
-		//then
-		assertNotNull(idResponse);
-		assertEquals(studyGroupId, idResponse.studyGroupId());
-	}
-
-	@Test
-	@DisplayName("이미 가입 했거나 가입신청을한 스터디 그룹에 가입신청을 한다면 예외가 발생한다.")
-	void testExistingStudyMember() {
-		//given
-		Long memberId = member2.getId();
-		Long studyGroupId = studyGroup.getId();
-
-		//when, then
-		studyGroupService.applyStudyGroup(memberId, studyGroupId);
-		assertThrows(StudyGroupException.class, () -> studyGroupService.applyStudyGroup(memberId, studyGroupId));
-	}
-
-	@Test
 	@DisplayName("스터디 그룹을 삭제한다.")
 	void testDeleteStudyGroup() {
-	    //given
+		//given
 		Long memberId = member.getId();
 		Long studyGroupId = studyGroup.getId();
 
@@ -164,7 +133,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		studyGroupService.deleteStudyGroup(memberId, studyGroupId);
 		Optional<StudyGroup> deletedStudyGroup = studyGroupRepository.findStudyGroupById(studyGroup.getId());
 
-	    //then
+		//then
 		assertTrue(deletedStudyGroup.isEmpty());
 	}
 
@@ -172,9 +141,8 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	@DisplayName("리더가 아닌 회원이 스터디 그룹을 삭제하려고 접근한다면 예외가 발생한다.")
 	void testNotLeaderAccessToDeleteStudyGroup() {
 		//given
-		Long memberId = member2.getId();
+		Long memberId = otherMember.getId();
 		Long studyGroupId = studyGroup.getId();
-		studyGroupService.applyStudyGroup(memberId, studyGroupId);
 
 		//when, then
 		assertThrows(StudyGroupException.class, () -> studyGroupService.deleteStudyGroup(memberId, studyGroupId));

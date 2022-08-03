@@ -10,7 +10,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupRestControllerTest.Field.*;
+import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
+import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -47,6 +48,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 
 	@MockBean
 	private StudyGroupService studyGroupService;
+
 	private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	@Test
@@ -141,39 +143,14 @@ class StudyGroupRestControllerTest extends TestConfig {
 	}
 
 	@Test
-	@DisplayName("스터디 그룹에 가입신청을한다.")
-	void postApplyStudyGroup() throws Exception {
-		//given
-		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.applyStudyGroup(any(), any())).willReturn(idResponse);
-
-		//when
-		ResultActions resultActions = mockMvc.perform(
-			post("/api/v1/study-groups/{studyGroupId}",
-				idResponse.studyGroupId()).contentType(APPLICATION_JSON));
-
-		resultActions
-			.andExpectAll(
-				status().isOk(),
-				content().json(objectMapper.writeValueAsString(idResponse)))
-			.andDo(
-				document(COMMON_DOCS_NAME,
-					requestHeaders(contentType(), host()),
-					pathParameters(studyGroupIdPath()),
-					responseHeaders(contentType()),
-					responseFields(studyGroupIdField())));
-	}
-
-	@Test
 	@DisplayName("스터디 그룹을 삭제한다.")
 	void deleteStudyGroup() throws Exception {
 		//given
-		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(1L);
-		given(studyGroupService.deleteStudyGroup(any(), any())).willReturn(idResponse);
+		doNothing().when(studyGroupService).deleteStudyGroup(any(), any());
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			delete("/api/v1/study-groups/{studyGroupId}", idResponse.studyGroupId())
+			delete("/api/v1/study-groups/{studyGroupId}", 1L)
 				.contentType(APPLICATION_JSON));
 
 		// then
@@ -185,8 +162,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
 					pathParameters(studyGroupIdPath()),
-					responseHeaders(contentType()),
-					responseFields(studyGroupIdField())));
+					responseHeaders(contentType())));
 	}
 
 	private MultiValueMap<String, String> toCreateParams() {
@@ -247,20 +223,8 @@ class StudyGroupRestControllerTest extends TestConfig {
 			"image/png", "test".getBytes()).getBytes();
 	}
 
-	private HeaderDescriptor contentType() {
-		return headerWithName(HttpHeaders.CONTENT_TYPE).description("컨텐츠 타입");
-	}
-
 	private HeaderDescriptor location() {
 		return headerWithName(HttpHeaders.LOCATION).description("생성된 리소스 주소");
-	}
-
-	private HeaderDescriptor host() {
-		return headerWithName(HttpHeaders.HOST).description("호스트");
-	}
-
-	private ParameterDescriptor studyGroupIdPath() {
-		return parameterWithName(STUDY_GROUP_ID.value()).description("스터디 그룹 아이디");
 	}
 
 	private ParameterDescriptor title() {
@@ -308,31 +272,13 @@ class StudyGroupRestControllerTest extends TestConfig {
 
 	private List<FieldDescriptor> toLeaderFields() {
 		return List.of(
-			fieldWithPath("memberId").type(NUMBER).description("회원 아이디"),
-			fieldWithPath("profileImageUrl").type(STRING).description("프로필 이미지 url"),
-			fieldWithPath("nickname").type(STRING).description("닉네임"),
-			fieldWithPath("field").type(STRING).description("업무분야"),
-			fieldWithPath("career").type(STRING).description("개발경력"),
-			fieldWithPath("mbti").type(STRING).description("MBTI")
+			fieldWithPath(MEMBER_ID.value()).type(NUMBER).description("회원 아이디"),
+			fieldWithPath(PROFILE_IMAGE_URL.value()).type(STRING).description("프로필 이미지 url"),
+			fieldWithPath(NICKNAME.value()).type(STRING).description("닉네임"),
+			fieldWithPath(FIELD.value()).type(STRING).description("업무분야"),
+			fieldWithPath(CAREER.value()).type(STRING).description("개발경력"),
+			fieldWithPath(MBTI.value()).type(STRING).description("MBTI")
 		);
-	}
-
-	enum Field {
-		TITLE("title"), TOPIC("topic"), IS_ONLINE("isOnline"),
-		REGION("region"), PREFERRED_MBTIS("preferredMBTIs"),
-		NUMBER_OF_RECRUITS("numberOfRecruits"), START_DATE_TIME("startDateTime"),
-		END_DATE_TIME("endDateTime"), DESCRIPTION("description"), IMAGE_FILE("imageFile"),
-		STUDY_GROUP_ID("studyGroupId"), IMAGE_URL("imageUrl"), NUMBER_OF_MEMBERS("numberOfMembers");
-
-		private final String value;
-
-		Field(String value) {
-			this.value = value;
-		}
-
-		public String value() {
-			return this.value;
-		}
 	}
 }
 

@@ -57,6 +57,10 @@ public class Question extends BaseEntity {
 		this.studyGroup = studyGroup;
 	}
 
+	public void updateContent(String content) {
+		this.content = content;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

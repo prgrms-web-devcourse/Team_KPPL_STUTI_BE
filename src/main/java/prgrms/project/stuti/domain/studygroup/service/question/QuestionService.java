@@ -11,6 +11,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.repository.QuestionRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.QuestionCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.QuestionUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.QuestionIdResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
@@ -31,14 +32,27 @@ public class QuestionService {
 		return QuestionConverter.toQuestionIdResponse(question.getId());
 	}
 
+	@Transactional
+	public QuestionIdResponse updateQuestion(QuestionUpdateDto updateDto) {
+		Question question = findQuestion(updateDto.questionId());
+		question.updateContent(updateDto.content());
+
+		return QuestionConverter.toQuestionIdResponse(question.getId());
+	}
+
 	private Question saveQuestion(QuestionCreateDto createDto, Long parentId) {
 		Question parent = parentId == null
 			? null
-			: questionRepository.findById(parentId).orElseThrow(() -> StudyGroupException.notFoundQuestion(parentId));
+			: findQuestion(parentId);
 		Member member = findMember(createDto.memberId());
 		StudyGroup studyGroup = findStudyGroup(createDto.studyGroupId());
 
 		return questionRepository.save(new Question(createDto.content(), parent, member, studyGroup));
+	}
+
+	private Question findQuestion(Long questionId) {
+		return questionRepository.findById(questionId)
+			.orElseThrow(() -> StudyGroupException.notFoundQuestion(questionId));
 	}
 
 	private Member findMember(Long memberId) {

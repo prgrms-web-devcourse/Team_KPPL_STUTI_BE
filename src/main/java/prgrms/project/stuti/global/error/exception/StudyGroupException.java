@@ -40,4 +40,10 @@ public class StudyGroupException extends BusinessException {
 			MessageFormat.format(
 				"스터디 멤버를 찾을 수 없습니다. (studyMemberId: {0})", studyMemberId));
 	}
+
+	public static StudyGroupException notFoundQuestion(Long questionId) {
+		return new StudyGroupException(ErrorCode.NOT_FOUND_QUESTION,
+			MessageFormat.format(
+				"스터디 질문 댓글을 찾을 수 없습니다. (studyMemberId: {0})", questionId));
+	}
 }

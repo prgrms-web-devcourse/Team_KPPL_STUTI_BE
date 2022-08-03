@@ -40,6 +40,15 @@ public class QuestionService {
 		return QuestionConverter.toQuestionIdResponse(question.getId());
 	}
 
+	@Transactional
+	public void deleteQuestion(Long memberId, Long studyGroupId, Long questionId) {
+		Question question = questionRepository.findFetchById(questionId);
+
+		if (question.getMember().getId().equals(memberId) && question.getStudyGroup().getId().equals(studyGroupId)) {
+			questionRepository.delete(question);
+		}
+	}
+
 	private Question saveQuestion(QuestionCreateDto createDto, Long parentId) {
 		Question parent = parentId == null
 			? null

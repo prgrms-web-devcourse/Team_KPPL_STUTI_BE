@@ -17,7 +17,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
@@ -51,9 +50,7 @@ public class Question extends BaseEntity {
 	@JoinColumn(name = "study_group_id")
 	private StudyGroup studyGroup;
 
-	@Builder
-	public Question(String content, Question parent, Member member,
-		StudyGroup studyGroup) {
+	public Question(String content, Question parent, Member member, StudyGroup studyGroup) {
 		this.content = content;
 		this.parent = parent;
 		this.member = member;

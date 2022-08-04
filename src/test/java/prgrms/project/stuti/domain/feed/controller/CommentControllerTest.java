@@ -37,7 +37,7 @@ class CommentControllerTest extends TestConfig {
 			.memberId(1L)
 			.nickname("testNickname")
 			.contents("새로운 댓글입니다.")
-			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.build();
 		String requestBody =
 			objectMapper.writeValueAsString(new CommentRequest(null, "테스트 댓글을 답니다."));

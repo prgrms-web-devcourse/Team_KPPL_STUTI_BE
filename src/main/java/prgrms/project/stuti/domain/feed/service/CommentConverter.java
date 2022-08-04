@@ -22,7 +22,7 @@ public class CommentConverter {
 			.memberId(savedComment.getMember().getId())
 			.nickname(savedComment.getMember().getNickName())
 			.contents(savedComment.getContent())
-			.createdAt(savedComment.getCreatedAt())
+			.updatedAt(savedComment.getUpdatedAt())
 			.build();
 	}
 }

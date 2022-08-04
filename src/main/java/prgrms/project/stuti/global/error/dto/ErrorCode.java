@@ -35,7 +35,10 @@ public enum ErrorCode {
 	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST),
 
 	//feed
-	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST);
+	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),
+
+	//(feed)comment
+	PARENT_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

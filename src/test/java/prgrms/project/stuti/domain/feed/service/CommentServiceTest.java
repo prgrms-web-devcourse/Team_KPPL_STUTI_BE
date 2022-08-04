@@ -15,7 +15,7 @@ import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.CommentIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.error.exception.FeedException;
 
@@ -48,8 +48,8 @@ class CommentServiceTest extends ServiceTestConfig {
 			.contents("테스트 게시글 1번에 대한 댓글 1번")
 			.build();
 
-		CommentIdResponse commentIdResponse = commentService.createComment(commentCreateDto);
-		Comment savedComment = commentRepository.findById(commentIdResponse.commentId()).get();
+		CommentResponse commentResponse = commentService.createComment(commentCreateDto);
+		Comment savedComment = commentRepository.findById(commentResponse.postCommentId()).get();
 
 		assertThat(savedComment.getContent()).isEqualTo(commentCreateDto.contents());
 		assertThat(savedComment.getParent()).isNull();
@@ -65,21 +65,20 @@ class CommentServiceTest extends ServiceTestConfig {
 			.parentId(null)
 			.contents("테스트 게시글 1번에 대한 댓글")
 			.build();
-		CommentIdResponse parentCommentIdResponse = commentService.createComment(parentCommentCreateDto);
+		CommentResponse parentCommentResponse = commentService.createComment(parentCommentCreateDto);
 
 		CommentCreateDto childCommentCreateDto = CommentCreateDto.builder()
 			.memberId(member.getId())
 			.postId(post.getId())
-			.parentId(parentCommentIdResponse.commentId())
+			.parentId(parentCommentResponse.postCommentId())
 			.contents("테스트 게시글 1번에 대한 대댓글")
 			.build();
-		CommentIdResponse childCommentIdResponse = commentService.createComment(childCommentCreateDto);
+		CommentResponse childCommentResponse = commentService.createComment(childCommentCreateDto);
 
-		Comment childComment = commentRepository.findById(childCommentIdResponse.commentId()).get();
+		Comment childComment = commentRepository.findById(childCommentResponse.postCommentId()).get();
 
 		assertThat(childComment.getContent()).isEqualTo(childCommentCreateDto.contents());
-		assertThat(childComment.getParent().getId()).isEqualTo(parentCommentIdResponse.commentId());
-
+		assertThat(childComment.getParent().getId()).isEqualTo(parentCommentResponse.postCommentId());
 	}
 
 	@Test

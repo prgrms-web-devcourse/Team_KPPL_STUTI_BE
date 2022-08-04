@@ -9,7 +9,7 @@ import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.CommentIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
 import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.FeedException;
 
@@ -21,7 +21,7 @@ public class CommentService {
 	private final FeedRepository feedRepository;
 
 	@Transactional
-	public CommentIdResponse createComment(CommentCreateDto commentCreateDto) {
+	public CommentResponse createComment(CommentCreateDto commentCreateDto) {
 		Feed feed = feedRepository.findById(commentCreateDto.postId()).orElseThrow(FeedException::FEED_NOT_FOUND);
 		Comment parentComment = null;
 		if (commentCreateDto.parentId() != null) {
@@ -30,7 +30,7 @@ public class CommentService {
 		Comment newComment = CommentConverter.toComment(commentCreateDto.contents(), feed, parentComment);
 		Comment savedComment = commentRepository.save(newComment);
 
-		return CommentConverter.toCommentIdResponse(savedComment.getId());
+		return CommentConverter.toCommentResponse(savedComment);
 	}
 
 	private Comment getParentComment(Long parentCommentId) {

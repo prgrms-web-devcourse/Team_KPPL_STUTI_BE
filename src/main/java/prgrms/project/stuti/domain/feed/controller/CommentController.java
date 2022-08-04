@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.CommentRequest;
 import prgrms.project.stuti.domain.feed.service.CommentService;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.CommentIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,12 +24,12 @@ public class CommentController {
 	private final CommentService commentService;
 
 	@PostMapping("/api/v1/posts/{postId}/comments")
-	public ResponseEntity<CommentIdResponse> createComment(@PathVariable Long postId,
+	public ResponseEntity<CommentResponse> createComment(@PathVariable Long postId,
 		@Valid @RequestBody CommentRequest commentRequest, @AuthenticationPrincipal Long memberId) {
 		CommentCreateDto commentCreateDto = CommentMapper.toCommentCreateDto(commentRequest, postId, memberId);
-		CommentIdResponse commentIdResponse = commentService.createComment(commentCreateDto);
-		URI uri = URI.create("/api/v1/posts/" + postId + "/comments/" + commentIdResponse.commentId());
+		CommentResponse commentResponse = commentService.createComment(commentCreateDto);
+		URI uri = URI.create("/api/v1/posts/" + postId + "/comments/" + commentResponse.postCommentId());
 
-		return ResponseEntity.created(uri).body(commentIdResponse);
+		return ResponseEntity.created(uri).body(commentResponse);
 	}
 }

@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public record RegisterPostRequest(
+public record PostRequest(
 	MultipartFile postImage,
 	@NotNull String contents
 ) {

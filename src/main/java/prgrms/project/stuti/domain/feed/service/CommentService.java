@@ -34,6 +34,7 @@ public class CommentService {
 	}
 
 	private Comment getParentComment(Long parentCommentId) {
-		return commentRepository.findById(parentCommentId).orElseThrow(CommentException::PARENT_COMMENT_NOT_FOUND);
+		return commentRepository.findById(parentCommentId)
+			.orElseThrow(() -> CommentException.PARENT_COMMENT_NOT_FOUND(parentCommentId));
 	}
 }

@@ -20,8 +20,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
+import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
@@ -49,6 +51,9 @@ class FeedServiceTest {
 
 	@Autowired
 	private FeedImageRepository feedImageRepository;
+
+	@Autowired
+	private CommentRepository commentRepository;
 
 	@Autowired
 	private FeedService feedService;
@@ -206,6 +211,20 @@ class FeedServiceTest {
 			.imageFile(testOriginalMultipartFile)
 			.build();
 		return feedService.registerPost(postDto);
+	}
+
+	@Test
+	@DisplayName("게시글 삭제시 게시글에 붙은 댓글도 전부 삭제처리한다.")
+	void testDeletePostWithComments() {
+		Feed feed = new Feed("울랄라 테스트 게시글", savedMember);
+		feedRepository.save(feed);
+		Comment comment = new Comment("댓글", null, savedMember, feed);
+		commentRepository.save(comment);
+
+		feedService.deletePost(feed.getId());
+		Optional<Comment> foundComment = commentRepository.findById(comment.getId());
+
+		assertThat(foundComment).isEmpty();
 	}
 
 	@Test

@@ -1,9 +1,9 @@
 package prgrms.project.stuti.domain.studygroup.service.dto;
 
-public record QuestionUpdateDto(
+public record StudyGroupQuestionUpdateDto(
 	Long memberId,
-	Long questionId,
+	Long studyGroupQuestionId,
 	Long studyGroupId,
-	String content
+	String contents
 ) {
 }

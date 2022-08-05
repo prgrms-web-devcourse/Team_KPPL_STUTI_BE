@@ -9,6 +9,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
@@ -39,6 +40,10 @@ public class StudyGroupConverter {
 
 	public static StudyGroupMemberIdResponse toStudyGroupMemberIdResponse(Long studyGroupMemberId) {
 		return new StudyGroupMemberIdResponse(studyGroupMemberId);
+	}
+
+	public static StudyGroupQuestionIdResponse toStudyGroupQuestionIdResponse(Long studyGroupQuestionId) {
+		return new StudyGroupQuestionIdResponse(studyGroupQuestionId);
 	}
 
 	public static StudyGroupDetailResponse toStudyGroupDetailResponse(StudyGroupMember studyGroupDetail) {

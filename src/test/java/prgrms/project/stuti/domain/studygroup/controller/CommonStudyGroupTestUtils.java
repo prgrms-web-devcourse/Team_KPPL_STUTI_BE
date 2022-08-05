@@ -38,7 +38,7 @@ public class CommonStudyGroupTestUtils {
 		END_DATE_TIME("endDateTime"), DESCRIPTION("description"), IMAGE_FILE("imageFile"),
 		STUDY_GROUP_ID("studyGroupId"), IMAGE_URL("imageUrl"), NUMBER_OF_MEMBERS("numberOfMembers"),
 		MEMBER_ID("memberId"), PROFILE_IMAGE_URL("profileImageUrl"), NICKNAME("nickname"), FIELD("field"),
-		CAREER("career"), MBTI("mbti");
+		CAREER("career"), MBTI("mbti"), STUDY_GROUP_QUESTION_ID("studyGroupQuestionId");
 
 		private final String value;
 

@@ -2,8 +2,8 @@ package prgrms.project.stuti.domain.studygroup.controller.dto;
 
 import javax.validation.constraints.NotBlank;
 
-public record QuestionUpdateRequest(
+public record StudyGroupQuestionUpdateRequest(
 	@NotBlank
-	String content
+	String contents
 ) {
 }

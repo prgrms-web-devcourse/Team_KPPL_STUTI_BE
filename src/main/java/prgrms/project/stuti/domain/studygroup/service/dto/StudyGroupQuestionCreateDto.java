@@ -2,14 +2,14 @@ package prgrms.project.stuti.domain.studygroup.service.dto;
 
 import lombok.Builder;
 
-public record QuestionCreateDto(
+public record StudyGroupQuestionCreateDto(
 	Long memberId,
 	Long studyGroupId,
 	Long parentId,
-	String content
+	String contents
 ) {
 
 	@Builder
-	public QuestionCreateDto {
+	public StudyGroupQuestionCreateDto {
 	}
 }

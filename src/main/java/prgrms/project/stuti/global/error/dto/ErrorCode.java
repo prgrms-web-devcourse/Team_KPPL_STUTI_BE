@@ -17,7 +17,7 @@ public enum ErrorCode {
 	NOT_STUDY_LEADER("SG003", "Not study leader", HttpStatus.BAD_REQUEST),
 	EXISTING_STUDY_GROUP_MEMBER("SG004", "Existing study group member", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_STUDY_GROUP_MEMBER("SG005", "Not found study group member", HttpStatus.NOT_FOUND),
-	NOT_FOUND_QUESTION("SG006", "Not found question", HttpStatus.NOT_FOUND),
+	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.NOT_FOUND),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),

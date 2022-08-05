@@ -2,11 +2,10 @@ package prgrms.project.stuti.domain.studygroup.controller.dto;
 
 import javax.validation.constraints.NotBlank;
 
-public record QuestionCreateRequest(
+public record StudyGroupQuestionCreateRequest(
 	Long parentId,
 
 	@NotBlank
-	String content
+	String contents
 ) {
-
 }

@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.service.studymember;
+package prgrms.project.stuti.domain.studygroup.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -3,6 +3,8 @@ package prgrms.project.stuti.domain.feed.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -128,6 +130,56 @@ class CommentServiceTest extends ServiceTestConfig {
 			.build();
 
 		assertThrows(CommentException.class, () -> commentService.changeComment(commentUpdateDto));
+	}
+
+	@Test
+	@DisplayName("댓글을 삭제한다.")
+	void testDeleteComment() {
+		Feed post = createPost(member);
+		Comment comment = new Comment("댓글입니다.", null, member, post);
+		commentRepository.save(comment);
+
+		commentService.deleteComment(post.getId(), comment.getId(), member.getId());
+		Optional<Comment> foundComment = commentRepository.findById(comment.getId());
+
+		assertThat(foundComment).isEmpty();
+	}
+
+	@Test
+	@DisplayName("댓글삭제시 대댓글도 전부 삭제한다.")
+	void testDeleteCommentWithChildComment() {
+		Feed post = createPost(member);
+		Comment parentComment = new Comment("댓글입니다.", null, member, post);
+		commentRepository.save(parentComment);
+		Comment childComment = new Comment("대댓글입니다.", parentComment, member2, post);
+		commentRepository.save(childComment);
+
+		commentService.deleteComment(post.getId(), parentComment.getId(), member.getId());
+		Optional<Comment> foundChildComment = commentRepository.findById(childComment.getId());
+
+		assertThat(foundChildComment).isEmpty();
+	}
+
+	@Test
+	@DisplayName("댓글이 없는 경우 삭제 할 수 없다.")
+	void testDuplicateDeleteTest() {
+		Feed post = createPost(member);
+		Comment comment = new Comment("댓글입니다.", null, member, post);
+		commentRepository.save(comment);
+
+		commentService.deleteComment(post.getId(), comment.getId(), member.getId());
+
+		assertThrows(CommentException.class, () -> commentService.deleteComment(post.getId(), comment.getId(),
+			member.getId()));
+	}
+
+	@Test
+	@DisplayName("원 게시글이 없는경우 댓글 삭제를 할 수 없다") // 보류
+	void testDeleteCommentWithUnknownPostId() {
+		Feed post = createPost(member);
+		Comment comment = new Comment("댓글입니다.", null, member, post);
+		commentRepository.save(comment);
+
 	}
 
 	private Feed createPost(Member member) {

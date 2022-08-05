@@ -46,6 +46,13 @@ public class CommentService {
 		return CommentConverter.toCommentResponse(comment);
 	}
 
+	@Transactional
+	public void deleteComment(Long postId, Long commentId, Long memberId) {
+		feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
+		commentRepository.findById(commentId).orElseThrow(() -> CommentException.COMMENT_NOT_FOUND(commentId));
+		commentRepository.deleteById(commentId);
+	}
+
 	private Comment getParentComment(Long parentCommentId) {
 		return commentRepository.findById(parentCommentId)
 			.orElseThrow(() -> CommentException.PARENT_COMMENT_NOT_FOUND(parentCommentId));

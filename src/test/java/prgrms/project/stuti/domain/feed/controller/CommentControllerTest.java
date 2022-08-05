@@ -77,4 +77,15 @@ class CommentControllerTest extends TestConfig {
 			.andExpect(status().isOk())
 			.andDo(print());
 	}
+
+	@Test
+	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
+	@DisplayName("댓글을 삭제한다")
+	void testDeleteComment() throws Exception {
+		doNothing().when(commentService).deleteComment(anyLong(), anyLong(), anyLong());
+
+		mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L))
+			.andExpect(status().isNoContent())
+			.andDo(print());
+	}
 }

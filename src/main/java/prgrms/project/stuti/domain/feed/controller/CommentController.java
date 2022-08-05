@@ -4,8 +4,11 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +45,15 @@ public class CommentController {
 		CommentResponse commentResponse = commentService.changeComment(commentUpdateDto);
 
 		return ResponseEntity.ok().body(commentResponse);
+	}
+
+	@DeleteMapping("/api/v1/posts/{postId}/comments/{commentId}")
+	public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
+		@AuthenticationPrincipal Long memberId) {
+		commentService.deleteComment(postId, commentId, memberId);
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+		return ResponseEntity.noContent().headers(httpHeaders).build();
 	}
 }

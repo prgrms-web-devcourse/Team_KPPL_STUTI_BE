@@ -17,11 +17,11 @@ import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.PreferredMbtiRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
@@ -49,9 +49,16 @@ public class StudyGroupService {
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());
 	}
 
+	@Transactional(readOnly = true)
+	public StudyGroupDetailResponse getStudyGroup(Long studyGroupId) {
+		List<StudyGroupDetailDto> detailDtos = studyGroupRepository.findStudyGroupDetailById(studyGroupId);
+
+		return StudyGroupConverter.toStudyGroupResponse(detailDtos);
+	}
+
 	@Transactional
 	public StudyGroupIdResponse updateStudyGroup(StudyGroupUpdateDto updateDto) {
-		StudyGroup studyGroup = getStudyGroup(updateDto.studyGroupId());
+		StudyGroup studyGroup = findStudyGroup(updateDto.studyGroupId());
 
 		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
 
@@ -62,22 +69,9 @@ public class StudyGroupService {
 	}
 
 	@Transactional
-	public StudyGroupIdResponse applyStudyGroup(StudyGroupApplyDto applyDto) {
-		Long memberId = applyDto.memberId();
-		Long studyGroupId = applyDto.studyGroupId();
-
-		validateExistingStudyMember(memberId, studyGroupId);
-		saveStudyGroupApplicant(memberId, studyGroupId);
-
-		return StudyGroupConverter.toStudyGroupIdResponse(studyGroupId);
-	}
-
-	@Transactional
-	public StudyGroupIdResponse deleteStudyGroup(StudyGroupDeleteDto deleteDto) {
-		validateLeader(deleteDto.memberId(), deleteDto.studyGroupId());
-		updateToDeleted(deleteDto.studyGroupId());
-
-		return StudyGroupConverter.toStudyGroupIdResponse(deleteDto.studyGroupId());
+	public void deleteStudyGroup(Long memberId, Long studyGroupId) {
+		validateLeader(memberId, studyGroupId);
+		updateToDeleted(studyGroupId);
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupCreateDto createDto, String imageUrl, String thumbnailUrl) {
@@ -92,16 +86,9 @@ public class StudyGroupService {
 	}
 
 	private void saveStudyGroupLeader(Long memberId, StudyGroup studyGroup) {
-		Member member = getMember(memberId);
+		Member member = findMember(memberId);
 
 		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
-	}
-
-	private void saveStudyGroupApplicant(Long memberId, Long studyGroupId) {
-		Member member = getMember(memberId);
-		StudyGroup studyGroup = getStudyGroup(studyGroupId);
-
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.APPLICANT, member, studyGroup));
 	}
 
 	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {
@@ -123,7 +110,7 @@ public class StudyGroupService {
 	}
 
 	private void updateToDeleted(Long studyGroupId) {
-		StudyGroup studyGroup = getStudyGroup(studyGroupId);
+		StudyGroup studyGroup = findStudyGroup(studyGroupId);
 		studyGroup.delete();
 	}
 
@@ -135,19 +122,11 @@ public class StudyGroupService {
 		}
 	}
 
-	private void validateExistingStudyMember(Long memberId, Long studyGroupId) {
-		boolean isExists = studyMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
-
-		if (isExists) {
-			throw StudyGroupException.existingStudyMember(memberId, studyGroupId);
-		}
-	}
-
-	private Member getMember(Long memberId) {
+	private Member findMember(Long memberId) {
 		return memberRepository.findMemberById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 	}
 
-	private StudyGroup getStudyGroup(Long studyGroupId) {
+	private StudyGroup findStudyGroup(Long studyGroupId) {
 		return studyGroupRepository.findStudyGroupById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 	}

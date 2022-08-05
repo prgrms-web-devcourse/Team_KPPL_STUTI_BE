@@ -9,6 +9,10 @@ public class FeedException extends BusinessException{
 	}
 
 	public static final FeedException FEED_NOT_FOUND() {
-		throw new FeedException(ErrorCode.FEED_NOT_FOUND, "존재하지 않는 피드입니다.");
+		throw new FeedException(ErrorCode.FEED_NOT_FOUND, "존재하지 않는 게시글입니다.");
+	}
+
+	public static final FeedException FEED_LIKE_DUPLICATED() {
+		throw new FeedException(ErrorCode.FEED_LIKE_DUPLICATED, "이미 좋아요를 누른 게시글입니다.");
 	}
 }

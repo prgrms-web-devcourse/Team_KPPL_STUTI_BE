@@ -38,6 +38,7 @@ public enum ErrorCode {
 	//feed
 	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),
 	FEED_LIKE_DUPLICATED("F002", "already liked this post", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_FEED_LIKE("F003","not found feed like", HttpStatus.BAD_REQUEST),
 
 	//(feed)comment
 	PARENT_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST),

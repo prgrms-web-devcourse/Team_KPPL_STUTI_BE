@@ -23,16 +23,16 @@ import prgrms.project.stuti.global.base.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StudyMember extends BaseEntity {
+public class StudyGroupMember extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "study_member_id", unique = true, nullable = false, updatable = false)
+	@Column(name = "study_group_member_id", unique = true, nullable = false, updatable = false)
 	private Long id;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "study_member_role", length = 16, nullable = false)
-	private StudyMemberRole studyMemberRole;
+	@Column(name = "study_group_member_role", length = 16, nullable = false)
+	private StudyGroupMemberRole studyGroupMemberRole;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
@@ -42,14 +42,14 @@ public class StudyMember extends BaseEntity {
 	@JoinColumn(name = "study_group_id")
 	private StudyGroup studyGroup;
 
-	public StudyMember(StudyMemberRole studyMemberRole, Member member, StudyGroup studyGroup) {
-		this.studyMemberRole = studyMemberRole;
+	public StudyGroupMember(StudyGroupMemberRole studyGroupMemberRole, Member member, StudyGroup studyGroup) {
+		this.studyGroupMemberRole = studyGroupMemberRole;
 		this.member = member;
 		this.studyGroup = studyGroup;
 	}
 
-	public void updateStudyMemberRole(StudyMemberRole studyMemberRole) {
-		this.studyMemberRole = studyMemberRole;
+	public void updateStudyGroupMemberRole(StudyGroupMemberRole studyGroupMemberRole) {
+		this.studyGroupMemberRole = studyGroupMemberRole;
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class StudyMember extends BaseEntity {
 		return new ToStringBuilder(this,
 			ToStringStyle.SHORT_PREFIX_STYLE)
 			.append("id", id)
-			.append("studyMemberRole", studyMemberRole)
+			.append("studyGroupMemberRole", studyGroupMemberRole)
 			.append("member", member)
 			.append("studyGroup", studyGroup)
 			.toString();

@@ -23,6 +23,7 @@ import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
+import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;

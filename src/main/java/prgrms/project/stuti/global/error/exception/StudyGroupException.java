@@ -23,27 +23,27 @@ public class StudyGroupException extends BusinessException {
 				"스터디 그룹을 찾을 수 없습니다. (studyGroupId: {0})", studyGroupId));
 	}
 
-	public static StudyGroupException notLeader(Long memberId, Long studyGroupId) {
-		return new StudyGroupException(ErrorCode.NOT_LEADER,
+	public static StudyGroupException notStudyLeader(Long memberId, Long studyGroupId) {
+		return new StudyGroupException(ErrorCode.NOT_STUDY_LEADER,
 			MessageFormat.format(
 				"스터디 그룹의 리더가 아닙니다. (memberId: {0}, studyGroupId: {1})", memberId, studyGroupId));
 	}
 
 	public static StudyGroupException existingStudyMember(Long memberId, Long studyGroupId) {
-		return new StudyGroupException(ErrorCode.EXISTING_STUDY_MEMBER,
+		return new StudyGroupException(ErrorCode.EXISTING_STUDY_GROUP_MEMBER,
 			MessageFormat.format(
-				"이미 존재하는 스터디 멤버입니다. (memberId: {0}, studyGroupId: {1})", memberId, studyGroupId));
+				"이미 존재하는 스터디 그룹 멤버입니다. (memberId: {0}, studyGroupId: {1})", memberId, studyGroupId));
 	}
 
-	public static StudyGroupException notFoundStudyMember(Long studyMemberId) {
-		return new StudyGroupException(ErrorCode.EXISTING_STUDY_MEMBER,
+	public static StudyGroupException notFoundStudyGroupMember(Long studyGroupMemberId) {
+		return new StudyGroupException(ErrorCode.EXISTING_STUDY_GROUP_MEMBER,
 			MessageFormat.format(
-				"스터디 멤버를 찾을 수 없습니다. (studyMemberId: {0})", studyMemberId));
+				"스터디 그룹 멤버를 찾을 수 없습니다. (studyGroupMemberId: {0})", studyGroupMemberId));
 	}
 
 	public static StudyGroupException notFoundQuestion(Long questionId) {
 		return new StudyGroupException(ErrorCode.NOT_FOUND_QUESTION,
 			MessageFormat.format(
-				"스터디 질문 댓글을 찾을 수 없습니다. (studyMemberId: {0})", questionId));
+				"스터디 질문 댓글을 찾을 수 없습니다. (questionId: {0})", questionId));
 	}
 }

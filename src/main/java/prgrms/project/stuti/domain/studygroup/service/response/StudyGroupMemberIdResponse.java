@@ -1,4 +1,4 @@
 package prgrms.project.stuti.domain.studygroup.service.response;
 
-public record StudyMemberIdResponse(Long studyMemberId) {
+public record StudyGroupMemberIdResponse(Long studyGroupMemberId) {
 }

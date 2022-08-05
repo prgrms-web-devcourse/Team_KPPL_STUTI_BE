@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.service.studygroup;
+package prgrms.project.stuti.domain.studygroup.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
-import prgrms.project.stuti.domain.studygroup.model.StudyMember;
-import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
@@ -28,7 +27,7 @@ public class StudyGroupService {
 	private final ImageUploader imageUploader;
 	private final MemberRepository memberRepository;
 	private final StudyGroupRepository studyGroupRepository;
-	private final StudyMemberRepository studyMemberRepository;
+	private final StudyGroupMemberRepository studyGroupMemberRepository;
 
 	@Transactional
 	public StudyGroupIdResponse createStudyGroup(StudyGroupCreateDto createDto) {
@@ -43,7 +42,7 @@ public class StudyGroupService {
 
 	@Transactional(readOnly = true)
 	public StudyGroupDetailResponse getStudyGroup(Long studyGroupId) {
-		StudyMember studyGroupDetail = studyGroupRepository.findStudyGroupDetailById(studyGroupId)
+		StudyGroupMember studyGroupDetail = studyGroupRepository.findStudyGroupDetailById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 
 		return StudyGroupConverter.toStudyGroupDetailResponse(studyGroupDetail);
@@ -76,7 +75,8 @@ public class StudyGroupService {
 	private void saveStudyGroupLeader(Long memberId, StudyGroup studyGroup) {
 		Member member = findMember(memberId);
 
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
+		studyGroupMemberRepository.save(new StudyGroupMember(
+			prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
 	}
 
 	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {
@@ -103,10 +103,10 @@ public class StudyGroupService {
 	}
 
 	private void validateLeader(Long memberId, Long studyGroupId) {
-		boolean isLeader = studyMemberRepository.isLeader(memberId, studyGroupId);
+		boolean isLeader = studyGroupMemberRepository.isStudyLeader(memberId, studyGroupId);
 
 		if (!isLeader) {
-			throw StudyGroupException.notLeader(memberId, studyGroupId);
+			throw StudyGroupException.notStudyLeader(memberId, studyGroupId);
 		}
 	}
 

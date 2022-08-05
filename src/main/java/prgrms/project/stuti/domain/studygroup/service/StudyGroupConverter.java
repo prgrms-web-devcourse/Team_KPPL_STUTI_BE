@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.service.studygroup;
+package prgrms.project.stuti.domain.studygroup.service;
 
 import java.util.HashSet;
 
@@ -6,12 +6,13 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
-import prgrms.project.stuti.domain.studygroup.model.StudyMember;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyMemberResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberResponse;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupConverter {
@@ -36,7 +37,11 @@ public class StudyGroupConverter {
 		return new StudyGroupIdResponse(studyGroupId);
 	}
 
-	public static StudyGroupDetailResponse toStudyGroupDetailResponse(StudyMember studyGroupDetail) {
+	public static StudyGroupMemberIdResponse toStudyGroupMemberIdResponse(Long studyGroupMemberId) {
+		return new StudyGroupMemberIdResponse(studyGroupMemberId);
+	}
+
+	public static StudyGroupDetailResponse toStudyGroupDetailResponse(StudyGroupMember studyGroupDetail) {
 		StudyGroup studyGroup = studyGroupDetail.getStudyGroup();
 		StudyPeriod studyPeriod = studyGroup.getStudyPeriod();
 		Member member = studyGroupDetail.getMember();
@@ -47,7 +52,7 @@ public class StudyGroupConverter {
 			.topic(studyGroup.getTopic().getValue())
 			.title(studyGroup.getTitle())
 			.imageUrl(studyGroup.getImageUrl())
-			.leader(toStudyMemberResponse(member))
+			.leader(toStudyGroupMemberResponse(member))
 			.preferredMBTIs(studyGroup.getPreferredMBTIs())
 			.isOnline(studyGroup.isOnline())
 			.region(studyGroup.getRegion().getValue())
@@ -59,8 +64,8 @@ public class StudyGroupConverter {
 			.build();
 	}
 
-	private static StudyMemberResponse toStudyMemberResponse(Member member) {
-		return StudyMemberResponse
+	private static StudyGroupMemberResponse toStudyGroupMemberResponse(Member member) {
+		return StudyGroupMemberResponse
 			.builder()
 			.memberId(member.getId())
 			.profileImageUrl(member.getProfileImageUrl())

@@ -21,29 +21,29 @@ import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.test.web.servlet.ResultActions;
 
 import prgrms.project.stuti.config.TestConfig;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyMemberIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.studymember.StudyMemberService;
+import prgrms.project.stuti.domain.studygroup.service.StudyGroupMemberService;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
 
-@WebMvcTest(controllers = StudyMemberRestController.class)
-class StudyMemberRestControllerTest extends TestConfig {
+@WebMvcTest(controllers = StudyGroupMemberRestController.class)
+class StudyGroupMemberRestControllerTest extends TestConfig {
 
 	@MockBean
-	private StudyMemberService studyMemberService;
+	private StudyGroupMemberService studyGroupMemberService;
 
 	private final Long studyGroupId = 1L;
-	private final Long studyMemberId = 1L;
+	private final Long studyGroupMemberId = 1L;
+	private final String studyGroupMemberApiPrefix = "/api/v1/study-groups/{studyGroupId}/members";
 
 	@Test
 	@DisplayName("스터디 그룹에 가입신청을한다.")
 	void postApplyStudyGroup() throws Exception {
 		//given
-		StudyMemberIdResponse idResponse = new StudyMemberIdResponse(1L);
-		given(studyMemberService.applyForJoinStudyGroup(any(), any())).willReturn(idResponse);
+		StudyGroupMemberIdResponse idResponse = new StudyGroupMemberIdResponse(1L);
+		given(studyGroupMemberService.applyForJoinStudyGroup(any(), any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			post("/api/v1/study-groups/{studyGroupId}/study-members",
-				studyGroupId).contentType(APPLICATION_JSON));
+			post(studyGroupMemberApiPrefix, studyGroupId).contentType(APPLICATION_JSON));
 
 		resultActions
 			.andExpectAll(
@@ -54,20 +54,19 @@ class StudyMemberRestControllerTest extends TestConfig {
 					requestHeaders(contentType(), host()),
 					pathParameters(studyGroupIdPath()),
 					responseHeaders(contentType()),
-					responseFields(studyMemberIdField())));
+					responseFields(studyGroupMemberIdField())));
 	}
 
 	@Test
 	@DisplayName("스터디 가입신청을 수락한다.")
 	void acceptRequestForJoin() throws Exception {
 		//given
-		StudyMemberIdResponse idResponse = toStudyMemberIdResponse(studyMemberId);
-		given(studyMemberService.acceptRequestForJoin(any(), any(), any())).willReturn(idResponse);
+		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse(studyGroupMemberId);
+		given(studyGroupMemberService.acceptRequestForJoin(any(), any(), any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			patch("/api/v1/study-groups/{studyGroupId}/study-members/{studyMemberId}",
-				studyGroupId, studyMemberId)
+			patch(studyGroupMemberApiPrefix + "/{studyGroupMemberId}", studyGroupId, studyGroupMemberId)
 				.contentType(APPLICATION_JSON));
 
 		//then
@@ -78,21 +77,21 @@ class StudyMemberRestControllerTest extends TestConfig {
 				content().contentType(APPLICATION_JSON))
 			.andDo(document(COMMON_DOCS_NAME,
 				requestHeaders(contentType(), host()),
-				pathParameters(studyGroupIdPath(), studyMemberIdPath()),
+				pathParameters(studyGroupIdPath(), studyGroupMemberIdPath()),
 				responseHeaders(contentType(), contentLength()),
-				responseFields(studyMemberIdField())));
+				responseFields(studyGroupMemberIdField())));
 	}
 
 	@Test
-	@DisplayName("스터디 멤버를 삭제한다.")
-	void deleteStudyMember() throws Exception {
+	@DisplayName("스터디 그룹 멤버를 삭제한다.")
+	void deleteStudyGroupMember() throws Exception {
 		//given
-		willDoNothing().given(studyMemberService).deleteStudyMember(any(), any(), any());
+		willDoNothing().given(studyGroupMemberService).deleteStudyGroupMember(any(), any(), any());
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			delete("/api/v1/study-groups/{studyGroupId}/study-members/{studyMemberId}",
-				studyGroupId, studyMemberId).contentType(APPLICATION_JSON_VALUE));
+			delete(studyGroupMemberApiPrefix + "/{studyGroupMemberId}", studyGroupId, studyGroupMemberId)
+				.contentType(APPLICATION_JSON_VALUE));
 
 		//then
 		resultActions
@@ -101,19 +100,19 @@ class StudyMemberRestControllerTest extends TestConfig {
 				content().contentType(APPLICATION_JSON))
 			.andDo(document(COMMON_DOCS_NAME,
 				requestHeaders(contentType(), host()),
-				pathParameters(studyGroupIdPath(), studyMemberIdPath()),
+				pathParameters(studyGroupIdPath(), studyGroupMemberIdPath()),
 				responseHeaders(contentType())));
 	}
 
-	private StudyMemberIdResponse toStudyMemberIdResponse(Long studyMemberId) {
-		return new StudyMemberIdResponse(studyMemberId);
+	private StudyGroupMemberIdResponse toStudyGroupMemberIdResponse(Long studyGroupMemberId) {
+		return new StudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
-	private ParameterDescriptor studyMemberIdPath() {
-		return parameterWithName(STUDY_MEMBER_ID.value()).description("스터디 멤버 아이디");
+	private ParameterDescriptor studyGroupMemberIdPath() {
+		return parameterWithName(STUDY_GROUP_MEMBER_ID.value()).description("스터디 그룹 멤버 아이디");
 	}
 
-	private FieldDescriptor studyMemberIdField() {
-		return fieldWithPath(STUDY_MEMBER_ID.value()).type(NUMBER).description("스터디 멤버 아이디");
+	private FieldDescriptor studyGroupMemberIdField() {
+		return fieldWithPath(STUDY_GROUP_MEMBER_ID.value()).type(NUMBER).description("스터디 그룹  멤버 아이디");
 	}
 }

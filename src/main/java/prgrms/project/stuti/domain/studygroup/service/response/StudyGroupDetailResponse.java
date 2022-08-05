@@ -11,7 +11,7 @@ public record StudyGroupDetailResponse(
 	String topic,
 	String title,
 	String imageUrl,
-	StudyMemberResponse leader,
+	StudyGroupMemberResponse leader,
 	Set<Mbti> preferredMBTIs,
 	boolean isOnline,
 	String region,

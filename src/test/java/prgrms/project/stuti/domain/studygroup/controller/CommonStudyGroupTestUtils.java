@@ -33,7 +33,7 @@ public class CommonStudyGroupTestUtils {
 
 	enum CommonField {
 		TITLE("title"), TOPIC("topic"), IS_ONLINE("isOnline"),
-		REGION("region"), PREFERRED_MBTIS("preferredMBTIs"), STUDY_MEMBER_ID("studyMemberId"),
+		REGION("region"), PREFERRED_MBTIS("preferredMBTIs"), STUDY_GROUP_MEMBER_ID("studyGroupMemberId"),
 		NUMBER_OF_RECRUITS("numberOfRecruits"), START_DATE_TIME("startDateTime"),
 		END_DATE_TIME("endDateTime"), DESCRIPTION("description"), IMAGE_FILE("imageFile"),
 		STUDY_GROUP_ID("studyGroupId"), IMAGE_URL("imageUrl"), NUMBER_OF_MEMBERS("numberOfMembers"),

@@ -15,16 +15,16 @@ import prgrms.project.stuti.config.RepositoryTestConfig;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
-import prgrms.project.stuti.domain.studygroup.model.StudyMember;
-import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 
 class StudyGroupRepositoryTest extends RepositoryTestConfig {
 
 	@Autowired
-	private StudyMemberRepository studyMemberRepository;
+	private StudyGroupMemberRepository studyGroupMemberRepository;
 
 	@Autowired
 	private StudyGroupRepository studyGroupRepository;
@@ -48,7 +48,7 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 				.description("description")
 				.build());
 
-		studyMemberRepository.save(new StudyMember(StudyMemberRole.LEADER, member, studyGroup));
+		studyGroupMemberRepository.save(new StudyGroupMember(StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
 	}
 
 	@Test
@@ -58,12 +58,12 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 		Long studyGroupId = studyGroup.getId();
 
 		//when
-		Optional<StudyMember> studyGroupDetail = studyGroupRepository.findStudyGroupDetailById(studyGroupId);
+		Optional<StudyGroupMember> studyGroupDetail = studyGroupRepository.findStudyGroupDetailById(studyGroupId);
 
 		// then
 		assertTrue(studyGroupDetail.isPresent());
 
-		StudyMember detail = studyGroupDetail.get();
+		StudyGroupMember detail = studyGroupDetail.get();
 		assertEquals(studyGroup.getId(), detail.getStudyGroup().getId());
 		assertEquals(member.getId(), detail.getMember().getId());
 	}

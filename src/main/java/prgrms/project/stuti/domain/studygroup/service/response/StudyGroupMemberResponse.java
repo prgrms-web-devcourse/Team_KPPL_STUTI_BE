@@ -3,7 +3,7 @@ package prgrms.project.stuti.domain.studygroup.service.response;
 import lombok.Builder;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record StudyMemberResponse(
+public record StudyGroupMemberResponse(
 	Long memberId,
 	String profileImageUrl,
 	String nickname,
@@ -13,6 +13,6 @@ public record StudyMemberResponse(
 ) {
 
 	@Builder
-	public StudyMemberResponse {
+	public StudyGroupMemberResponse {
 	}
 }

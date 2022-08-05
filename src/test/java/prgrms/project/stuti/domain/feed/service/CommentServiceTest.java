@@ -151,7 +151,7 @@ class CommentServiceTest extends ServiceTestConfig {
 		Feed post = createPost(member);
 		Comment parentComment = new Comment("댓글입니다.", null, member, post);
 		commentRepository.save(parentComment);
-		Comment childComment = new Comment("대댓글입니다.", parentComment, member2, post);
+		Comment childComment = new Comment("대댓글입니다.", parentComment, member, post);
 		commentRepository.save(childComment);
 
 		commentService.deleteComment(post.getId(), parentComment.getId(), member.getId());

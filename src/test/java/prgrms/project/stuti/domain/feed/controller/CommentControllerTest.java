@@ -52,4 +52,29 @@ class CommentControllerTest extends TestConfig {
 			.andDo(print());
 	}
 
+	@Test
+	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
+	@DisplayName("댓글을 수정한다.")
+	void testChangeComment() throws Exception {
+		CommentResponse commentResponse = CommentResponse.builder()
+			.postCommentId(1L)
+			.parentId(null)
+			.profileImageUrl("www.test.prgrm/image.jpg")
+			.memberId(1L)
+			.nickname("testNickname")
+			.contents("새로운 댓글입니다.")
+			.updatedAt(LocalDateTime.now())
+			.build();
+
+		String requestBody =
+			objectMapper.writeValueAsString(new CommentRequest(null, "댓글을 수정합니다."));
+
+		when(commentService.changeComment(any())).thenReturn(commentResponse);
+
+		mockMvc.perform(patch("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
 }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import prgrms.project.stuti.domain.feed.service.dto.CommentUpdateDto;
 import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
@@ -31,6 +32,18 @@ public class CommentService {
 		Comment savedComment = commentRepository.save(newComment);
 
 		return CommentConverter.toCommentResponse(savedComment);
+	}
+
+	@Transactional
+	public CommentResponse changeComment(CommentUpdateDto commentUpdateDto) {
+		Comment comment = commentRepository.findById(commentUpdateDto.postCommentId())
+			.orElseThrow(() -> CommentException.COMMENT_NOT_FOUND(commentUpdateDto.postCommentId()));
+		if(comment.getFeed() == null) { //추후 isdelete로 변경시 로직확인 필요, 대댓글인 경우 댓글 있는지 확인 필요
+			FeedException.FEED_NOT_FOUND();
+		}
+		comment.changeContents(commentUpdateDto.contents());
+
+		return CommentConverter.toCommentResponse(comment);
 	}
 
 	private Comment getParentComment(Long parentCommentId) {

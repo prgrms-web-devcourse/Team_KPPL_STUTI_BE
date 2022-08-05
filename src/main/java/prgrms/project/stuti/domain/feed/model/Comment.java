@@ -59,6 +59,10 @@ public class Comment extends BaseEntity {
 		this.feed = feed;
 	}
 
+	public void changeContents(String content) {
+		this.content = content;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

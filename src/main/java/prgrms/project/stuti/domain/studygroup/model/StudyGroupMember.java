@@ -1,7 +1,9 @@
-package prgrms.project.stuti.domain.feed.model;
+package prgrms.project.stuti.domain.studygroup.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,27 +23,33 @@ import prgrms.project.stuti.global.base.BaseEntity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Feed extends BaseEntity {
+public class StudyGroupMember extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "feed_id", unique = true, nullable = false, updatable = false)
+	@Column(name = "study_group_member_id", unique = true, nullable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "contents", length = 1000, nullable = false)
-	private String content;
+	@Enumerated(value = EnumType.STRING)
+	@Column(name = "study_group_member_role", length = 16, nullable = false)
+	private StudyGroupMemberRole studyGroupMemberRole;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	public Feed(String content, Member member) {
-		this.content = content;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "study_group_id")
+	private StudyGroup studyGroup;
+
+	public StudyGroupMember(StudyGroupMemberRole studyGroupMemberRole, Member member, StudyGroup studyGroup) {
+		this.studyGroupMemberRole = studyGroupMemberRole;
 		this.member = member;
+		this.studyGroup = studyGroup;
 	}
 
-	public void changeContents(String content) {
-		this.content = content;
+	public void updateStudyGroupMemberRole(StudyGroupMemberRole studyGroupMemberRole) {
+		this.studyGroupMemberRole = studyGroupMemberRole;
 	}
 
 	@Override
@@ -49,8 +57,9 @@ public class Feed extends BaseEntity {
 		return new ToStringBuilder(this,
 			ToStringStyle.SHORT_PREFIX_STYLE)
 			.append("id", id)
-			.append("contents", content)
+			.append("studyGroupMemberRole", studyGroupMemberRole)
 			.append("member", member)
+			.append("studyGroup", studyGroup)
 			.toString();
 	}
 }

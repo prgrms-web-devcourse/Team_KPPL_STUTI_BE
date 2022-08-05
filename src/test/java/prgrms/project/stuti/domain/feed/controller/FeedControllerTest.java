@@ -46,7 +46,7 @@ class FeedControllerTest extends TestConfig {
 		mockMvc.perform(
 				multipart("/api/v1/posts")
 					.file(file)
-					.param("content", "게시글")
+					.param("contents", "게시글")
 					.with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(status().isCreated())
 			.andDo(print());
@@ -91,7 +91,7 @@ class FeedControllerTest extends TestConfig {
 		mockMvc.perform(
 				multipart(HttpMethod.PATCH, "/api/v1/posts/{postId}", 1L)
 					.file(file)
-					.param("content", "수정게시글입니다."))
+					.param("contents", "수정게시글입니다."))
 			.andExpect(status().isOk())
 			.andDo(print());
 	}

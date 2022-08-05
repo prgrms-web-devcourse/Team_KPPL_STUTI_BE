@@ -2,14 +2,14 @@ package prgrms.project.stuti.domain.studygroup.controller;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import prgrms.project.stuti.domain.studygroup.controller.dto.QuestionCreateRequest;
-import prgrms.project.stuti.domain.studygroup.controller.dto.QuestionUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionCreateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.model.Region;
-import prgrms.project.stuti.domain.studygroup.service.dto.QuestionCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.QuestionUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -44,19 +44,19 @@ public class StudyGroupMapper {
 			.build();
 	}
 
-	public static QuestionCreateDto toQuestionCreateDto(Long memberId, Long studyGroupId,
-		QuestionCreateRequest createRequest) {
-		return QuestionCreateDto
+	public static StudyGroupQuestionCreateDto toStudyGroupQuestionCreateDto(Long memberId, Long studyGroupId,
+		StudyGroupQuestionCreateRequest createRequest) {
+		return StudyGroupQuestionCreateDto
 			.builder()
 			.memberId(memberId)
 			.studyGroupId(studyGroupId)
 			.parentId(createRequest.parentId())
-			.content(createRequest.content())
+			.contents(createRequest.contents())
 			.build();
 	}
 
-	public static QuestionUpdateDto toQuestionUpdateDto(Long memberId, Long studyGroupId,
-		Long questionId, QuestionUpdateRequest updateRequest) {
-		return new QuestionUpdateDto(memberId, studyGroupId, questionId, updateRequest.content());
+	public static StudyGroupQuestionUpdateDto toStudyGroupQuestionUpdateDto(Long memberId, Long studyGroupId,
+		Long studyGroupQuestionId, StudyGroupQuestionUpdateRequest updateRequest) {
+		return new StudyGroupQuestionUpdateDto(memberId, studyGroupId, studyGroupQuestionId, updateRequest.contents());
 	}
 }

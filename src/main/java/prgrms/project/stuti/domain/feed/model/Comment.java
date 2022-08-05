@@ -33,7 +33,7 @@ public class Comment extends BaseEntity {
 	@Column(name = "comment_id", unique = true, nullable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "content", length = 500, nullable = false)
+	@Column(name = "contents", length = 500, nullable = false)
 	private String content;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -64,7 +64,7 @@ public class Comment extends BaseEntity {
 		return new ToStringBuilder(this,
 			ToStringStyle.SHORT_PREFIX_STYLE)
 			.append("id", id)
-			.append("content", content)
+			.append("contents", content)
 			.append("member", member)
 			.append("feed", feed)
 			.toString();

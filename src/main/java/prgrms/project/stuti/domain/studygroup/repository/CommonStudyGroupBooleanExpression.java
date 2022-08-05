@@ -2,19 +2,19 @@ package prgrms.project.stuti.domain.studygroup.repository;
 
 import static prgrms.project.stuti.domain.member.model.QMember.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
-import static prgrms.project.stuti.domain.studygroup.model.QStudyMember.*;
+import static prgrms.project.stuti.domain.studygroup.model.QStudyGroupMember.*;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonStudyGroupBooleanExpression {
 
-	public static BooleanExpression hasStudyMemberRole(StudyMemberRole studyMemberRole) {
-		return studyMember.studyMemberRole.eq(studyMemberRole);
+	public static BooleanExpression hasStudyGroupMemberRole(StudyGroupMemberRole studyGroupMemberRole) {
+		return studyGroupMember.studyGroupMemberRole.eq(studyGroupMemberRole);
 	}
 
 	public static BooleanExpression isNotDeletedMember() {

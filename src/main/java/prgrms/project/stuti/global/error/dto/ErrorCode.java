@@ -17,6 +17,7 @@ public enum ErrorCode {
 	NOT_LEADER("SG003", "Not leader", HttpStatus.BAD_REQUEST),
 	EXISTING_STUDY_MEMBER("SG004", "Existing study member", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_STUDY_MEMBER("SG005", "Not found study member", HttpStatus.NOT_FOUND),
+	NOT_FOUND_QUESTION("SG006", "Not found question", HttpStatus.NOT_FOUND),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),

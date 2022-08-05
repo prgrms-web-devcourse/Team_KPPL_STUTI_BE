@@ -27,6 +27,10 @@ public class CommonStudyGroupTestUtils {
 		return headerWithName(CONTENT_LENGTH).description("컨텐츠 길이");
 	}
 
+	public static HeaderDescriptor location() {
+		return headerWithName(HttpHeaders.LOCATION).description("생성된 리소스 주소");
+	}
+
 	enum CommonField {
 		TITLE("title"), TOPIC("topic"), IS_ONLINE("isOnline"),
 		REGION("region"), PREFERRED_MBTIS("preferredMBTIs"), STUDY_MEMBER_ID("studyMemberId"),

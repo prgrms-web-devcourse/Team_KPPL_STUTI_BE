@@ -11,9 +11,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyMemberRepository;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyMemberIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupConverter;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 

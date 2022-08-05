@@ -1,17 +1,18 @@
 package prgrms.project.stuti.domain.studygroup.service.response;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import lombok.Builder;
+import prgrms.project.stuti.domain.member.model.Mbti;
 
 public record StudyGroupDetailResponse(
 	Long studyGroupId,
 	String topic,
 	String title,
 	String imageUrl,
-	LeaderResponse leader,
-	List<String> preferredMBTIs,
+	StudyMemberResponse leader,
+	Set<Mbti> preferredMBTIs,
 	boolean isOnline,
 	String region,
 	LocalDateTime startDateTime,

@@ -1,16 +1,17 @@
 package prgrms.project.stuti.domain.studygroup.service.studygroup;
 
-import java.util.List;
+import java.util.HashSet;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
+import prgrms.project.stuti.domain.studygroup.model.StudyMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
-import prgrms.project.stuti.domain.studygroup.service.response.LeaderResponse;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDetailDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyMemberResponse;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupConverter {
@@ -26,6 +27,7 @@ public class StudyGroupConverter {
 			.region(createDto.region())
 			.numberOfRecruits(createDto.numberOfRecruits())
 			.studyPeriod(new StudyPeriod(createDto.startDateTime(), createDto.endDateTime()))
+			.preferredMBTIs(new HashSet<>(createDto.preferredMBTIs()))
 			.description(createDto.description())
 			.build();
 	}
@@ -34,40 +36,38 @@ public class StudyGroupConverter {
 		return new StudyGroupIdResponse(studyGroupId);
 	}
 
-	public static StudyGroupDetailResponse toStudyGroupResponse(List<StudyGroupDetailDto> detailDtos) {
-		StudyGroupDetailDto detailDto = detailDtos.get(0);
+	public static StudyGroupDetailResponse toStudyGroupDetailResponse(StudyMember studyGroupDetail) {
+		StudyGroup studyGroup = studyGroupDetail.getStudyGroup();
+		StudyPeriod studyPeriod = studyGroup.getStudyPeriod();
+		Member member = studyGroupDetail.getMember();
 
 		return StudyGroupDetailResponse
 			.builder()
-			.studyGroupId(detailDto.studyGroupId())
-			.topic(detailDto.topic().getValue())
-			.title(detailDto.title())
-			.imageUrl(detailDto.imageUrl())
-			.leader(toLeaderResponse(detailDto))
-			.preferredMBTIs(toPreferredMBTIs(detailDtos))
-			.isOnline(detailDto.isOnline())
-			.region(detailDto.region().getValue())
-			.startDateTime(detailDto.startDateTime())
-			.endDateTime(detailDto.endDateTime())
-			.numberOfMembers(detailDto.numberOfMembers())
-			.numberOfRecruits(detailDto.numberOfRecruits())
-			.description(detailDto.description())
+			.studyGroupId(studyGroup.getId())
+			.topic(studyGroup.getTopic().getValue())
+			.title(studyGroup.getTitle())
+			.imageUrl(studyGroup.getImageUrl())
+			.leader(toStudyMemberResponse(member))
+			.preferredMBTIs(studyGroup.getPreferredMBTIs())
+			.isOnline(studyGroup.isOnline())
+			.region(studyGroup.getRegion().getValue())
+			.startDateTime(studyPeriod.getStartDateTime())
+			.endDateTime(studyPeriod.getEndDateTime())
+			.numberOfMembers(studyGroup.getNumberOfMembers())
+			.numberOfRecruits(studyGroup.getNumberOfRecruits())
+			.description(studyGroup.getDescription())
 			.build();
 	}
 
-	private static LeaderResponse toLeaderResponse(StudyGroupDetailDto detailDto) {
-		return LeaderResponse
+	private static StudyMemberResponse toStudyMemberResponse(Member member) {
+		return StudyMemberResponse
 			.builder()
-			.memberId(detailDto.memberId())
-			.profileImageUrl(detailDto.profileImageUrl())
-			.nickname(detailDto.nickname())
-			.field(detailDto.field().getFieldValue())
-			.career(detailDto.career().getCareerValue())
-			.mbti(String.valueOf(detailDto.mbti()))
+			.memberId(member.getId())
+			.profileImageUrl(member.getProfileImageUrl())
+			.nickname(member.getNickName())
+			.field(member.getField().getFieldValue())
+			.career(member.getCareer().getCareerValue())
+			.mbti(member.getMbti())
 			.build();
-	}
-
-	private static List<String> toPreferredMBTIs(List<StudyGroupDetailDto> detailDtos) {
-		return detailDtos.stream().map(dto -> String.valueOf(dto.preferredMBTI())).toList();
 	}
 }

@@ -1,7 +1,7 @@
 package prgrms.project.stuti.domain.studygroup.controller.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -39,7 +39,7 @@ public record StudyGroupCreateRequest(
 	Region region,
 
 	@NotNull
-	List<Mbti> preferredMBTIs,
+	Set<Mbti> preferredMBTIs,
 
 	@NotNull
 	@Positive

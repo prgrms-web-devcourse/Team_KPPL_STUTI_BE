@@ -7,8 +7,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -157,7 +157,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 			.topic(Topic.AI)
 			.isOnline(false)
 			.region(Region.SEOUL)
-			.preferredMBTIs(List.of(Mbti.ENFJ, Mbti.ENFP))
+			.preferredMBTIs(Set.of(Mbti.ENFJ, Mbti.ENFP))
 			.numberOfRecruits(5)
 			.startDateTime(LocalDateTime.now().plusDays(10))
 			.endDateTime(LocalDateTime.now().plusMonths(3))

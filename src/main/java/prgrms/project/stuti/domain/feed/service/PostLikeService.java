@@ -35,4 +35,11 @@ public class PostLikeService {
 
 		return PostLikeConverter.toPostLikeIdResponse(savedPostLike.getId());
 	}
+
+	@Transactional
+	public void cancelPostLike(Long postId, Long memberId) {
+		FeedLike feedLike = postLikeRepository.findByFeedIdAndMemberId(postId, memberId)
+			.orElseThrow(FeedException::NOT_FOUND_FEED_LIKE);
+		postLikeRepository.deleteById(feedLike.getId());
+	}
 }

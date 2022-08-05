@@ -4,6 +4,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,5 +30,14 @@ public class PostLikeController {
 
 		//return ResponseEntity.created(uri).body(postLikeIdResponse);
 		return ResponseEntity.ok().headers(httpHeaders).body(postLikeIdResponse);
+	}
+
+	@DeleteMapping("/api/v1/posts/{postId}/like")
+	public ResponseEntity<Void> cancelPostLike(@PathVariable Long postId, @AuthenticationPrincipal Long memberId) {
+		postLikeService.cancelPostLike(postId, memberId);
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+		return ResponseEntity.noContent().headers(httpHeaders).build();
 	}
 }

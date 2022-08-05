@@ -28,8 +28,7 @@ class PostLikeControllerTest extends TestConfig {
 	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
 	@DisplayName("게시글에 좋아요를 등록한다")
 	void testCreatePostLike() throws Exception {
-		PostLikeIdResponse postLikeIdResponse = PostLikeIdResponse.builder()
-			.postLikeId(1L).build();
+		PostLikeIdResponse postLikeIdResponse = new PostLikeIdResponse(1L);
 
 		when(postLikeService.createPostLike(anyLong(), anyLong()))
 			.thenReturn(postLikeIdResponse);
@@ -38,6 +37,17 @@ class PostLikeControllerTest extends TestConfig {
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8))
 			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
+	@Test
+	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
+	@DisplayName("좋아요를 취소한다")
+	void testCancelPostLike() throws Exception {
+		doNothing().when(postLikeService).cancelPostLike(anyLong(), anyLong());
+
+		mockMvc.perform(delete("/api/v1/posts/{postId}/like", 1L))
+			.andExpect(status().isNoContent())
 			.andDo(print());
 	}
 }

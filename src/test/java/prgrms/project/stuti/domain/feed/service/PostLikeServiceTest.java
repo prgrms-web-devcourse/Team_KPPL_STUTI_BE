@@ -58,7 +58,27 @@ class PostLikeServiceTest extends ServiceTestConfig {
 
 		postLikeService.createPostLike(post.getId(), member.getId());
 
-		assertThrows(FeedException.class, () ->postLikeService.createPostLike(post.getId(), member.getId()));
+		assertThrows(FeedException.class, () -> postLikeService.createPostLike(post.getId(), member.getId()));
+	}
+
+	@Test
+	@DisplayName("좋아요를 취소한다.")
+	void testCancelPostLike() {
+		Feed post = createPost(member);
+		PostLikeIdResponse postLike = postLikeService.createPostLike(post.getId(), member.getId());
+
+		postLikeService.cancelPostLike(post.getId(), member.getId());
+		Optional<FeedLike> foundPostLike = postLikeRepository.findById(postLike.postLikeId());
+
+		assertThat(foundPostLike).isEmpty();
+	}
+
+	@Test
+	@DisplayName("좋아요 하지 않은 게시글을 좋아요 취소 할 수 없다.")
+	void testCancelPostLikeWithUnknownLike() {
+		Feed post = createPost(member);
+
+		assertThrows(FeedException.class, () -> postLikeService.cancelPostLike(post.getId(), member.getId()));
 	}
 
 	private Feed createPost(Member member) {

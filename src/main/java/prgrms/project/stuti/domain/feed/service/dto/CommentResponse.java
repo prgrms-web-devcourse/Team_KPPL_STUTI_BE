@@ -11,7 +11,7 @@ public record CommentResponse(
 	Long memberId,
 	String nickname,
 	String contents,
-	LocalDateTime createdAt
+	LocalDateTime updatedAt
 ) {
 	@Builder
 	public CommentResponse {

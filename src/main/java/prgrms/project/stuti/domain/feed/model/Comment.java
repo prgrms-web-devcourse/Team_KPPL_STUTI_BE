@@ -40,7 +40,7 @@ public class Comment extends BaseEntity {
 	@JoinColumn(name = "parent_id")
 	private Comment parent;
 
-	@OneToMany(mappedBy = "parent")
+	@OneToMany(mappedBy = "parent", orphanRemoval = true)
 	private final List<Comment> children = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -57,6 +57,10 @@ public class Comment extends BaseEntity {
 		this.parent = parent;
 		this.member = member;
 		this.feed = feed;
+	}
+
+	public void changeContents(String content) {
+		this.content = content;
 	}
 
 	@Override

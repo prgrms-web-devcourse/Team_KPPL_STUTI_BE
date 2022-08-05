@@ -39,7 +39,8 @@ public enum ErrorCode {
 	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),
 
 	//(feed)comment
-	PARENT_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST);
+	PARENT_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST),
+	COMMENT_NOT_FOUND("FC002", "not exist comment", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

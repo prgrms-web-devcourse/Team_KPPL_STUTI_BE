@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
+import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
@@ -30,6 +31,7 @@ public class FeedService {
 	private final MemberRepository memberRepository;
 	private final ImageUploader imageUploader;
 	private final FeedImageRepository feedImageRepository;
+	private final CommentRepository commentRepository;
 
 	@Transactional
 	public PostIdResponse registerPost(PostCreateDto postDto) {
@@ -75,6 +77,7 @@ public class FeedService {
 	public void deletePost(Long postId) {
 		feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
 		feedImageRepository.deleteByFeedId(postId);
+		commentRepository.deleteAllByFeedId(postId);
 		feedRepository.deleteById(postId);
 	}
 

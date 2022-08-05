@@ -4,8 +4,12 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.CommentRequest;
+import prgrms.project.stuti.domain.feed.service.dto.CommentUpdateDto;
 import prgrms.project.stuti.domain.feed.service.CommentService;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
@@ -31,5 +36,24 @@ public class CommentController {
 		URI uri = URI.create("/api/v1/posts/" + postId + "/comments/" + commentResponse.postCommentId());
 
 		return ResponseEntity.created(uri).body(commentResponse);
+	}
+
+	@PatchMapping("/api/v1/posts/{postId}/comments/{commentId}")
+	public ResponseEntity<CommentResponse> changeComment(@PathVariable Long postId, @PathVariable Long commentId,
+		@Valid @RequestBody CommentRequest commentRequest, @AuthenticationPrincipal Long memberId) {
+		CommentUpdateDto commentUpdateDto = CommentMapper.toCommentUpdateDto(commentRequest, postId, commentId, memberId);
+		CommentResponse commentResponse = commentService.changeComment(commentUpdateDto);
+
+		return ResponseEntity.ok().body(commentResponse);
+	}
+
+	@DeleteMapping("/api/v1/posts/{postId}/comments/{commentId}")
+	public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
+		@AuthenticationPrincipal Long memberId) {
+		commentService.deleteComment(postId, commentId, memberId);
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+		return ResponseEntity.noContent().headers(httpHeaders).build();
 	}
 }

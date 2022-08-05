@@ -37,7 +37,7 @@ class CommentControllerTest extends TestConfig {
 			.memberId(1L)
 			.nickname("testNickname")
 			.contents("새로운 댓글입니다.")
-			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.build();
 		String requestBody =
 			objectMapper.writeValueAsString(new CommentRequest(null, "테스트 댓글을 답니다."));
@@ -52,4 +52,40 @@ class CommentControllerTest extends TestConfig {
 			.andDo(print());
 	}
 
+	@Test
+	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
+	@DisplayName("댓글을 수정한다.")
+	void testChangeComment() throws Exception {
+		CommentResponse commentResponse = CommentResponse.builder()
+			.postCommentId(1L)
+			.parentId(null)
+			.profileImageUrl("www.test.prgrm/image.jpg")
+			.memberId(1L)
+			.nickname("testNickname")
+			.contents("새로운 댓글입니다.")
+			.updatedAt(LocalDateTime.now())
+			.build();
+
+		String requestBody =
+			objectMapper.writeValueAsString(new CommentRequest(null, "댓글을 수정합니다."));
+
+		when(commentService.changeComment(any())).thenReturn(commentResponse);
+
+		mockMvc.perform(patch("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(requestBody))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
+	@Test
+	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
+	@DisplayName("댓글을 삭제한다")
+	void testDeleteComment() throws Exception {
+		doNothing().when(commentService).deleteComment(anyLong(), anyLong(), anyLong());
+
+		mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L))
+			.andExpect(status().isNoContent())
+			.andDo(print());
+	}
 }

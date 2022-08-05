@@ -23,7 +23,7 @@ import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
+import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 
 @RestController
 @RequestMapping("/api/v1/study-groups")

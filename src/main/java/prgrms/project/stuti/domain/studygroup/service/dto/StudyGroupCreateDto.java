@@ -1,7 +1,7 @@
 package prgrms.project.stuti.domain.studygroup.service.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +17,7 @@ public record StudyGroupCreateDto(
 	Topic topic,
 	boolean isOnline,
 	Region region,
-	List<Mbti> preferredMBTIs,
+	Set<Mbti> preferredMBTIs,
 	int numberOfRecruits,
 	LocalDateTime startDateTime,
 	LocalDateTime endDateTime,

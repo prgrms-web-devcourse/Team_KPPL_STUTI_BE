@@ -1,6 +1,11 @@
 package prgrms.project.stuti.domain.studygroup.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,6 +23,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.global.base.BaseEntity;
 
 @Entity
@@ -58,6 +65,12 @@ public class StudyGroup extends BaseEntity {
 	@Embedded
 	private StudyPeriod studyPeriod;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	@ElementCollection
+	@CollectionTable(name = "preferred_mbtis", joinColumns = @JoinColumn(name = "study_group_id"))
+	private Set<Mbti> preferredMBTIs = new HashSet<>();
+
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;
 
@@ -66,7 +79,7 @@ public class StudyGroup extends BaseEntity {
 
 	@Builder
 	public StudyGroup(String imageUrl, String thumbnailUrl, String title, Topic topic, boolean isOnline, Region region,
-		int numberOfRecruits, StudyPeriod studyPeriod, String description) {
+		int numberOfRecruits, StudyPeriod studyPeriod, Set<Mbti> preferredMBTIs, String description) {
 		this.imageUrl = imageUrl;
 		this.thumbnailUrl = thumbnailUrl;
 		this.title = title;
@@ -75,6 +88,7 @@ public class StudyGroup extends BaseEntity {
 		this.region = region;
 		this.numberOfMembers = NumberUtils.INTEGER_ZERO;
 		this.numberOfRecruits = numberOfRecruits;
+		this.preferredMBTIs = preferredMBTIs;
 		this.studyPeriod = studyPeriod;
 		this.description = description;
 		this.isDeleted = false;

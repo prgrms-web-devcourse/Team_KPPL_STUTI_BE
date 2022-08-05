@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,10 +39,10 @@ import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.service.response.LeaderResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.studygroup.StudyGroupService;
+import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 
 @WebMvcTest(controllers = StudyGroupRestController.class)
 class StudyGroupRestControllerTest extends TestConfig {
@@ -189,17 +190,15 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.title("test title")
 			.imageUrl("test image url")
 			.leader(
-				LeaderResponse.builder()
+				StudyGroupMemberResponse.builder()
 					.memberId(1L)
 					.profileImageUrl("test profile image url")
 					.nickname("nickname")
 					.field("BACKEND")
-					.career(
-						Career.JUNIOR.getCareerValue())
-					.mbti(Mbti.ENFJ.name())
-					.build()
-			)
-			.preferredMBTIs(List.of("ENFJ", "INFJ"))
+					.career(Career.JUNIOR.getCareerValue())
+					.mbti(Mbti.ENFJ)
+					.build())
+			.preferredMBTIs(Set.of(Mbti.ENFJ, Mbti.INFJ))
 			.isOnline(false)
 			.region(Region.DAEJEON.getValue())
 			.startDateTime(LocalDateTime.now().plusDays(10))

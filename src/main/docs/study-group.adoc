@@ -11,10 +11,10 @@ operation::get-study-groups[snippets='http-request,request-headers,request-param
 === 상세조회
 operation::get-study-group[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body'']
 
-=== 업데이트
+=== 수정
 operation::patch-study-group[snippets='http-request,request-headers,request-parts,request-parameters,response-headers,response-fields,response-body']
 '''
 
-=== 스터디 삭제
-operation::delete-study-group[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body']
+=== 삭제
+operation::delete-study-group[snippets='http-request,request-headers,path-parameters,response-headers']
 '''

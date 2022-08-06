@@ -22,12 +22,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionCreateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupQuestionService;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @WebMvcTest(controllers = StudyGroupQuestionRestController.class)
 class StudyGroupQuestionRestControllerTest extends TestConfig {
@@ -69,6 +73,34 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 				requestFields(parentIdField(), contents()),
 				responseHeaders(contentType(), contentLength(), location()),
 				responseFields(commonQuestionResponse())));
+
+	}
+
+	@Test
+	@DisplayName("스터디 그룹 문의 댓글 페이징 조회한다.")
+	void getStudyGroupQuestions() throws Exception {
+		//given
+		PageResponse<StudyGroupQuestionListResponse> pageResponse = toListResponse();
+		given(studyGroupQuestionService.getStudyGroupQuestions(any(), any(), any())).willReturn(pageResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			get(studyGroupQuestionApiPrefix, studyGroupId)
+				.queryParams(toPageRequestParams())
+				.contentType(APPLICATION_JSON));
+
+		//then
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().json(objectMapper.writeValueAsString(pageResponse)),
+				content().contentType(APPLICATION_JSON))
+			.andDo(document(COMMON_DOCS_NAME,
+				requestHeaders(contentType(), host()),
+				pathParameters(studyGroupIdPath()),
+				requestParameters(pageRequestParameters()),
+				responseHeaders(contentType(), contentLength()),
+				responseFields(pageResponseFields())));
 
 	}
 
@@ -137,6 +169,22 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 			.build();
 	}
 
+	private PageResponse<StudyGroupQuestionListResponse> toListResponse() {
+		final List<StudyGroupQuestionListResponse> contents = List.of(StudyGroupQuestionListResponse
+			.builder()
+			.studyGroupQuestionId(studyGroupQuestionId)
+			.memberId(1L)
+			.parentId(1L)
+			.profileImageUrl("test profile image url")
+			.nickname("test nickname")
+			.contents("test contents")
+			.updatedAt(LocalDateTime.now())
+			.children(List.of(toQuestionResponse()))
+			.build());
+
+		return new PageResponse<>(contents, false, 10);
+	}
+
 	private ParameterDescriptor studyGroupQuestionIdPath() {
 		return parameterWithName(STUDY_GROUP_QUESTION_ID.value()).description("스터디 그룹 문의댓글 아이디");
 	}
@@ -158,6 +206,29 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 			fieldWithPath(NICKNAME.value()).type(STRING).description("닉네임"),
 			contents(),
 			fieldWithPath("updatedAt").type(STRING).description("업데이트 시간")
+		);
+	}
+
+	private MultiValueMap<String, String> toPageRequestParams() {
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+		map.add("size", "10");
+		map.add("lastStudyGroupQuestionId", "1");
+
+		return map;
+	}
+
+	private List<ParameterDescriptor> pageRequestParameters() {
+		return List.of(
+			parameterWithName("size").description("페이지 사이즈"),
+			parameterWithName("lastStudyGroupQuestionId").description("마지막으로 본 스터디 그룹 문의댓글 아이디")
+		);
+	}
+
+	private List<FieldDescriptor> pageResponseFields() {
+		return List.of(
+			subsectionWithPath("contents").type(ARRAY).description("페이징 컨텐츠"),
+			fieldWithPath("hasNext").type(BOOLEAN).description("다음 컨텐츠 유무"),
+			fieldWithPath("totalElements").type(NUMBER).description("총 컨텐츠 수")
 		);
 	}
 }

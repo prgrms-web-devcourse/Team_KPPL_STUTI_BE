@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQuestionRepository;
@@ -15,6 +16,7 @@ import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpda
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +34,16 @@ public class StudyGroupQuestionService {
 		return StudyGroupConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
 	}
 
+	@Transactional(readOnly = true)
+	public PageResponse<StudyGroupQuestionListResponse> getStudyGroupQuestions(Long studyGroupId, Long size,
+		Long lastStudyGroupQuestionId) {
+		return studyGroupQuestionRepository.findAllWithPagination(studyGroupId, size, lastStudyGroupQuestionId);
+	}
+
 	@Transactional
 	public StudyGroupQuestionResponse updateStudyGroupQuestion(StudyGroupQuestionUpdateDto updateDto) {
 		StudyGroupQuestion studyGroupQuestion = findStudyGroupQuestion(updateDto.studyGroupQuestionId());
-		studyGroupQuestion.updateContents(updateDto.contents());
+		updateQuestion(updateDto, studyGroupQuestion);
 
 		return StudyGroupConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
 	}
@@ -73,6 +81,13 @@ public class StudyGroupQuestionService {
 		validateStudyGroup(studyGroup, studyGroupId);
 
 		studyGroupQuestionRepository.delete(studyGroupQuestion);
+	}
+
+	private void updateQuestion(StudyGroupQuestionUpdateDto updateDto, StudyGroupQuestion studyGroupQuestion) {
+		validateMember(studyGroupQuestion.getMember(), updateDto.memberId());
+		validateStudyGroup(studyGroupQuestion.getStudyGroup(), updateDto.studyGroupId());
+
+		studyGroupQuestion.updateContents(updateDto.contents());
 	}
 
 	private Member findMember(Long memberId) {

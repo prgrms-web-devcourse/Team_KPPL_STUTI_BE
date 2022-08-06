@@ -1,5 +1,6 @@
 package prgrms.project.stuti.domain.studygroup.service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -15,9 +16,11 @@ import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailR
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupConverter {
@@ -89,6 +92,11 @@ public class StudyGroupConverter {
 		return new CursorPageResponse<>(toStudyGroupResponse(studyGroupMembers), hasNext);
 	}
 
+	public static PageResponse<StudyGroupQuestionListResponse> toStudyGroupQuestionPageResponse(
+		List<StudyGroupQuestion> questions, boolean hasNext, Long totalElements) {
+		return new PageResponse<>(toStudyGroupQuestionListResponse(questions), hasNext, totalElements);
+	}
+
 	private static StudyGroupMemberResponse toStudyGroupMemberResponse(Member member) {
 		return StudyGroupMemberResponse
 			.builder()
@@ -126,5 +134,50 @@ public class StudyGroupConverter {
 			})
 			.toList();
 
+	}
+
+	private static List<StudyGroupQuestionListResponse> toStudyGroupQuestionListResponse(
+		List<StudyGroupQuestion> studyGroupQuestions) {
+		return studyGroupQuestions
+			.stream()
+			.map(parentQuestion -> {
+				Member parentMember = parentQuestion.getMember();
+
+				return StudyGroupQuestionListResponse
+					.builder()
+					.studyGroupQuestionId(parentQuestion.getId())
+					.parentId(null)
+					.profileImageUrl(parentMember.getProfileImageUrl())
+					.memberId(parentMember.getId())
+					.nickname(parentMember.getNickName())
+					.contents(parentQuestion.getContents())
+					.updatedAt(parentQuestion.getUpdatedAt())
+					.children(toStudyGroupQuestionChildren(parentQuestion.getChildren()))
+					.build();
+			})
+			.toList();
+	}
+
+	private static List<StudyGroupQuestionResponse> toStudyGroupQuestionChildren(
+		List<StudyGroupQuestion> children) {
+		return children.isEmpty()
+			? Collections.emptyList()
+			: children
+			.stream()
+			.map(child -> {
+				Member member = child.getMember();
+				StudyGroupQuestion childrenParent = child.getParent();
+
+				return StudyGroupQuestionResponse.builder()
+					.studyGroupQuestionId(child.getId())
+					.parentId(childrenParent.getId())
+					.profileImageUrl(member.getProfileImageUrl())
+					.memberId(member.getId())
+					.nickname(member.getNickName())
+					.contents(child.getContents())
+					.updatedAt(child.getUpdatedAt())
+					.build();
+			})
+			.toList();
 	}
 }

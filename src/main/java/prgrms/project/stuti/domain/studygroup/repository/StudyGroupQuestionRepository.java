@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 
-public interface StudyGroupQuestionRepository extends JpaRepository<StudyGroupQuestion, Long> {
+public interface StudyGroupQuestionRepository
+	extends JpaRepository<StudyGroupQuestion, Long>, CustomStudyGroupQuestionRepository {
 
 	@EntityGraph(attributePaths = {"member", "studyGroup"})
 	Optional<StudyGroupQuestion> findStudyGroupQuestionById(Long studyGroupQuestionId);

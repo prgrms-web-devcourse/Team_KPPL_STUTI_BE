@@ -39,7 +39,7 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			jpaQueryFactory
 				.selectFrom(studyGroupMember)
 				.join(studyGroupMember.member, member)
-				.join(studyGroupMember.studyGroup, studyGroup)
+				.join(studyGroupMember.studyGroup, studyGroup).fetchJoin()
 				.where(equalStudyGroupMemberId(studyGroupMemberId), notDeletedMember(), notDeletedStudyGroup())
 				.fetchFirst()
 		);

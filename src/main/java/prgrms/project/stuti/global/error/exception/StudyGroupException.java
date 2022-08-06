@@ -58,4 +58,10 @@ public class StudyGroupException extends BusinessException {
 			MessageFormat.format(
 				"스터디 그룹 문의 댓글의 스터디 그룹 정보와 일치하지 않습니다. (studyGroupId: {0})", studyGroupId));
 	}
+
+	public static StudyGroupException recruitmentIsClosed(int numberOfMembers, int numberOfRecruits) {
+		return new StudyGroupException(ErrorCode.RECRUITMENT_IS_CLOSED,
+			MessageFormat.format("스터디 그룹의 모집이 마감되었습니다. (numberOfMembers: {0}, numberOfRecruits: {1})",
+				numberOfMembers, numberOfRecruits));
+	}
 }

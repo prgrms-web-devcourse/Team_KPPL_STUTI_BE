@@ -36,11 +36,24 @@ public class StudyGroupMemberService {
 		return StudyGroupConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
+	@Transactional(readOnly = true)
+	public StudyGroupMemberManagementResponse getStudyGroupMembers(Long memberId, Long studyGroupId) {
+		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(memberId,
+			studyGroupId);
+
+		return StudyGroupConverter.toStudyGroupMemberManagementResponse(studyGroupMembers);
+	}
+
 	@Transactional
 	public StudyGroupMemberIdResponse acceptRequestForJoin(Long memberId, Long studyGroupId, Long studyGroupMemberId) {
 		validateStudyLeader(memberId, studyGroupId);
 		StudyGroupMember studyGroupMember = findStudyGroupMember(studyGroupMemberId);
-		studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
+		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
+
+		if (!studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)) {
+			studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
+			studyGroup.increaseNumberOfMembers();
+		}
 
 		return StudyGroupConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
 	}
@@ -88,12 +101,5 @@ public class StudyGroupMemberService {
 	private StudyGroup findStudyGroup(Long studyGroupId) {
 		return studyGroupRepository.findStudyGroupById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
-	}
-
-	public StudyGroupMemberManagementResponse getStudyGroupMembers(Long memberId, Long studyGroupId) {
-		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(memberId,
-			studyGroupId);
-
-		return StudyGroupConverter.toStudyGroupMemberManagementResponse(studyGroupMembers);
 	}
 }

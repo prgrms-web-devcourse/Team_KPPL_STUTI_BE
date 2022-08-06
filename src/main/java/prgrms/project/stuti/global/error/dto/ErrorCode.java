@@ -20,6 +20,7 @@ public enum ErrorCode {
 	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.NOT_FOUND),
 	NOT_MATCH_WRITER("SG007", "Not match writer", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_STUDY_GROUP("SG008", "Not match study group", HttpStatus.BAD_REQUEST),
+	RECRUITMENT_IS_CLOSED("SG009", "Recruitment is closed", HttpStatus.BAD_REQUEST),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),

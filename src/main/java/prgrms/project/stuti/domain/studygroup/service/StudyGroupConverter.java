@@ -1,19 +1,27 @@
 package prgrms.project.stuti.domain.studygroup.service;
 
 import java.util.HashSet;
+import java.util.List;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionIdResponse;
+<<<<<<< Updated upstream
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
+=======
+>>>>>>> Stashed changes
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupConverter {
@@ -42,8 +50,19 @@ public class StudyGroupConverter {
 		return new StudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
-	public static StudyGroupQuestionIdResponse toStudyGroupQuestionIdResponse(Long studyGroupQuestionId) {
-		return new StudyGroupQuestionIdResponse(studyGroupQuestionId);
+	public static StudyGroupQuestionResponse toStudyGroupQuestionResponse(StudyGroupQuestion studyGroupQuestion) {
+		Member member = studyGroupQuestion.getMember();
+
+		return StudyGroupQuestionResponse
+			.builder()
+			.studyGroupQuestionId(studyGroupQuestion.getId())
+			.parentId(studyGroupQuestion.getParent() == null ? null : studyGroupQuestion.getParent().getId())
+			.profileImageUrl(member.getProfileImageUrl())
+			.memberId(member.getId())
+			.nickname(member.getNickName())
+			.contents(studyGroupQuestion.getContents())
+			.updatedAt(studyGroupQuestion.getUpdatedAt())
+			.build();
 	}
 
 	public static StudyGroupDetailResponse toStudyGroupDetailResponse(StudyGroupMember studyGroupDetail) {

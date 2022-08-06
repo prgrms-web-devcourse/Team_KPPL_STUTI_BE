@@ -46,4 +46,16 @@ public class StudyGroupException extends BusinessException {
 			MessageFormat.format(
 				"스터디 그룹 문의 댓글을 찾을 수 없습니다. (studyGroupQuestionId: {0})", studyGroupQuestionId));
 	}
+
+	public static StudyGroupException notMatchWriter(Long memberId) {
+		return new StudyGroupException(ErrorCode.NOT_MATCH_WRITER,
+			MessageFormat.format(
+				"스터디 그룹 문의 댓글의 작성자 정보와 일치하지 않습니다. (memberId: {0})", memberId));
+	}
+
+	public static StudyGroupException notMatchStudyGroup(Long studyGroupId) {
+		return new StudyGroupException(ErrorCode.NOT_MATCH_STUDY_GROUP,
+			MessageFormat.format(
+				"스터디 그룹 문의 댓글의 스터디 그룹 정보와 일치하지 않습니다. (studyGroupId: {0})", studyGroupId));
+	}
 }

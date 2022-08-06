@@ -9,5 +9,5 @@ operation::post-apply-study-group[snippets='http-request,request-headers,path-pa
 '''
 
 === 스터디 멤버 삭제
-operation::delete-study-member[snippets='http-request,request-headers,path-parameters,response-headers']
+operation::delete-study-group-member[snippets='http-request,request-headers,path-parameters,response-headers']
 '''

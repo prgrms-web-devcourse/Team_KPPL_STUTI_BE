@@ -1,0 +1,13 @@
+== 스터디 그룹 문의/질문 댓글
+
+=== 문의/질문 댓글 생성
+operation::post-study-group-question[snippets='http-request,request-headers,path-parameters,request-fields,request-body,response-headers,response-fields,response-body']
+'''
+
+=== 문의/질문 댓글 수정
+operation::patch-study-group-question[snippets='http-request,request-headers,path-parameters,request-fields,request-body,response-headers,response-fields,response-body']
+'''
+
+=== 문의/질문 댓글 삭제
+operation::delete-study-group-question[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body']
+'''

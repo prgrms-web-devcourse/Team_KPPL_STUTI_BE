@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  redis:
+    host: ${REDIS_ENDPOINT}
+    port: 6379
+  jpa:
+    database: mysql
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+app:
+  cors:
+    allowed-origins: 'http://localhost:3000'
+  oauth:
+    domain: "http://localhost:3000"
+
+# Sentry
+DSN: https://e6ac8fba443a46ea8425aadf84c6325c@o1332931.ingest.sentry.io/6597826

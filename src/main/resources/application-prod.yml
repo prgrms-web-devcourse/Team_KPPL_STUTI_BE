@@ -17,8 +17,9 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
   flyway:
-    enabled: true
-    baseline-on-migrate: true
+    enabled: false
+#    enabled: true
+#    baseline-on-migrate: true
 
 app:
   cors:
@@ -27,4 +28,4 @@ app:
     domain: "http://localhost:3000"
 
 # Sentry
-DSN: https://e6ac8fba443a46ea8425aadf84c6325c@o1332931.ingest.sentry.io/6597826
+#DSN: https://e6ac8fba443a46ea8425aadf84c6325c@o1332931.ingest.sentry.io/6597826

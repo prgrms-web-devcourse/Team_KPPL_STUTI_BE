@@ -9,7 +9,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
     id 'org.asciidoctor.convert' version '1.5.8'
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
-    id 'checkstyle'
+//    id 'checkstyle'
     id 'java'
 }
 
@@ -23,43 +23,53 @@ sourceCompatibility = '17'
 //    toolVersion ="10.3.1"
 //}
 
-//configurations {
-//    compileOnly {
-//        extendsFrom annotationProcessor
-//    }
-//
-//    querydsl.extendsFrom compileClasspath
-//}
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // SPRING
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.session:spring-session-core'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // FLYWAY
     implementation 'org.flywaydb:flyway-core'
     implementation 'org.flywaydb:flyway-mysql'
+
+    // SENTRY
     implementation 'io.sentry:sentry-logback:6.2.1'
     implementation 'org.apache.commons:commons-lang3'
     implementation 'io.sentry:sentry-logback:6.2.1'
+
+    // QUERYDSAL
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // JWT
     implementation 'javax.xml.bind:jaxb-api'
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
     implementation 'net.coobird:thumbnailator:0.4.17'
-
-    compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-    runtimeOnly 'mysql:mysql-connector-java'
+
+    // LOMBOK
+    compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    // DB
+    runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     testRuntimeOnly 'com.h2database:h2'
@@ -80,6 +90,11 @@ test {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+
+tasks.named('compileJava') {
+    inputs.files(tasks.named('processResources'))
 }
 
 bootJar {

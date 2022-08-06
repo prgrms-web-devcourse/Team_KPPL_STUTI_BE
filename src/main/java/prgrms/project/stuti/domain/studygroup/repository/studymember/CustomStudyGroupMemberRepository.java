@@ -11,5 +11,5 @@ public interface CustomStudyGroupMemberRepository {
 
 	Optional<StudyGroupMember> findStudyGroupMemberById(Long studyGroupMemberId);
 
-	List<StudyGroupMember> findStudyGroupMembers(Long memberId, Long studyGroupId);
+	List<StudyGroupMember> findStudyGroupMembers(Long studyGroupId);
 }

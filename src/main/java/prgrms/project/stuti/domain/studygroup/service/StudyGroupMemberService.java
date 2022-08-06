@@ -38,8 +38,8 @@ public class StudyGroupMemberService {
 
 	@Transactional(readOnly = true)
 	public StudyGroupMemberManagementResponse getStudyGroupMembers(Long memberId, Long studyGroupId) {
-		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(memberId,
-			studyGroupId);
+		validateStudyLeader(memberId, studyGroupId);
+		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(studyGroupId);
 
 		return StudyGroupConverter.toStudyGroupMemberManagementResponse(studyGroupMembers);
 	}

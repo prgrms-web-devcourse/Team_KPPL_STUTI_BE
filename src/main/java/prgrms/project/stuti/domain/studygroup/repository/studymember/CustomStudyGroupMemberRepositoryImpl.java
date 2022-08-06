@@ -46,7 +46,7 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 	}
 
 	@Override
-	public List<StudyGroupMember> findStudyGroupMembers(Long memberId, Long studyGroupId) {
+	public List<StudyGroupMember> findStudyGroupMembers(Long studyGroupId) {
 		return jpaQueryFactory
 			.selectFrom(studyGroupMember)
 			.join(studyGroupMember.member, member).fetchJoin()

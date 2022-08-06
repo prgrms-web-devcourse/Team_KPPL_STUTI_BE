@@ -23,13 +23,13 @@ sourceCompatibility = '17'
 //    toolVersion ="10.3.1"
 //}
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-
-    querydsl.extendsFrom compileClasspath
-}
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//
+//    querydsl.extendsFrom compileClasspath
+//}
 
 repositories {
     mavenCentral()
@@ -96,6 +96,7 @@ task copyPrivate(type: Copy) {
         into 'src/main/resources'
     }
 }
+// querydsl
 
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -110,4 +111,11 @@ sourceSets {
 
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
 }

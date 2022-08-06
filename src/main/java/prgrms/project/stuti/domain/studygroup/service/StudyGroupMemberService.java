@@ -2,6 +2,8 @@ package prgrms.project.stuti.domain.studygroup.service;
 
 import static prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberManagementResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
@@ -85,5 +88,12 @@ public class StudyGroupMemberService {
 	private StudyGroup findStudyGroup(Long studyGroupId) {
 		return studyGroupRepository.findStudyGroupById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
+	}
+
+	public StudyGroupMemberManagementResponse getStudyGroupMembers(Long memberId, Long studyGroupId) {
+		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(memberId,
+			studyGroupId);
+
+		return StudyGroupConverter.toStudyGroupMemberManagementResponse(studyGroupMembers);
 	}
 }

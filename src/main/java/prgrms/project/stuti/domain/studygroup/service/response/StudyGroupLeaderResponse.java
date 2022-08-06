@@ -3,17 +3,16 @@ package prgrms.project.stuti.domain.studygroup.service.response;
 import lombok.Builder;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record StudyGroupMemberResponse(
-	Long studyGroupMemberId,
+public record StudyGroupLeaderResponse(
+	Long memberId,
 	String profileImageUrl,
 	String nickname,
 	String field,
 	String career,
-	Mbti mbti,
-	String studyGroupMemberRole
+	Mbti mbti
 ) {
 
 	@Builder
-	public StudyGroupMemberResponse {
+	public StudyGroupLeaderResponse {
 	}
 }

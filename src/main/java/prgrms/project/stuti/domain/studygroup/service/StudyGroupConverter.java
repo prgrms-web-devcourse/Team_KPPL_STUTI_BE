@@ -3,18 +3,23 @@ package prgrms.project.stuti.domain.studygroup.service;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupLeaderResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberManagementResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
@@ -75,7 +80,7 @@ public class StudyGroupConverter {
 			.topic(studyGroup.getTopic().getValue())
 			.title(studyGroup.getTitle())
 			.imageUrl(studyGroup.getImageUrl())
-			.leader(toStudyGroupMemberResponse(member))
+			.leader(toStudyGroupLeaderResponse(member))
 			.preferredMBTIs(studyGroup.getPreferredMBTIs())
 			.isOnline(studyGroup.isOnline())
 			.region(studyGroup.getRegion().getValue())
@@ -97,8 +102,33 @@ public class StudyGroupConverter {
 		return new PageResponse<>(toStudyGroupQuestionListResponse(questions), hasNext, totalElements);
 	}
 
-	private static StudyGroupMemberResponse toStudyGroupMemberResponse(Member member) {
-		return StudyGroupMemberResponse
+	public static StudyGroupMemberManagementResponse toStudyGroupMemberManagementResponse(
+		List<StudyGroupMember> studyGroupMembers) {
+		Map<StudyGroupMemberRole, List<StudyGroupMember>> studyGroupMemberMap = studyGroupMembers.stream()
+			.collect(Collectors.groupingBy(StudyGroupMember::getStudyGroupMemberRole));
+
+		StudyGroupMember studyLeader = studyGroupMemberMap.get(StudyGroupMemberRole.STUDY_LEADER).get(0);
+		List<StudyGroupMember> studyMembers = studyGroupMemberMap.getOrDefault(StudyGroupMemberRole.STUDY_MEMBER,
+			Collections.emptyList());
+		List<StudyGroupMember> studyApplicants = studyGroupMemberMap.getOrDefault(StudyGroupMemberRole.STUDY_APPLICANT,
+			Collections.emptyList());
+		StudyGroup studyGroup = studyLeader.getStudyGroup();
+
+		return StudyGroupMemberManagementResponse
+			.builder()
+			.studyGroupId(studyGroup.getId())
+			.topic(studyGroup.getTopic().getValue())
+			.title(studyGroup.getTitle())
+			.numberOfMembers(studyGroup.getNumberOfMembers())
+			.numberOfRecruits(studyGroup.getNumberOfRecruits())
+			.studyMembers(toStudyGroupMemberResponse(studyMembers))
+			.numberOfApplicants(studyApplicants.size())
+			.studyApplicants(toStudyGroupMemberResponse(studyApplicants))
+			.build();
+	}
+
+	private static StudyGroupLeaderResponse toStudyGroupLeaderResponse(Member member) {
+		return StudyGroupLeaderResponse
 			.builder()
 			.memberId(member.getId())
 			.profileImageUrl(member.getProfileImageUrl())
@@ -179,5 +209,24 @@ public class StudyGroupConverter {
 					.build();
 			})
 			.toList();
+	}
+
+	private static List<StudyGroupMemberResponse> toStudyGroupMemberResponse(List<StudyGroupMember> studyGroupMembers) {
+		return studyGroupMembers.isEmpty()
+			? Collections.emptyList()
+			: studyGroupMembers.stream().map(studyGroupMember -> {
+			Member member = studyGroupMember.getMember();
+
+			return StudyGroupMemberResponse
+				.builder()
+				.studyGroupMemberId(studyGroupMember.getId())
+				.profileImageUrl(member.getProfileImageUrl())
+				.nickname(member.getNickName())
+				.field(member.getField().getFieldValue())
+				.career(member.getCareer().getCareerValue())
+				.mbti(member.getMbti())
+				.studyGroupMemberRole(studyGroupMember.getStudyGroupMemberRole().getValue())
+				.build();
+		}).toList();
 	}
 }

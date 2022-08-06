@@ -5,6 +5,7 @@ import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroupMember.*;
 import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroupBooleanExpression.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -42,6 +43,17 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 				.where(equalStudyGroupMemberId(studyGroupMemberId), notDeletedMember(), notDeletedStudyGroup())
 				.fetchFirst()
 		);
+	}
+
+	@Override
+	public List<StudyGroupMember> findStudyGroupMembers(Long memberId, Long studyGroupId) {
+		return jpaQueryFactory
+			.selectFrom(studyGroupMember)
+			.join(studyGroupMember.member, member).fetchJoin()
+			.join(studyGroupMember.studyGroup, studyGroup).fetchJoin()
+			.where(notDeletedMember(), equalStudyGroup(studyGroupId))
+			.orderBy(studyGroupMember.createdAt.asc())
+			.fetch();
 	}
 
 	private BooleanExpression equalStudyGroupMemberId(Long studyGroupMemberId) {

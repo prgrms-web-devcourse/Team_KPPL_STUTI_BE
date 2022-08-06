@@ -42,7 +42,7 @@ import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupLeaderResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
@@ -236,7 +236,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.title("test title")
 			.imageUrl("test image url")
 			.leader(
-				StudyGroupMemberResponse.builder()
+				StudyGroupLeaderResponse.builder()
 					.memberId(1L)
 					.profileImageUrl("test profile image url")
 					.nickname("nickname")

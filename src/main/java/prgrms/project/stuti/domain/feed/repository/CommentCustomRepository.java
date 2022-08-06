@@ -1,10 +1,10 @@
 package prgrms.project.stuti.domain.feed.repository;
 
-import java.util.List;
-
-import prgrms.project.stuti.domain.feed.model.Comment;
+import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
+import prgrms.project.stuti.global.page.offset.PageResponse;
 
 public interface CommentCustomRepository {
 
-	List<Comment> findAllByFeedIdAndParentIdIsNUllWithNoOffset(Long postId, Long lastCommentId, int size);
+	PageResponse<CommentParentContents> findAllByFeedIdAndParentIdIsNUllWithNoOffset(Long postId, Long lastCommentId,
+		int size);
 }

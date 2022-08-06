@@ -24,15 +24,11 @@ public class CommentConverter {
 		return new CommentGetDto(postId, lastPostId, size);
 	}
 
-	public static PageResponse toCommentResponse(List<Comment> comments, boolean hasNext,
-		Long countParentCommentId) {
-
+	public static PageResponse<CommentParentContents> toCommentResponse(List<Comment> comments, boolean hasNext,
+		Long totalParentComments) {
 		List<CommentParentContents> contents = createContents(comments);
-		return PageResponse.builder()
-			.contents(contents)
-			.hasNext(hasNext)
-			.totalElements(countParentCommentId)
-			.build();
+
+		return new PageResponse<>(contents, hasNext, totalParentComments);
 	}
 
 	private static List<CommentParentContents> createContents(List<Comment> comments) {
@@ -57,6 +53,5 @@ public class CommentConverter {
 						.build()
 				).toList()).build()
 		).toList();
-
 	}
 }

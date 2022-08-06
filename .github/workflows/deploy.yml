@@ -1,0 +1,70 @@
+name: stuti
+
+on:
+  push:
+    branches:
+      - prod
+
+env:
+  PROJECT_NAME: stuti
+  DEPLOY_GROUP: stuti-group
+  S3_BUCKET_NAME: devcourse-stuti
+  AWS_REGION: ap-northeast-2
+  RESOURCE_PATH: ./src/main/resources/application.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SUBMODULE_TOKEN }}
+          submodules: true
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Set yaml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ${{ env.RESOURCE_PATH }}
+        env:
+          spring.datasource.url: ${{secrets.RDS_URL}}
+          spring.datasource.username: ${{secrets.RDS_USERNAME}}
+          spring.datasource.password: ${{secrets.RDS_PASSWORD}}
+          spring.redis.host: ${{secrets.REDIS_ENDPOINT}}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
+      
+      - name: Build with Gradle
+        run: ./gradlew clean build
+        shell: bash		
+
+      - name: Make zip file
+        run: zip -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-action/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip
+
+      - name: Code Deploy
+        run: |
+          aws deploy create-deployment \
+          --application-name $PROJECT_NAME \
+          --deployment-group-name $DEPLOY_GROUP \
+          --file-exists-behavior OVERWRITE \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip \
+          --region ap-northeast-2

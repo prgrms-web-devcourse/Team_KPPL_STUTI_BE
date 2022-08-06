@@ -12,16 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import prgrms.project.stuti.config.ServiceTestConfig;
-import prgrms.project.stuti.domain.feed.service.dto.CommentUpdateDto;
 import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
+import prgrms.project.stuti.domain.feed.service.dto.CommentGetDto;
+import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
+import prgrms.project.stuti.domain.feed.service.dto.CommentUpdateDto;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.FeedException;
+import prgrms.project.stuti.global.page.offset.PageResponse;
 
 @SpringBootTest
 class CommentServiceTest extends ServiceTestConfig {
@@ -174,12 +177,44 @@ class CommentServiceTest extends ServiceTestConfig {
 	}
 
 	@Test
-	@DisplayName("원 게시글이 없는경우 댓글 삭제를 할 수 없다") // 보류
+	@DisplayName("원 게시글이 없는경우 댓글 삭제를 할 수 없다")
+		// 보류
 	void testDeleteCommentWithUnknownPostId() {
 		Feed post = createPost(member);
 		Comment comment = new Comment("댓글입니다.", null, member, post);
 		commentRepository.save(comment);
+	}
 
+	@Test
+	@DisplayName("댓글과 대댓글을 페이징해서 가져온다.")
+	void testGetAllCommentByPostId() {
+		//게시글 등록
+		Feed post = createPost(member);
+		//댓글 등록
+		Comment firstParent = null;
+		for (int i = 1; i <= 10; i++) {
+			Comment parentComment = new Comment("댓글" + i, null, member, post);
+			Comment savedComment = commentRepository.save(parentComment);
+			if (i == 10) {
+				firstParent = savedComment;
+			}
+		}
+		//대댓글 등록
+		for (int i = 1; i <= 10; i++) {
+			Comment childComment = new Comment("대댓글" + i, firstParent, member, post);
+			commentRepository.save(childComment);
+		}
+
+		CommentGetDto commentGetDto = new CommentGetDto(post.getId(), null, 4);
+		PageResponse<CommentParentContents> pageResponse = commentService.getPostComments(commentGetDto);
+
+		assertThat(pageResponse.hasNext()).isTrue();
+		assertThat(pageResponse.totalElements()).isEqualTo(10);
+		assertThat(pageResponse.contents()).isNotEmpty();
+		assertThat(pageResponse.contents()).hasSize(4);
+		assertThat(pageResponse.contents().get(0).contents()).isEqualTo("댓글10");
+		assertThat(pageResponse.contents().get(0).children()).hasSize(10);
+		System.out.println(pageResponse);
 	}
 
 	private Feed createPost(Member member) {

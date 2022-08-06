@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.controller.dto.CommentRequest;
 import prgrms.project.stuti.domain.feed.service.CommentService;
+import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
+import prgrms.project.stuti.global.page.offset.PageResponse;
 
 @WebMvcTest(CommentController.class)
 class CommentControllerTest extends TestConfig {
@@ -86,6 +90,21 @@ class CommentControllerTest extends TestConfig {
 
 		mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L))
 			.andExpect(status().isNoContent())
+			.andDo(print());
+	}
+
+	@Test
+	@DisplayName("게시글의 댓글을 페이징하여 조회한다")
+	void testGetAllCommentsByPostId() throws Exception {
+		List<CommentParentContents> contents = new ArrayList<>();
+		PageResponse<CommentParentContents> pageResponse = new PageResponse<>(contents, true, 3L);
+
+		when(commentService.getPostComments(any())).thenReturn(pageResponse);
+
+		mockMvc.perform(get("/api/v1/posts/{postId}/comments", 1L)
+				.param("lastPostId", "3")
+				.param("size", "3"))
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 }

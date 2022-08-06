@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS STUDY_GROUP;
 DROP TABLE IF EXISTS STUDY_GROUP_MEMBER;
 DROP TABLE IF EXISTS STUDY_GROUP_QUESTION;
 
-create table COMMENT
+create table IF NOT EXISTS COMMENT
 (
     COMMENT_ID bigint       not null auto_increment,
     CREATED_AT datetime(6) not null,
@@ -22,7 +22,7 @@ create table COMMENT
     primary key (COMMENT_ID)
 ) engine=InnoDB;
 
-create table FEED
+create table IF NOT EXISTS FEED
 (
     FEED_ID    bigint        not null auto_increment,
     CREATED_AT datetime(6) not null,
@@ -34,7 +34,7 @@ create table FEED
     primary key (FEED_ID)
 ) engine=InnoDB;
 
-create table FEED_IMAGE
+create table IF NOT EXISTS  FEED_IMAGE
 (
     FEED_IMAGE_ID bigint not null auto_increment,
     CREATED_AT    datetime(6) not null,
@@ -46,7 +46,7 @@ create table FEED_IMAGE
     primary key (FEED_IMAGE_ID)
 ) engine=InnoDB;
 
-create table FEED_LIKE
+create table IF NOT EXISTS  FEED_LIKE
 (
     FEED_LIKE_ID bigint not null auto_increment,
     CREATED_AT   datetime(6) not null,
@@ -58,7 +58,7 @@ create table FEED_LIKE
     primary key (FEED_LIKE_ID)
 ) engine=InnoDB;
 
-create table MEMBER
+create table IF NOT EXISTS  MEMBER
 (
     MEMBER_ID         bigint      not null auto_increment,
     CREATED_AT        datetime(6) not null,
@@ -76,14 +76,14 @@ create table MEMBER
     primary key (MEMBER_ID)
 ) engine=InnoDB;
 
-create table PREFERRED_MBTIS
+create table IF NOT EXISTS  PREFERRED_MBTIS
 (
     STUDY_GROUP_ID  bigint       not null,
     PREFERRED_MBTIS varchar(255) not null,
     primary key (STUDY_GROUP_ID, PREFERRED_MBTIS)
 ) engine=InnoDB;
 
-create table STUDY_GROUP
+create table IF NOT EXISTS  STUDY_GROUP
 (
     STUDY_GROUP_ID     bigint        not null auto_increment,
     CREATED_AT         datetime(6) not null,
@@ -105,7 +105,7 @@ create table STUDY_GROUP
     primary key (STUDY_GROUP_ID)
 ) engine=InnoDB;
 
-create table STUDY_GROUP_MEMBER
+create table IF NOT EXISTS  STUDY_GROUP_MEMBER
 (
     STUDY_GROUP_MEMBER_ID   bigint      not null auto_increment,
     CREATED_AT              datetime(6) not null,
@@ -118,7 +118,7 @@ create table STUDY_GROUP_MEMBER
     primary key (STUDY_GROUP_MEMBER_ID)
 ) engine=InnoDB;
 
-create table STUDY_GROUP_QUESTION
+create table IF NOT EXISTS  STUDY_GROUP_QUESTION
 (
     STUDY_GROUP_QUESTION_ID bigint       not null auto_increment,
     CREATED_AT              datetime(6) not null,

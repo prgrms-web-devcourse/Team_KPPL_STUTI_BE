@@ -22,7 +22,6 @@ import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 
 public record StudyGroupCreateRequest(
-	@NotNull
 	MultipartFile imageFile,
 
 	@NotBlank

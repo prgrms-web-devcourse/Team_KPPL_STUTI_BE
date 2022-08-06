@@ -54,7 +54,7 @@ public class StudyGroup extends BaseEntity {
 	private boolean isOnline;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "region", length = 16)
+	@Column(name = "region", nullable = false, length = 16)
 	private Region region;
 
 	@Column(name = "number_of_members", nullable = false)
@@ -67,7 +67,7 @@ public class StudyGroup extends BaseEntity {
 	private StudyPeriod studyPeriod;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column(name = "preferred_mbti")
 	@ElementCollection
 	@CollectionTable(name = "preferred_mbtis", joinColumns = @JoinColumn(name = "study_group_id"))
 	private Set<Mbti> preferredMBTIs = new HashSet<>();
@@ -133,6 +133,7 @@ public class StudyGroup extends BaseEntity {
 			.append("region", region)
 			.append("numberOfMembers", numberOfMembers)
 			.append("numberOfRecruits", numberOfRecruits)
+			.append("preferredMBTIs", preferredMBTIs)
 			.append("studyPeriod", studyPeriod)
 			.append("description", description)
 			.append("isDeleted", isDeleted)

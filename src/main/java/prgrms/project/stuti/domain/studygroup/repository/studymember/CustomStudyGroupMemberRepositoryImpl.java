@@ -5,8 +5,10 @@ import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroupMember.*;
 import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroupBooleanExpression.*;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +27,8 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			.from(studyGroupMember)
 			.join(studyGroupMember.member, member)
 			.join(studyGroupMember.studyGroup, studyGroup)
-			.where(hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER), isEqualIdAndNotDeletedMember(memberId),
-				isEqualIdAndNotDeletedStudyGroup(studyGroupId))
+			.where(hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER), equalMember(memberId),
+				equalStudyGroup(studyGroupId))
 			.fetchFirst();
 
 		return result != null;
@@ -37,9 +39,24 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			jpaQueryFactory
 				.selectFrom(studyGroupMember)
 				.join(studyGroupMember.member, member)
-				.join(studyGroupMember.studyGroup, studyGroup)
-				.where(studyGroupMember.id.eq(studyGroupMemberId), isNotDeletedMember(), isNotDeletedStudyGroup())
+				.join(studyGroupMember.studyGroup, studyGroup).fetchJoin()
+				.where(equalStudyGroupMemberId(studyGroupMemberId), notDeletedMember(), notDeletedStudyGroup())
 				.fetchFirst()
 		);
+	}
+
+	@Override
+	public List<StudyGroupMember> findStudyGroupMembers(Long studyGroupId) {
+		return jpaQueryFactory
+			.selectFrom(studyGroupMember)
+			.join(studyGroupMember.member, member).fetchJoin()
+			.join(studyGroupMember.studyGroup, studyGroup).fetchJoin()
+			.where(notDeletedMember(), equalStudyGroup(studyGroupId))
+			.orderBy(studyGroupMember.createdAt.asc())
+			.fetch();
+	}
+
+	private BooleanExpression equalStudyGroupMemberId(Long studyGroupMemberId) {
+		return studyGroupMemberId == null ? null : studyGroupMember.id.eq(studyGroupMemberId);
 	}
 }

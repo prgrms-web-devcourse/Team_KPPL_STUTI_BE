@@ -21,6 +21,9 @@ import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.global.page.CursorPageResponse;
 
 class StudyGroupRepositoryTest extends RepositoryTestConfig {
 
@@ -67,5 +70,39 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 		StudyGroupMember detail = studyGroupDetail.get();
 		assertEquals(studyGroup.getId(), detail.getStudyGroup().getId());
 		assertEquals(member.getId(), detail.getMember().getId());
+	}
+
+	@Test
+	@DisplayName("전체 스터디 그룹을 동적으로 페이징 조회한다.")
+	void dynamicFindAllWithCursorPagination() {
+		//given
+		studyGroupRepository.save(
+			StudyGroup
+				.builder()
+				.imageUrl("imageUrl")
+				.thumbnailUrl("thumbnailUrl")
+				.title("test title")
+				.topic(Topic.NETWORK)
+				.isOnline(true)
+				.region(Region.ONLINE)
+				.numberOfRecruits(5)
+				.preferredMBTIs(Set.of(Mbti.ESFJ))
+				.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(10)))
+				.description("description")
+				.build());
+
+		StudyGroupFindConditionDto conditionDto = StudyGroupFindConditionDto.builder()
+			.topic(Topic.NETWORK)
+			.size(20L)
+			.build();
+
+		//when
+		CursorPageResponse<StudyGroupResponse> pageResponse = studyGroupRepository.dynamicFindAllWithCursorPagination(
+			conditionDto);
+
+		//then
+		assertFalse(pageResponse.contents().isEmpty());
+		assertEquals(Topic.NETWORK.getValue(), pageResponse.contents().get(0).topic());
+		assertFalse(pageResponse.hasNext());
 	}
 }

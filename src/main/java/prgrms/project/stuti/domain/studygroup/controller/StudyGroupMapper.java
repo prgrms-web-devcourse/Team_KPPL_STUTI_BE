@@ -3,11 +3,13 @@ package prgrms.project.stuti.domain.studygroup.controller;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupFindCondition;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionCreateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
@@ -57,6 +59,26 @@ public class StudyGroupMapper {
 
 	public static StudyGroupQuestionUpdateDto toStudyGroupQuestionUpdateDto(Long memberId, Long studyGroupId,
 		Long studyGroupQuestionId, StudyGroupQuestionUpdateRequest updateRequest) {
-		return new StudyGroupQuestionUpdateDto(memberId, studyGroupId, studyGroupQuestionId, updateRequest.contents());
+		return StudyGroupQuestionUpdateDto
+			.builder()
+			.memberId(memberId)
+			.studyGroupId(studyGroupId)
+			.studyGroupQuestionId(studyGroupQuestionId)
+			.contents(updateRequest.contents())
+			.build();
+	}
+
+	public static StudyGroupFindConditionDto toStudyGroupFindConditionDto(Long memberId, Long size,
+		StudyGroupFindCondition condition) {
+		return StudyGroupFindConditionDto
+			.builder()
+			.mbti(condition.mbti())
+			.topic(condition.topic())
+			.region(condition.region())
+			.studyGroupMemberRole(condition.studyGroupMemberRole())
+			.memberId(memberId)
+			.lastStudyGroupId(condition.lastStudyGroupId())
+			.size(size)
+			.build();
 	}
 }

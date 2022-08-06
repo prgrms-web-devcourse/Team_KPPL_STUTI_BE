@@ -3,8 +3,6 @@ package prgrms.project.stuti.domain.feed.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,9 +18,9 @@ import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.global.page.offset.PageResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.error.exception.FeedException;
+import prgrms.project.stuti.global.page.offset.PageResponse;
 
 @SpringBootTest
 class CommentServiceTest extends ServiceTestConfig {
@@ -101,40 +99,11 @@ class CommentServiceTest extends ServiceTestConfig {
 	}
 
 	@Test
-	@DisplayName("댓글과 대댓글을 페이징해서 가져온다  --- 취소")
-	void testGetAllCommentByPostIdNo() {
-		//게시글 등록
-		Feed post = createPost(member);
-		//댓글, 대댓글 등록
-		Comment firstParent = null;
-		for(int i = 1; i <= 10; i++) {
-			Comment parentComment = new Comment("댓글" + i, null, member, post);
-			Comment savedComment = commentRepository.save(parentComment);
-			if(i == 1) {
-				firstParent = savedComment;
-			}
-			Comment childComment = new Comment("대댓글" + i, firstParent, member2, post);
-			commentRepository.save(childComment);
-		}
-
-		//CommentGetDto commentGetDto = new CommentGetDto(post.getId(), 0, 3);
-		//PageResponse commentResponse = commentService.getAllCommentsByPostId(commentGetDto);
-
-		//List<CommentParentContents> contents = commentResponse.contents();
-		//System.out.println(contents + "악");
-		// assertThat(commentResponse.isLast()).isFalse();
-		//assertThat(commentResponse.totalElements()).isEqualTo(10); //전체 "댓글" 만으로 10개 맟
-		// assertThat(contents).isNotEmpty();
-		// assertThat(contents).isEqualTo("댓글1");
-		// assertThat(contents.get(0).children()).hasSize(10);
-	}
-
-	@Test
-	@DisplayName("")
+	@DisplayName("댓글과 대댓글을 페이징해서 가져온다.")
 	void testGetAllCommentByPostId() {
 		//게시글 등록
 		Feed post = createPost(member);
-		//댓글, 대댓글 등록
+		//댓글 등록
 		Comment firstParent = null;
 		for(int i = 1; i <= 10; i++) {
 			Comment parentComment = new Comment("댓글" + i, null, member, post);
@@ -142,13 +111,23 @@ class CommentServiceTest extends ServiceTestConfig {
 			if(i == 10) {
 				firstParent = savedComment;
 			}
+		}
+		//대댓글 등록
+		for(int i = 1; i <= 10; i++) {
 			Comment childComment = new Comment("대댓글" + i, firstParent, member2, post);
 			commentRepository.save(childComment);
 		}
-		CommentGetDto commentGetDto = new CommentGetDto(post.getId(), null, 4);
-		PageResponse allCommentsByPostId = commentService.getAllCommentsByPostId(commentGetDto);
-		System.out.println(allCommentsByPostId);
 
+		CommentGetDto commentGetDto = new CommentGetDto(post.getId(), null, 4);
+		PageResponse<CommentParentContents> pageResponse = commentService.getPostComments(commentGetDto);
+
+		assertThat(pageResponse.hasNext()).isTrue();
+		assertThat(pageResponse.totalElements()).isEqualTo(10);
+		assertThat(pageResponse.contents()).isNotEmpty();
+		assertThat(pageResponse.contents()).hasSize(4);
+		assertThat(pageResponse.contents().get(0).contents()).isEqualTo("댓글10");
+		assertThat(pageResponse.contents().get(0).children()).hasSize(10);
+		System.out.println(pageResponse);
 	}
 
 	private Feed createPost(Member member) {

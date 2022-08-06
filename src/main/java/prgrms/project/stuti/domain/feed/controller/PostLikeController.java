@@ -25,11 +25,8 @@ public class PostLikeController {
 		PostLikeIdResponse postLikeIdResponse = postLikeService.createPostLike(postId, memberId);
 		//URI uri = URI.create("/api/v1/post/" + postId + "/like/" + postLikeIdResponse.postLikeId());
 
-		final HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
 		//return ResponseEntity.created(uri).body(postLikeIdResponse);
-		return ResponseEntity.ok().headers(httpHeaders).body(postLikeIdResponse);
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postLikeIdResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/like")

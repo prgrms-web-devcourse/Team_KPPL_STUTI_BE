@@ -1,0 +1,17 @@
+== 스터디 그룹 문의댓글
+
+=== 생성
+operation::post-study-group-question[snippets='http-request,request-headers,path-parameters,request-fields,request-body,response-headers,response-fields,response-body']
+'''
+
+=== 전체조회
+operation::get-study-group-questions[snippets='http-request,request-headers,path-parameters,request-parameters,response-headers,response-fields,response-body']
+'''
+
+=== 수정
+operation::patch-study-group-question[snippets='http-request,request-headers,path-parameters,request-fields,request-body,response-headers,response-fields,response-body']
+'''
+
+=== 삭제
+operation::delete-study-group-question[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body']
+'''

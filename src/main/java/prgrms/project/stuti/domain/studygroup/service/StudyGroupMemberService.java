@@ -2,6 +2,8 @@ package prgrms.project.stuti.domain.studygroup.service;
 
 import static prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole.*;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberManagementResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
@@ -33,11 +36,24 @@ public class StudyGroupMemberService {
 		return StudyGroupConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
+	@Transactional(readOnly = true)
+	public StudyGroupMemberManagementResponse getStudyGroupMembers(Long memberId, Long studyGroupId) {
+		validateStudyLeader(memberId, studyGroupId);
+		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(studyGroupId);
+
+		return StudyGroupConverter.toStudyGroupMemberManagementResponse(studyGroupMembers);
+	}
+
 	@Transactional
 	public StudyGroupMemberIdResponse acceptRequestForJoin(Long memberId, Long studyGroupId, Long studyGroupMemberId) {
 		validateStudyLeader(memberId, studyGroupId);
 		StudyGroupMember studyGroupMember = findStudyGroupMember(studyGroupMemberId);
-		studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
+		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
+
+		if (studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)) {
+			studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
+			studyGroup.increaseNumberOfMembers();
+		}
 
 		return StudyGroupConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
 	}
@@ -73,9 +89,7 @@ public class StudyGroupMemberService {
 		Member member = findMember(memberId);
 		StudyGroup studyGroup = findStudyGroup(studyGroupId);
 
-		return studyGroupMemberRepository.save(new StudyGroupMember(
-			STUDY_APPLICANT, member, studyGroup))
-			.getId();
+		return studyGroupMemberRepository.save(new StudyGroupMember(STUDY_APPLICANT, member, studyGroup)).getId();
 	}
 
 	private Member findMember(Long memberId) {

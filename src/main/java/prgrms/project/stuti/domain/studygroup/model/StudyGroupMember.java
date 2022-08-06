@@ -31,7 +31,7 @@ public class StudyGroupMember extends BaseEntity {
 	private Long id;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "study_group_member_role", length = 16, nullable = false)
+	@Column(name = "study_group_member_role", length = 20, nullable = false)
 	private StudyGroupMemberRole studyGroupMemberRole;
 
 	@ManyToOne(fetch = FetchType.LAZY)

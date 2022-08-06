@@ -3,7 +3,7 @@ name: stuti
 on:
   push:
     branches:
-      - prod
+      - main
 
 env:
   PROJECT_NAME: stuti

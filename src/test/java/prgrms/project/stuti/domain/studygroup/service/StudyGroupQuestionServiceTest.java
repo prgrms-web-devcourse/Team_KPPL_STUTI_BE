@@ -20,7 +20,7 @@ import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQuestionRepos
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 
 class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 
@@ -67,7 +67,7 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 			new StudyGroupQuestionCreateDto(memberId, studyGroupId, null, "test contents");
 
 		//when
-		StudyGroupQuestionIdResponse idResponse = studyGroupQuestionService.createStudyGroupQuestion(createDto);
+		StudyGroupQuestionResponse idResponse = studyGroupQuestionService.createStudyGroupQuestion(createDto);
 		Optional<StudyGroupQuestion> optionalQuestion =
 			studyGroupQuestionRepository.findById(idResponse.studyGroupQuestionId());
 
@@ -88,7 +88,7 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 			new StudyGroupQuestionUpdateDto(memberId, studyGroupQuestionId, studyGroupId, newContent);
 
 		//when
-		StudyGroupQuestionIdResponse idResponse = studyGroupQuestionService.updateStudyGroupQuestion(updateDto);
+		StudyGroupQuestionResponse idResponse = studyGroupQuestionService.updateStudyGroupQuestion(updateDto);
 		Optional<StudyGroupQuestion> optionalQuestion =
 			studyGroupQuestionRepository.findById(idResponse.studyGroupQuestionId());
 

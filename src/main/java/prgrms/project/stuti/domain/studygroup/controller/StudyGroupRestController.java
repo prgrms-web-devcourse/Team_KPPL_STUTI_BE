@@ -14,16 +14,21 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupFindCondition;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
+import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @RestController
 @RequestMapping("/api/v1/study-groups")
@@ -40,6 +45,25 @@ public class StudyGroupRestController {
 		URI uri = URI.create("/api/v1/study-groups/" + idResponse.studyGroupId());
 
 		return ResponseEntity.created(uri).body(idResponse);
+	}
+
+	@GetMapping
+	public ResponseEntity<CursorPageResponse<StudyGroupResponse>> getStudyGroups(
+		@RequestParam(defaultValue = "20") Long size, StudyGroupFindCondition condition) {
+		StudyGroupFindConditionDto conditionDto =
+			StudyGroupMapper.toStudyGroupFindConditionDto(null, size, condition);
+
+		return ResponseEntity.ok(studyGroupService.getStudyGroups(conditionDto));
+	}
+
+	@GetMapping("/my-page")
+	public ResponseEntity<CursorPageResponse<StudyGroupResponse>> getMyStudyGroups(
+		@AuthenticationPrincipal Long memberId, @RequestParam(defaultValue = "20") Long size,
+		StudyGroupFindCondition condition) {
+		StudyGroupFindConditionDto conditionDto =
+			StudyGroupMapper.toStudyGroupFindConditionDto(memberId, size, condition);
+
+		return ResponseEntity.ok(studyGroupService.getStudyGroups(conditionDto));
 	}
 
 	@GetMapping("/{studyGroupId}")

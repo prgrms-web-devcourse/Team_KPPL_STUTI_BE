@@ -39,7 +39,7 @@ public class StudyGroupQuestion extends BaseEntity {
 	@JoinColumn(name = "parent_id")
 	private StudyGroupQuestion parent;
 
-	@OneToMany(mappedBy = "parent")
+	@OneToMany(mappedBy = "parent", orphanRemoval = true)
 	private final List<StudyGroupQuestion> children = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)

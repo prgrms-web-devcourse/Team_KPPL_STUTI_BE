@@ -24,10 +24,9 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
 class StudyGroupServiceTest extends ServiceTestConfig {
@@ -42,7 +41,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 
 	@BeforeEach
 	void setup() throws IOException {
-		StudyGroupCreateDto createDto = toCreateDto(member.getId());
+		StudyGroupDto.CreateDto createDto = toCreateDto(member.getId());
 		StudyGroupIdResponse idResponse = studyGroupService.createStudyGroup(createDto);
 		this.studyGroup = studyGroupRepository.findStudyGroupById(idResponse.studyGroupId())
 			.orElseThrow(() -> new IllegalArgumentException("failed to find studyGroup"));
@@ -52,7 +51,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	@DisplayName("새로운 스터디 그룹을 생성한다.")
 	void testCreateStudyGroup() throws IOException {
 		//given
-		StudyGroupCreateDto createDto = toCreateDto(member.getId());
+		StudyGroupDto.CreateDto createDto = toCreateDto(member.getId());
 
 		//when
 		StudyGroupIdResponse idResponse = studyGroupService.createStudyGroup(createDto);
@@ -69,15 +68,16 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	void testGetStudyGroup() {
 		//given
 		Long studyGroupId = studyGroup.getId();
+		StudyGroupDto.ReadDto readDto = new StudyGroupDto.ReadDto(studyGroupId);
 
 		//when
-		StudyGroupDetailResponse detailResponse = studyGroupService.getStudyGroup(studyGroupId);
+		StudyGroupResponse studyGroupResponse = studyGroupService.getStudyGroup(readDto);
 
 		//then
 		assertAll(
-			() -> assertEquals(studyGroup.getId(), detailResponse.studyGroupId()),
-			() -> assertEquals(studyGroup.getTitle(), detailResponse.title()),
-			() -> assertEquals(studyGroup.getDescription(), detailResponse.description())
+			() -> assertEquals(studyGroup.getId(), studyGroupResponse.studyGroupId()),
+			() -> assertEquals(studyGroup.getTitle(), studyGroupResponse.title()),
+			() -> assertEquals(studyGroup.getDescription(), studyGroupResponse.description())
 		);
 	}
 
@@ -88,7 +88,8 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		String updateTitle = "update title";
 		String updateDescription = "update description";
 		String imageUrlBeforeUpdate = studyGroup.getImageUrl();
-		StudyGroupUpdateDto updateDto = toUpdateDto(member.getId(), studyGroup.getId(), updateTitle, getMultipartFile(),
+		StudyGroupDto.UpdateDto updateDto = toUpdateDto(member.getId(), studyGroup.getId(), updateTitle,
+			getMultipartFile(),
 			updateDescription);
 
 		//when
@@ -109,7 +110,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		String updateTitle = studyGroup.getTitle();
 		String updateDescription = studyGroup.getDescription();
 		String imageUrlBeforeUpdate = studyGroup.getImageUrl();
-		StudyGroupUpdateDto updateDto = toUpdateDto(member.getId(), studyGroup.getId(), updateTitle, null,
+		StudyGroupDto.UpdateDto updateDto = toUpdateDto(member.getId(), studyGroup.getId(), updateTitle, null,
 			updateDescription);
 
 		//when
@@ -129,9 +130,10 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		//given
 		Long memberId = member.getId();
 		Long studyGroupId = studyGroup.getId();
+		StudyGroupDto.DeleteDto deleteDto = new StudyGroupDto.DeleteDto(memberId, studyGroupId);
 
 		//when
-		studyGroupService.deleteStudyGroup(memberId, studyGroupId);
+		studyGroupService.deleteStudyGroup(deleteDto);
 		Optional<StudyGroup> deletedStudyGroup = studyGroupRepository.findStudyGroupById(studyGroup.getId());
 
 		//then
@@ -144,13 +146,14 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		//given
 		Long memberId = otherMember.getId();
 		Long studyGroupId = studyGroup.getId();
+		StudyGroupDto.DeleteDto deleteDto = new StudyGroupDto.DeleteDto(memberId, studyGroupId);
 
 		//when, then
-		assertThrows(StudyGroupException.class, () -> studyGroupService.deleteStudyGroup(memberId, studyGroupId));
+		assertThrows(StudyGroupException.class, () -> studyGroupService.deleteStudyGroup(deleteDto));
 	}
 
-	private StudyGroupCreateDto toCreateDto(Long memberId) throws IOException {
-		return StudyGroupCreateDto
+	private StudyGroupDto.CreateDto toCreateDto(Long memberId) throws IOException {
+		return StudyGroupDto.CreateDto
 			.builder()
 			.memberId(memberId)
 			.imageFile(getMultipartFile())
@@ -166,9 +169,9 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 			.build();
 	}
 
-	private StudyGroupUpdateDto toUpdateDto(Long memberId, Long studyGroupId, String updateTitle,
+	private StudyGroupDto.UpdateDto toUpdateDto(Long memberId, Long studyGroupId, String updateTitle,
 		MultipartFile imageFile, String updateDescription) {
-		return StudyGroupUpdateDto
+		return StudyGroupDto.UpdateDto
 			.builder()
 			.memberId(memberId)
 			.studyGroupId(studyGroupId)
@@ -212,7 +215,6 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 					.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(10)))
 					.description("description")
 					.build());
-
 		}
 	}
 }

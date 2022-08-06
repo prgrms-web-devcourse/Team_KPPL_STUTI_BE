@@ -26,11 +26,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import prgrms.project.stuti.config.TestConfig;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionCreateRequest;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionUpdateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionRequest;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupQuestionService;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionsResponse;
 import prgrms.project.stuti.global.page.PageResponse;
 
 @WebMvcTest(controllers = StudyGroupQuestionRestController.class)
@@ -50,8 +49,8 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 	void postStudyGroupQuestion() throws Exception {
 		//given
 		StudyGroupQuestionResponse questionResponse = toQuestionResponse();
-		StudyGroupQuestionCreateRequest createRequest =
-			new StudyGroupQuestionCreateRequest(null, "test contents");
+		StudyGroupQuestionRequest.CreateRequest createRequest =
+			new StudyGroupQuestionRequest.CreateRequest(null, "test contents");
 		String requestJsonString = objectMapper.writeValueAsString(createRequest);
 		given(studyGroupQuestionService.createStudyGroupQuestion(any())).willReturn(questionResponse);
 
@@ -64,14 +63,14 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 		//then
 		resultActions
 			.andExpectAll(
-				status().isCreated(),
+				status().isOk(),
 				content().json(objectMapper.writeValueAsString(questionResponse)),
 				content().contentType(APPLICATION_JSON))
 			.andDo(document(COMMON_DOCS_NAME,
 				requestHeaders(contentType(), host()),
 				pathParameters(studyGroupIdPath()),
 				requestFields(parentIdField(), contents()),
-				responseHeaders(contentType(), contentLength(), location()),
+				responseHeaders(contentType(), contentLength()),
 				responseFields(commonQuestionResponse())));
 
 	}
@@ -80,8 +79,8 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 	@DisplayName("스터디 그룹 문의 댓글 페이징 조회한다.")
 	void getStudyGroupQuestions() throws Exception {
 		//given
-		PageResponse<StudyGroupQuestionListResponse> pageResponse = toListResponse();
-		given(studyGroupQuestionService.getStudyGroupQuestions(any(), any(), any())).willReturn(pageResponse);
+		PageResponse<StudyGroupQuestionsResponse> questionsResponse = toListResponse();
+		given(studyGroupQuestionService.getStudyGroupQuestions(any())).willReturn(questionsResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -93,7 +92,7 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 		resultActions
 			.andExpectAll(
 				status().isOk(),
-				content().json(objectMapper.writeValueAsString(pageResponse)),
+				content().json(objectMapper.writeValueAsString(questionsResponse)),
 				content().contentType(APPLICATION_JSON))
 			.andDo(document(COMMON_DOCS_NAME,
 				requestHeaders(contentType(), host()),
@@ -109,7 +108,8 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 	void patchStudyGroupQuestion() throws Exception {
 		//given
 		StudyGroupQuestionResponse questionResponse = toQuestionResponse();
-		StudyGroupQuestionUpdateRequest updateRequest = new StudyGroupQuestionUpdateRequest("test contents");
+		StudyGroupQuestionRequest.UpdateRequest updateRequest = new StudyGroupQuestionRequest.UpdateRequest(
+			"test contents");
 		given(studyGroupQuestionService.updateStudyGroupQuestion(any())).willReturn(questionResponse);
 
 		//when
@@ -137,7 +137,7 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 	void deleteStudyGroupQuestion() throws Exception {
 		//given
 		StudyGroupQuestionResponse questionResponse = toQuestionResponse();
-		given(studyGroupQuestionService.deleteStudyGroupQuestion(any(), any(), any())).willReturn(questionResponse);
+		given(studyGroupQuestionService.deleteStudyGroupQuestion(any())).willReturn(questionResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -169,18 +169,20 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 			.build();
 	}
 
-	private PageResponse<StudyGroupQuestionListResponse> toListResponse() {
-		final List<StudyGroupQuestionListResponse> contents = List.of(StudyGroupQuestionListResponse
-			.builder()
-			.studyGroupQuestionId(studyGroupQuestionId)
-			.memberId(1L)
-			.parentId(1L)
-			.profileImageUrl("test profile image url")
-			.nickname("test nickname")
-			.contents("test contents")
-			.updatedAt(LocalDateTime.now())
-			.children(List.of(toQuestionResponse()))
-			.build());
+	private PageResponse<StudyGroupQuestionsResponse> toListResponse() {
+		final List<StudyGroupQuestionsResponse> contents =
+			List.of(
+				StudyGroupQuestionsResponse
+					.builder()
+					.studyGroupQuestionId(studyGroupQuestionId)
+					.memberId(1L)
+					.parentId(1L)
+					.profileImageUrl("test profile image url")
+					.nickname("test nickname")
+					.contents("test contents")
+					.updatedAt(LocalDateTime.now())
+					.children(List.of(toQuestionResponse()))
+					.build());
 
 		return new PageResponse<>(contents, false, 10);
 	}

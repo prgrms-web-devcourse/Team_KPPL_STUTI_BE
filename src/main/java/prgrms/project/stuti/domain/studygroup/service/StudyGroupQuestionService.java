@@ -10,10 +10,9 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQuestionRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionsResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 import prgrms.project.stuti.global.page.PageResponse;
@@ -27,41 +26,39 @@ public class StudyGroupQuestionService {
 	private final StudyGroupQuestionRepository studyGroupQuestionRepository;
 
 	@Transactional
-	public StudyGroupQuestionResponse createStudyGroupQuestion(StudyGroupQuestionCreateDto createDto) {
+	public StudyGroupQuestionResponse createStudyGroupQuestion(StudyGroupQuestionDto.CreateDto createDto) {
 		Long parentId = createDto.parentId();
 		StudyGroupQuestion studyGroupQuestion = saveQuestion(createDto, parentId);
 
-		return StudyGroupConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
+		return StudyGroupQuestionConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<StudyGroupQuestionListResponse> getStudyGroupQuestions(Long studyGroupId, Long size,
-		Long lastStudyGroupQuestionId) {
-		return studyGroupQuestionRepository.findAllWithPagination(studyGroupId, size, lastStudyGroupQuestionId);
+	public PageResponse<StudyGroupQuestionsResponse> getStudyGroupQuestions(StudyGroupQuestionDto.PageDto pageDto) {
+		return studyGroupQuestionRepository.findAllWithPagination(pageDto);
 	}
 
 	@Transactional
-	public StudyGroupQuestionResponse updateStudyGroupQuestion(StudyGroupQuestionUpdateDto updateDto) {
+	public StudyGroupQuestionResponse updateStudyGroupQuestion(StudyGroupQuestionDto.UpdateDto updateDto) {
 		StudyGroupQuestion studyGroupQuestion = findStudyGroupQuestion(updateDto.studyGroupQuestionId());
 		validateMember(studyGroupQuestion.getMember(), updateDto.memberId());
 		validateStudyGroup(studyGroupQuestion.getStudyGroup(), updateDto.studyGroupId());
 		studyGroupQuestion.updateContents(updateDto.contents());
 
-		return StudyGroupConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
+		return StudyGroupQuestionConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
 	}
 
 	@Transactional
-	public StudyGroupQuestionResponse deleteStudyGroupQuestion(Long memberId, Long studyGroupId,
-		Long studyGroupQuestionId) {
-		StudyGroupQuestion studyGroupQuestion = findStudyGroupQuestion(studyGroupQuestionId);
-		validateMember(studyGroupQuestion.getMember(), memberId);
-		validateStudyGroup(studyGroupQuestion.getStudyGroup(), studyGroupId);
+	public StudyGroupQuestionResponse deleteStudyGroupQuestion(StudyGroupQuestionDto.DeleteDto deleteDto) {
+		StudyGroupQuestion studyGroupQuestion = findStudyGroupQuestion(deleteDto.studyGroupQuestionId());
+		validateMember(studyGroupQuestion.getMember(), deleteDto.memberId());
+		validateStudyGroup(studyGroupQuestion.getStudyGroup(), deleteDto.studyGroupId());
 		studyGroupQuestionRepository.delete(studyGroupQuestion);
 
-		return StudyGroupConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
+		return StudyGroupQuestionConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
 	}
 
-	private StudyGroupQuestion saveQuestion(StudyGroupQuestionCreateDto createDto, Long parentId) {
+	private StudyGroupQuestion saveQuestion(StudyGroupQuestionDto.CreateDto createDto, Long parentId) {
 		StudyGroupQuestion parent = parentId == null
 			? null
 			: findStudyGroupQuestion(parentId);

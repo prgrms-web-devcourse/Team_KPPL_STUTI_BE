@@ -18,8 +18,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQuestionRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 
 class StudyGroupQuestionServiceTest extends ServiceTestConfig {
@@ -54,7 +53,8 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 				.build());
 
 		studyGroupQuestion =
-			studyGroupQuestionRepository.save(new StudyGroupQuestion("test blabla", null, member, studyGroup));
+			studyGroupQuestionRepository
+				.save(new StudyGroupQuestion("test blabla", null, member, studyGroup));
 	}
 
 	@Test
@@ -63,17 +63,17 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 		//given
 		Long studyGroupId = studyGroup.getId();
 		Long memberId = member.getId();
-		StudyGroupQuestionCreateDto createDto =
-			new StudyGroupQuestionCreateDto(memberId, studyGroupId, null, "test contents");
+		StudyGroupQuestionDto.CreateDto createDto =
+			new StudyGroupQuestionDto.CreateDto(memberId, studyGroupId, null, "test contents");
 
 		//when
-		StudyGroupQuestionResponse idResponse = studyGroupQuestionService.createStudyGroupQuestion(createDto);
+		StudyGroupQuestionResponse questionResponse = studyGroupQuestionService.createStudyGroupQuestion(createDto);
 		Optional<StudyGroupQuestion> optionalQuestion =
-			studyGroupQuestionRepository.findById(idResponse.studyGroupQuestionId());
+			studyGroupQuestionRepository.findById(questionResponse.studyGroupQuestionId());
 
 		//then
 		assertTrue(optionalQuestion.isPresent());
-		assertEquals(idResponse.studyGroupQuestionId(), optionalQuestion.get().getId());
+		assertEquals(questionResponse.studyGroupQuestionId(), optionalQuestion.get().getId());
 	}
 
 	@Test
@@ -84,13 +84,13 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 		Long memberId = member.getId();
 		Long studyGroupQuestionId = studyGroupQuestion.getId();
 		String newContent = "update blabla";
-		StudyGroupQuestionUpdateDto updateDto =
-			new StudyGroupQuestionUpdateDto(memberId, studyGroupQuestionId, studyGroupId, newContent);
+		StudyGroupQuestionDto.UpdateDto updateDto =
+			new StudyGroupQuestionDto.UpdateDto(memberId, studyGroupQuestionId, studyGroupId, newContent);
 
 		//when
-		StudyGroupQuestionResponse idResponse = studyGroupQuestionService.updateStudyGroupQuestion(updateDto);
+		StudyGroupQuestionResponse questionResponse = studyGroupQuestionService.updateStudyGroupQuestion(updateDto);
 		Optional<StudyGroupQuestion> optionalQuestion =
-			studyGroupQuestionRepository.findById(idResponse.studyGroupQuestionId());
+			studyGroupQuestionRepository.findById(questionResponse.studyGroupQuestionId());
 
 		//then
 		assertTrue(optionalQuestion.isPresent());
@@ -104,10 +104,12 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 		Long studyGroupId = studyGroup.getId();
 		Long memberId = member.getId();
 		Long studyGroupQuestionId = studyGroupQuestion.getId();
+		final StudyGroupQuestionDto.DeleteDto deleteDto =
+			new StudyGroupQuestionDto.DeleteDto(memberId, studyGroupId, studyGroupQuestionId);
 
 		//when
 		Optional<StudyGroupQuestion> optionalQuestion = studyGroupQuestionRepository.findById(studyGroupQuestionId);
-		studyGroupQuestionService.deleteStudyGroupQuestion(memberId, studyGroupId, studyGroupQuestionId);
+		studyGroupQuestionService.deleteStudyGroupQuestion(deleteDto);
 		Optional<StudyGroupQuestion> retrievedQuestion = studyGroupQuestionRepository.findById(studyGroupQuestionId);
 
 		//then

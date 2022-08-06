@@ -15,8 +15,9 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupMemberDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberManagementResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
@@ -29,23 +30,31 @@ public class StudyGroupMemberService {
 	private final StudyGroupMemberRepository studyGroupMemberRepository;
 
 	@Transactional
-	public StudyGroupMemberIdResponse applyForJoinStudyGroup(Long memberId, Long studyGroupId) {
+	public StudyGroupMemberIdResponse applyForJoinStudyGroup(StudyGroupMemberDto.CreateDto createDto) {
+		Long memberId = createDto.memberId();
+		Long studyGroupId = createDto.studyGroupId();
 		validateExistingStudyGroupMember(memberId, studyGroupId);
 		Long studyGroupMemberId = saveStudyApplicant(memberId, studyGroupId);
 
-		return StudyGroupConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
+		return StudyGroupMemberConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
 	@Transactional(readOnly = true)
-	public StudyGroupMemberManagementResponse getStudyGroupMembers(Long memberId, Long studyGroupId) {
+	public StudyGroupMembersResponse getStudyGroupMembers(StudyGroupMemberDto.ReadDto readDto) {
+		Long memberId = readDto.memberId();
+		Long studyGroupId = readDto.studyGroupId();
 		validateStudyLeader(memberId, studyGroupId);
 		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(studyGroupId);
 
-		return StudyGroupConverter.toStudyGroupMemberManagementResponse(studyGroupMembers);
+		return StudyGroupMemberConverter.toStudyGroupMembersResponse(studyGroupMembers);
 	}
 
 	@Transactional
-	public StudyGroupMemberIdResponse acceptRequestForJoin(Long memberId, Long studyGroupId, Long studyGroupMemberId) {
+	public StudyGroupMemberIdResponse acceptRequestForJoin(StudyGroupMemberDto.UpdateDto updateDto) {
+		Long memberId = updateDto.memberId();
+		Long studyGroupId = updateDto.studyGroupId();
+		Long studyGroupMemberId = updateDto.studyGroupMemberId();
+
 		validateStudyLeader(memberId, studyGroupId);
 		StudyGroupMember studyGroupMember = findStudyGroupMember(studyGroupMemberId);
 		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
@@ -55,13 +64,13 @@ public class StudyGroupMemberService {
 			studyGroup.increaseNumberOfMembers();
 		}
 
-		return StudyGroupConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
+		return StudyGroupMemberConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
 	@Transactional
-	public void deleteStudyGroupMember(Long memberId, Long studyGroupId, Long studyGroupMemberId) {
-		validateStudyLeader(memberId, studyGroupId);
-		studyGroupMemberRepository.deleteById(studyGroupMemberId);
+	public void deleteStudyGroupMember(StudyGroupMemberDto.DeleteDto deleteDto) {
+		validateStudyLeader(deleteDto.memberId(), deleteDto.studyGroupId());
+		studyGroupMemberRepository.deleteById(deleteDto.studyGroupMemberId());
 	}
 
 	private StudyGroupMember findStudyGroupMember(Long studyGroupMemberId) {

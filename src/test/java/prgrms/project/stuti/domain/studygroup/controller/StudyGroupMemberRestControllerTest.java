@@ -41,7 +41,7 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	void postApplyStudyGroup() throws Exception {
 		//given
 		StudyGroupMemberIdResponse idResponse = new StudyGroupMemberIdResponse(1L);
-		given(studyGroupMemberService.applyForJoinStudyGroup(any(), any())).willReturn(idResponse);
+		given(studyGroupMemberService.applyForJoinStudyGroup(any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -64,7 +64,7 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	void acceptRequestForJoin() throws Exception {
 		//given
 		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse(studyGroupMemberId);
-		given(studyGroupMemberService.acceptRequestForJoin(any(), any(), any())).willReturn(idResponse);
+		given(studyGroupMemberService.acceptRequestForJoin(any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -88,7 +88,7 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	@DisplayName("스터디 그룹 멤버를 삭제한다.")
 	void deleteStudyGroupMember() throws Exception {
 		//given
-		willDoNothing().given(studyGroupMemberService).deleteStudyGroupMember(any(), any(), any());
+		willDoNothing().given(studyGroupMemberService).deleteStudyGroupMember(any());
 
 		//when
 		ResultActions resultActions = mockMvc.perform(

@@ -6,13 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQuestionRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
@@ -43,7 +43,9 @@ public class StudyGroupQuestionService {
 	@Transactional
 	public StudyGroupQuestionResponse updateStudyGroupQuestion(StudyGroupQuestionUpdateDto updateDto) {
 		StudyGroupQuestion studyGroupQuestion = findStudyGroupQuestion(updateDto.studyGroupQuestionId());
-		updateQuestion(updateDto, studyGroupQuestion);
+		validateMember(studyGroupQuestion.getMember(), updateDto.memberId());
+		validateStudyGroup(studyGroupQuestion.getStudyGroup(), updateDto.studyGroupId());
+		studyGroupQuestion.updateContents(updateDto.contents());
 
 		return StudyGroupConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
 	}
@@ -52,7 +54,9 @@ public class StudyGroupQuestionService {
 	public StudyGroupQuestionResponse deleteStudyGroupQuestion(Long memberId, Long studyGroupId,
 		Long studyGroupQuestionId) {
 		StudyGroupQuestion studyGroupQuestion = findStudyGroupQuestion(studyGroupQuestionId);
-		deleteQuestion(memberId, studyGroupId, studyGroupQuestion);
+		validateMember(studyGroupQuestion.getMember(), memberId);
+		validateStudyGroup(studyGroupQuestion.getStudyGroup(), studyGroupId);
+		studyGroupQuestionRepository.delete(studyGroupQuestion);
 
 		return StudyGroupConverter.toStudyGroupQuestionResponse(studyGroupQuestion);
 	}
@@ -71,23 +75,6 @@ public class StudyGroupQuestionService {
 	private StudyGroupQuestion findStudyGroupQuestion(Long studyGroupQuestionId) {
 		return studyGroupQuestionRepository.findStudyGroupQuestionById(studyGroupQuestionId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroupQuestion(studyGroupQuestionId));
-	}
-
-	private void deleteQuestion(Long memberId, Long studyGroupId, StudyGroupQuestion studyGroupQuestion) {
-		Member member = studyGroupQuestion.getMember();
-		StudyGroup studyGroup = studyGroupQuestion.getStudyGroup();
-
-		validateMember(member, memberId);
-		validateStudyGroup(studyGroup, studyGroupId);
-
-		studyGroupQuestionRepository.delete(studyGroupQuestion);
-	}
-
-	private void updateQuestion(StudyGroupQuestionUpdateDto updateDto, StudyGroupQuestion studyGroupQuestion) {
-		validateMember(studyGroupQuestion.getMember(), updateDto.memberId());
-		validateStudyGroup(studyGroupQuestion.getStudyGroup(), updateDto.studyGroupId());
-
-		studyGroupQuestion.updateContents(updateDto.contents());
 	}
 
 	private Member findMember(Long memberId) {

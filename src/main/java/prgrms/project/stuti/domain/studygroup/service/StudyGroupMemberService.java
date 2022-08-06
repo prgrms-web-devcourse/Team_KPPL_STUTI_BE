@@ -89,9 +89,7 @@ public class StudyGroupMemberService {
 		Member member = findMember(memberId);
 		StudyGroup studyGroup = findStudyGroup(studyGroupId);
 
-		return studyGroupMemberRepository.save(new StudyGroupMember(
-			STUDY_APPLICANT, member, studyGroup))
-			.getId();
+		return studyGroupMemberRepository.save(new StudyGroupMember(STUDY_APPLICANT, member, studyGroup)).getId();
 	}
 
 	private Member findMember(Long memberId) {

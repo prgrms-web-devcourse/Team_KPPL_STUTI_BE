@@ -10,7 +10,7 @@ env:
   DEPLOY_GROUP: stuti-group
   S3_BUCKET_NAME: devcourse-stuti
   AWS_REGION: ap-northeast-2
-  RESOURCE_PATH: ./src/main/resources/application-prod.yml
+  RESOURCE_PATH: ./src/main/resources/application.yml
 
 jobs:
   build:

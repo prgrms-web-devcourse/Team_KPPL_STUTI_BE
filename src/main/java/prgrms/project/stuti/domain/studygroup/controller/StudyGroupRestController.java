@@ -28,7 +28,6 @@ import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
-import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @RestController
@@ -57,12 +56,10 @@ public class StudyGroupRestController {
 		return ResponseEntity.ok(studyGroupService.getStudyGroups(conditionDto));
 	}
 
-	@GetMapping("/my-page/{memberId}")
+	@GetMapping("/my-page")
 	public ResponseEntity<CursorPageResponse<StudyGroupResponse>> getMyStudyGroups(
-		@AuthenticationPrincipal Long authMemberId, @PathVariable Long memberId,
-		@RequestParam(defaultValue = "20") Long size, StudyGroupFindCondition condition) {
-		validateMyPageMember(authMemberId, memberId);
-
+		@AuthenticationPrincipal Long memberId, @RequestParam(defaultValue = "20") Long size,
+		StudyGroupFindCondition condition) {
 		StudyGroupFindConditionDto conditionDto =
 			StudyGroupMapper.toStudyGroupFindConditionDto(memberId, size, condition);
 
@@ -91,11 +88,5 @@ public class StudyGroupRestController {
 		studyGroupService.deleteStudyGroup(memberId, studyGroupId);
 
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
-	}
-
-	private void validateMyPageMember(Long authMemberId, Long pathMemberId) {
-		if (!authMemberId.equals(pathMemberId)) {
-			throw MemberException.notMatchWithMyPageMember(authMemberId);
-		}
 	}
 }

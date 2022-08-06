@@ -11,15 +11,11 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-<<<<<<< Updated upstream
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
-=======
->>>>>>> Stashed changes
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
@@ -88,6 +84,11 @@ public class StudyGroupConverter {
 			.build();
 	}
 
+	public static CursorPageResponse<StudyGroupResponse> toStudyGroupPageResponse(
+		List<StudyGroupMember> studyGroupMembers, boolean hasNext) {
+		return new CursorPageResponse<>(toStudyGroupResponse(studyGroupMembers), hasNext);
+	}
+
 	private static StudyGroupMemberResponse toStudyGroupMemberResponse(Member member) {
 		return StudyGroupMemberResponse
 			.builder()
@@ -98,5 +99,32 @@ public class StudyGroupConverter {
 			.career(member.getCareer().getCareerValue())
 			.mbti(member.getMbti())
 			.build();
+	}
+
+	private static List<StudyGroupResponse> toStudyGroupResponse(List<StudyGroupMember> studyGroupMembers) {
+		return studyGroupMembers
+			.stream()
+			.map(studyGroupMember -> {
+				Member member = studyGroupMember.getMember();
+				StudyGroup studyGroup = studyGroupMember.getStudyGroup();
+				StudyPeriod studyPeriod = studyGroup.getStudyPeriod();
+
+				return StudyGroupResponse
+					.builder()
+					.studyGroupId(studyGroup.getId())
+					.memberId(member.getId())
+					.thumbnailUrl(studyGroup.getThumbnailUrl())
+					.topic(studyGroup.getTopic().getValue())
+					.title(studyGroup.getTitle())
+					.preferredMBTIs(studyGroup.getPreferredMBTIs())
+					.region(studyGroup.getRegion().getValue())
+					.startDateTime(studyPeriod.getStartDateTime())
+					.endDateTime(studyPeriod.getEndDateTime())
+					.numberOfMembers(studyGroup.getNumberOfMembers())
+					.numberOfRecruits(studyGroup.getNumberOfRecruits())
+					.build();
+			})
+			.toList();
+
 	}
 }

@@ -4,6 +4,10 @@
 operation::post-study-group[snippets='http-request,request-headers,request-parts,request-parameters,response-headers,response-fields,response-body']
 '''
 
+=== 전체조회
+operation::get-study-groups[snippets='http-request,request-headers,request-parameters,response-headers,response-fields,response-body']
+'''
+
 === 상세조회
 operation::get-study-group[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body'']
 

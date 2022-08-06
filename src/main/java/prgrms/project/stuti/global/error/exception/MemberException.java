@@ -41,4 +41,9 @@ public class MemberException extends BusinessException {
 		throw new MemberException(ErrorCode.REGISTERED_MEMBER,
 			MessageFormat.format("이미 등록된 회원 입니다. (email: {0})", email));
 	}
+
+	public static final MemberException notMatchWithMyPageMember(Long authMemberId) {
+		throw new MemberException(ErrorCode.NOT_MATCH_MY_PAGE_MEMBER,
+			MessageFormat.format("마이 페이지의 회원정보와 일치하지 않는 회원입니다. (authMemberId: {0})", authMemberId));
+	}
 }

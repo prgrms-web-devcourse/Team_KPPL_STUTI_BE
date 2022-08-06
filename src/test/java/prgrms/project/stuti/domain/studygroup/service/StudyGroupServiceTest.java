@@ -21,9 +21,9 @@ import prgrms.project.stuti.config.ServiceTestConfig;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
+import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
@@ -184,5 +184,35 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		String[] split = imageFile.getName().split("\\.");
 
 		return new MockMultipartFile(split[0], imageFile.getName(), "image/" + split[1], inputStream);
+	}
+
+	private void saveNetwork5AndBackend5() {
+		for (int i = 0; i < 5; i++) {
+			studyGroupRepository.save(
+				StudyGroup
+					.builder()
+					.title("test title")
+					.topic(Topic.NETWORK)
+					.isOnline(true)
+					.numberOfRecruits(5)
+					.preferredMBTIs(Set.of(Mbti.ESFJ))
+					.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(10)))
+					.description("description")
+					.build());
+
+			studyGroupRepository.save(
+				StudyGroup
+					.builder()
+					.title("test title")
+					.topic(Topic.BACKEND)
+					.isOnline(true)
+					.region(Region.ONLINE)
+					.numberOfRecruits(5)
+					.preferredMBTIs(Set.of(Mbti.ESFJ))
+					.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(10)))
+					.description("description")
+					.build());
+
+		}
 	}
 }

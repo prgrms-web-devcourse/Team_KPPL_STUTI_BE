@@ -7,6 +7,7 @@ import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroup
 
 import java.util.Optional;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			.from(studyGroupMember)
 			.join(studyGroupMember.member, member)
 			.join(studyGroupMember.studyGroup, studyGroup)
-			.where(hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER), isEqualIdAndNotDeletedMember(memberId),
-				isEqualIdAndNotDeletedStudyGroup(studyGroupId))
+			.where(hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER), equalMember(memberId),
+				equalStudyGroup(studyGroupId))
 			.fetchFirst();
 
 		return result != null;
@@ -38,8 +39,12 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 				.selectFrom(studyGroupMember)
 				.join(studyGroupMember.member, member)
 				.join(studyGroupMember.studyGroup, studyGroup)
-				.where(studyGroupMember.id.eq(studyGroupMemberId), isNotDeletedMember(), isNotDeletedStudyGroup())
+				.where(equalStudyGroupMemberId(studyGroupMemberId), notDeletedMember(), notDeletedStudyGroup())
 				.fetchFirst()
 		);
+	}
+
+	private BooleanExpression equalStudyGroupMemberId(Long studyGroupMemberId) {
+		return studyGroupMemberId == null ? null : studyGroupMember.id.eq(studyGroupMemberId);
 	}
 }

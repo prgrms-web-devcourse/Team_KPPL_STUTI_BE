@@ -67,4 +67,18 @@ public class StudyGroupMapper {
 			.contents(updateRequest.contents())
 			.build();
 	}
+
+	public static StudyGroupFindConditionDto toStudyGroupFindConditionDto(Long memberId, Long size,
+		StudyGroupFindCondition condition) {
+		return StudyGroupFindConditionDto
+			.builder()
+			.mbti(condition.mbti())
+			.topic(condition.topic())
+			.region(condition.region())
+			.studyGroupMemberRole(condition.studyGroupMemberRole())
+			.memberId(memberId)
+			.lastStudyGroupId(condition.lastStudyGroupId())
+			.size(size)
+			.build();
+	}
 }

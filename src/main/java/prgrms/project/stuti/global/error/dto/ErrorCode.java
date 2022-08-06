@@ -36,6 +36,7 @@ public enum ErrorCode {
 	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.BAD_REQUEST),
 	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.BAD_REQUEST),
 	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST),
+	NOT_MATCH_MY_PAGE_MEMBER("M007", "Not match with my page member", HttpStatus.BAD_REQUEST),
 
 	//feed
 	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),

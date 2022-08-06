@@ -1,10 +1,5 @@
 package prgrms.project.stuti.domain.feed.service;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +12,9 @@ import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.global.page.offset.PageResponse;
 import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.FeedException;
+import prgrms.project.stuti.global.page.offset.PageResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -42,30 +37,14 @@ public class CommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse getAllCommentsByPostId(CommentGetDto commentGetDto) {
+	public PageResponse<CommentParentContents> getPostComments(CommentGetDto commentGetDto) {
 		feedRepository.findById(commentGetDto.postId()).orElseThrow(FeedException::FEED_NOT_FOUND);
-		List<Comment> comments = commentRepository.findAllByFeedIdAndParentIdIsNUllWithNoOffset(commentGetDto.postId(),
-			commentGetDto.lastCommentId(), commentGetDto.size());
-		boolean hasNext = hasNext(commentGetDto.lastCommentId());
-		Long countParentCommentId = getCountParentCommentId(commentGetDto.postId());
 
-		return CommentConverter.toCommentResponse(comments, hasNext, countParentCommentId);
+		return commentRepository.findAllByFeedIdAndParentIdIsNUllWithNoOffset(commentGetDto.postId(),
+			commentGetDto.lastCommentId(), commentGetDto.size());
 	}
 
 	private Comment getParentComment(Long parentCommentId) {
 		return commentRepository.findById(parentCommentId).orElseThrow(CommentException::PARENT_COMMENT_NOT_FOUND);
 	}
-
-	private boolean hasNext(Long lastCommentId) {
-		if (lastCommentId == null) {
-			return false;
-		}
-
-		return commentRepository.existsByIdLessThanAndParentIdNull(lastCommentId);
-	}
-
-	private Long getCountParentCommentId(Long postId) {
-		return commentRepository.countByFeedIdAndParentIdNull(postId);
-	}
-
 }

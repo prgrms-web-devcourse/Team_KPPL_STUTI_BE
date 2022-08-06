@@ -11,30 +11,48 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.Comment;
+import prgrms.project.stuti.domain.feed.service.CommentConverter;
+import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
+import prgrms.project.stuti.global.page.offset.PageResponse;
 
 @Repository
 @RequiredArgsConstructor
-public class CommentCustomRepositoryImpl implements CommentCustomRepository{
+public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<Comment> findAllByFeedIdAndParentIdIsNUllWithNoOffset(Long postId, Long lastCommentId, int size) {
+	public PageResponse<CommentParentContents> findAllByFeedIdAndParentIdIsNUllWithNoOffset(Long postId,
+		Long lastCommentId, int size) {
 
 		BooleanBuilder dynamicLtId = new BooleanBuilder();
 
-		if(lastCommentId != null) {
+		if (lastCommentId != null) {
 			dynamicLtId.and(comment.id.lt(lastCommentId));
 		}
 
 		List<Comment> comments = jpaQueryFactory.selectFrom(comment)
-			.where(comment.parent.id.isNull(), dynamicLtId)
+			.where(comment.feed.id.eq(postId), comment.parent.isNull(), dynamicLtId)
 			.orderBy(comment.id.desc())
 			.limit(size)
-			.fetch(); // 잘 못가져옴
+			.fetch();
 
-		comments.stream().map(Comment::getChildren);
+		List<Long> result = jpaQueryFactory.select(comment.count())
+			.from(comment)
+			.where(comment.feed.id.eq(postId), comment.parent.isNull())
+			.fetch();
+		Long totalParentComments = result.get(0);
+		Long lastCalledComment = comments.get(comments.size() - 1).getId();
 
-		return comments;
+		return CommentConverter.toCommentResponse(comments, hasNext(postId, lastCalledComment), totalParentComments);
+	}
+
+	private boolean hasNext(Long postId, Long lastCommentId) {
+		List<Comment> comments = jpaQueryFactory.selectFrom(comment)
+			.where(comment.feed.id.eq(postId), comment.parent.isNull(), comment.id.lt(lastCommentId))
+			.orderBy(comment.id.desc())
+			.fetch();
+
+		return !comments.isEmpty();
 	}
 }

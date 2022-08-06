@@ -17,11 +17,11 @@ group = 'prgrms.project'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
-checkstyle {
-    maxWarnings = 0
-    configFile = file("${rootDir}/config/checkstyle/naver-checkstyle-rules.xml")
-    toolVersion ="10.3.1"
-}
+//checkstyle {
+//    maxWarnings = 0
+//    configFile = file("${rootDir}/config/checkstyle/naver-checkstyle-rules.xml")
+//    toolVersion ="10.3.1"
+//}
 
 configurations {
     compileOnly {

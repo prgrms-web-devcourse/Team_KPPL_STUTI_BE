@@ -50,7 +50,7 @@ public class StudyGroupMemberService {
 		StudyGroupMember studyGroupMember = findStudyGroupMember(studyGroupMemberId);
 		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
 
-		if (!studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)) {
+		if (studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)) {
 			studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
 			studyGroup.increaseNumberOfMembers();
 		}

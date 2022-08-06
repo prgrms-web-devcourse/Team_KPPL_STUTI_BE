@@ -32,7 +32,7 @@ public class StudyGroupMemberRestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<StudyGroupMemberManagementResponse> test(@AuthenticationPrincipal Long memberId,
+	public ResponseEntity<StudyGroupMemberManagementResponse> getStudyGroupMembers(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId) {
 		StudyGroupMemberManagementResponse managementResponse = studyGroupMemberService.getStudyGroupMembers(
 			memberId, studyGroupId);

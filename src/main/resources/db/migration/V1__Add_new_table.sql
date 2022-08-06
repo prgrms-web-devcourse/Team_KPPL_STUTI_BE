@@ -20,7 +20,7 @@ create table COMMENT
     MEMBER_ID  bigint,
     PARENT_ID  bigint,
     primary key (COMMENT_ID)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table FEED
 (
@@ -32,7 +32,7 @@ create table FEED
     CONTENTS   varchar(1000) not null,
     MEMBER_ID  bigint,
     primary key (FEED_ID)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table FEED_IMAGE
 (
@@ -44,7 +44,7 @@ create table FEED_IMAGE
     IMAGE_URL     varchar(150),
     FEED_ID       bigint,
     primary key (FEED_IMAGE_ID)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table FEED_LIKE
 (
@@ -56,7 +56,7 @@ create table FEED_LIKE
     FEED_ID      bigint,
     MEMBER_ID    bigint,
     primary key (FEED_LIKE_ID)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table MEMBER
 (
@@ -74,14 +74,14 @@ create table MEMBER
     NICK_NAME         varchar(30) not null,
     PROFILE_IMAGE_URL varchar(150),
     primary key (MEMBER_ID)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table PREFERRED_MBTIS
 (
     STUDY_GROUP_ID  bigint       not null,
     PREFERRED_MBTIS varchar(255) not null,
     primary key (STUDY_GROUP_ID, PREFERRED_MBTIS)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table STUDY_GROUP
 (
@@ -103,7 +103,7 @@ create table STUDY_GROUP
     TITLE              varchar(100)  not null,
     TOPIC              varchar(20)   not null,
     primary key (STUDY_GROUP_ID)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table STUDY_GROUP_MEMBER
 (
@@ -116,7 +116,7 @@ create table STUDY_GROUP_MEMBER
     MEMBER_ID               bigint,
     STUDY_GROUP_ID          bigint,
     primary key (STUDY_GROUP_MEMBER_ID)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table STUDY_GROUP_QUESTION
 (
@@ -130,4 +130,4 @@ create table STUDY_GROUP_QUESTION
     PARENT_ID               bigint,
     STUDY_GROUP_ID          bigint,
     primary key (STUDY_GROUP_QUESTION_ID)
-) engine=InnoDB
+) engine=InnoDB;

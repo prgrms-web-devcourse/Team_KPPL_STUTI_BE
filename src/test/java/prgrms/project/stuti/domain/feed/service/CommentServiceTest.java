@@ -41,6 +41,7 @@ class CommentServiceTest extends ServiceTestConfig {
 	@AfterEach
 	void deleteAllComment() {
 		commentRepository.deleteAll();
+		feedRepository.deleteAll();
 	}
 
 	@Test

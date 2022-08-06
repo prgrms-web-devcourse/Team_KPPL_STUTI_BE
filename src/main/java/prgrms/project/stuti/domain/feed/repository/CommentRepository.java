@@ -8,6 +8,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 
 	void deleteAllByFeedId(Long postId);
 
+	void deleteAllByParentId(Long parentCommentId);
+
 	boolean existsByIdLessThanAndParentIdNull(Long commentId);
 
 	long countByFeedIdAndParentIdNull(Long postId);

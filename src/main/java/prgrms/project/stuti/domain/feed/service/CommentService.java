@@ -41,7 +41,7 @@ public class CommentService {
 	public CommentResponse changeComment(CommentUpdateDto commentUpdateDto) {
 		Comment comment = commentRepository.findById(commentUpdateDto.postCommentId())
 			.orElseThrow(() -> CommentException.COMMENT_NOT_FOUND(commentUpdateDto.postCommentId()));
-		if(comment.getFeed() == null) { //추후 isdelete로 변경시 로직확인 필요, 대댓글인 경우 댓글 있는지 확인 필요
+		if (comment.getFeed() == null) { //추후 isdelete로 변경시 로직확인 필요, 대댓글인 경우 댓글 있는지 확인 필요
 			FeedException.FEED_NOT_FOUND();
 		}
 		comment.changeContents(commentUpdateDto.contents());
@@ -52,8 +52,9 @@ public class CommentService {
 	@Transactional
 	public void deleteComment(Long postId, Long commentId, Long memberId) {
 		feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
-		commentRepository.findById(commentId).orElseThrow(() -> CommentException.COMMENT_NOT_FOUND(commentId));
-		commentRepository.deleteById(commentId);
+		Comment foundComment = commentRepository.findById(commentId)
+			.orElseThrow(() -> CommentException.COMMENT_NOT_FOUND(commentId));
+		deleteComments(foundComment);
 	}
 
 	@Transactional(readOnly = true)
@@ -67,5 +68,12 @@ public class CommentService {
 	private Comment getParentComment(Long parentCommentId) {
 		return commentRepository.findById(parentCommentId)
 			.orElseThrow(() -> CommentException.PARENT_COMMENT_NOT_FOUND(parentCommentId));
+	}
+
+	private void deleteComments(Comment deleteComment) {
+		if (deleteComment.getParent() == null) {
+			commentRepository.deleteAllByParentId(deleteComment.getId());
+		}
+		commentRepository.delete(deleteComment);
 	}
 }

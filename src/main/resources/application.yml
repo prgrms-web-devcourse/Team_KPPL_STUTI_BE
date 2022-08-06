@@ -19,13 +19,13 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
-#        default_batch_fetch_size: 500
-        format_sql: true
+      default_batch_fetch_size: 500
+      format_sql: true
+      naming:
+        physical-strategy: prgrms.project.stuti.global.config.SnakeUpperCaseNamingStrategy
     properties:
       hibernate:
-         dialect: org.hibernate.dialect.MySQL8Dialect
-       naming:
-         physical-strategy: prgrms.project.stuti.global.config.SnakeUpperCaseNamingStrategy
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
   servlet:
     multipart:

@@ -21,8 +21,8 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupConverter;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @RequiredArgsConstructor
@@ -54,8 +54,8 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	}
 
 	@Override
-	public CursorPageResponse<StudyGroupResponse> dynamicFindAllWithCursorPagination(
-		StudyGroupFindConditionDto conditionDto) {
+	public CursorPageResponse<StudyGroupsResponse> dynamicFindAllWithCursorPagination(
+		StudyGroupDto.FindCondition conditionDto) {
 		jpaQueryFactory.selectFrom(studyGroup).join(studyGroup.preferredMBTIs).fetchJoin().fetch();
 
 		List<StudyGroupMember> contents = jpaQueryFactory
@@ -77,7 +77,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 
 		boolean hasNext = contents.size() > conditionDto.size();
 
-		return StudyGroupConverter.toStudyGroupPageResponse(contents, hasNext);
+		return StudyGroupConverter.toStudyGroupsCursorPageResponse(contents, hasNext);
 	}
 
 	private BooleanExpression lessThanLastStudyGroupId(Long studyGroupId) {

@@ -13,8 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupMemberService;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupMemberDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberManagementResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse;
 
 @RestController
 @RequestMapping("/api/v1/study-groups/{studyGroupId}/members")
@@ -26,25 +27,28 @@ public class StudyGroupMemberRestController {
 	@PostMapping
 	public ResponseEntity<StudyGroupMemberIdResponse> applyForJoinStudyGroup(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId) {
-		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.applyForJoinStudyGroup(memberId, studyGroupId);
+		StudyGroupMemberDto.CreateDto createDto =
+			StudyGroupMemberMapper.toStudyGroupMemberCreateDto(memberId, studyGroupId);
+		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.applyForJoinStudyGroup(createDto);
 
 		return ResponseEntity.ok(idResponse);
 	}
 
 	@GetMapping
-	public ResponseEntity<StudyGroupMemberManagementResponse> getStudyGroupMembers(@AuthenticationPrincipal Long memberId,
+	public ResponseEntity<StudyGroupMembersResponse> getStudyGroupMembers(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId) {
-		StudyGroupMemberManagementResponse managementResponse = studyGroupMemberService.getStudyGroupMembers(
-			memberId, studyGroupId);
+		StudyGroupMemberDto.ReadDto readDto = StudyGroupMemberMapper.toStudyGroupMemberReadDto(memberId, studyGroupId);
+		StudyGroupMembersResponse studyGroupMembersResponse = studyGroupMemberService.getStudyGroupMembers(readDto);
 
-		return ResponseEntity.ok(managementResponse);
+		return ResponseEntity.ok(studyGroupMembersResponse);
 	}
 
 	@PatchMapping("/{studyGroupMemberId}")
 	public ResponseEntity<StudyGroupMemberIdResponse> acceptRequestForJoin(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId, @PathVariable Long studyGroupMemberId) {
-		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.acceptRequestForJoin(memberId, studyGroupId,
-			studyGroupMemberId);
+		StudyGroupMemberDto.UpdateDto updateDto =
+			StudyGroupMemberMapper.toStudyGroupMemberUpdateDto(memberId, studyGroupId, studyGroupMemberId);
+		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.acceptRequestForJoin(updateDto);
 
 		return ResponseEntity.ok(idResponse);
 	}
@@ -52,7 +56,9 @@ public class StudyGroupMemberRestController {
 	@DeleteMapping(value = "/{studyGroupMemberId}")
 	public ResponseEntity<Void> deleteStudyGroupMember(@AuthenticationPrincipal Long memberId,
 		@PathVariable Long studyGroupId, @PathVariable Long studyGroupMemberId) {
-		studyGroupMemberService.deleteStudyGroupMember(memberId, studyGroupId, studyGroupMemberId);
+		StudyGroupMemberDto.DeleteDto deleteDto =
+			StudyGroupMemberMapper.toStudyGroupMemberDeleteDto(memberId, studyGroupId, studyGroupMemberId);
+		studyGroupMemberService.deleteStudyGroupMember(deleteDto);
 
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
 	}

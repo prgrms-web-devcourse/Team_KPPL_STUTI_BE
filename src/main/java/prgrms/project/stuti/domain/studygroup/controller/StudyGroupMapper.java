@@ -1,76 +1,39 @@
 package prgrms.project.stuti.domain.studygroup.controller;
 
+import java.util.Set;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupFindCondition;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionCreateRequest;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionUpdateRequest;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
+import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupRequest;
 import prgrms.project.stuti.domain.studygroup.model.Region;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupMapper {
 
-	public static StudyGroupCreateDto toStudyGroupCreateDto(Long memberId, StudyGroupCreateRequest createRequest) {
-		return StudyGroupCreateDto
+	public static StudyGroupDto.CreateDto toStudyGroupCreateDto(
+		Long memberId, StudyGroupRequest.CreateRequest createRequest) {
+		return StudyGroupDto.CreateDto
 			.builder()
 			.memberId(memberId)
-			.imageFile(createRequest.imageFile())
 			.title(createRequest.title())
 			.topic(createRequest.topic())
 			.isOnline(createRequest.isOnline())
 			.region(createRequest.isOnline() ? Region.ONLINE : createRequest.region())
-			.preferredMBTIs(createRequest.preferredMBTIs())
 			.numberOfRecruits(createRequest.numberOfRecruits())
 			.startDateTime(createRequest.startDateTime())
 			.endDateTime(createRequest.endDateTime())
+			.preferredMBTIs(
+				createRequest.preferredMBTIs().isEmpty() ? Set.of(Mbti.NONE) : createRequest.preferredMBTIs())
+			.imageFile(createRequest.imageFile())
 			.description(createRequest.description())
 			.build();
 	}
 
-	public static StudyGroupUpdateDto toStudyGroupUpdateDto(Long memberId, Long studyGroupId,
-		StudyGroupUpdateRequest updateRequest) {
-		return StudyGroupUpdateDto
-			.builder()
-			.memberId(memberId)
-			.studyGroupId(studyGroupId)
-			.title(updateRequest.title())
-			.imageFile(updateRequest.imageFile())
-			.description(updateRequest.description())
-			.build();
-	}
-
-	public static StudyGroupQuestionCreateDto toStudyGroupQuestionCreateDto(Long memberId, Long studyGroupId,
-		StudyGroupQuestionCreateRequest createRequest) {
-		return StudyGroupQuestionCreateDto
-			.builder()
-			.memberId(memberId)
-			.studyGroupId(studyGroupId)
-			.parentId(createRequest.parentId())
-			.contents(createRequest.contents())
-			.build();
-	}
-
-	public static StudyGroupQuestionUpdateDto toStudyGroupQuestionUpdateDto(Long memberId, Long studyGroupId,
-		Long studyGroupQuestionId, StudyGroupQuestionUpdateRequest updateRequest) {
-		return StudyGroupQuestionUpdateDto
-			.builder()
-			.memberId(memberId)
-			.studyGroupId(studyGroupId)
-			.studyGroupQuestionId(studyGroupQuestionId)
-			.contents(updateRequest.contents())
-			.build();
-	}
-
-	public static StudyGroupFindConditionDto toStudyGroupFindConditionDto(Long memberId, Long size,
-		StudyGroupFindCondition condition) {
-		return StudyGroupFindConditionDto
+	public static StudyGroupDto.FindCondition toStudyGroupFindConditionDto(Long memberId, Long size,
+		StudyGroupRequest.FindCondition condition) {
+		return StudyGroupDto.FindCondition
 			.builder()
 			.mbti(condition.mbti())
 			.topic(condition.topic())
@@ -80,5 +43,25 @@ public class StudyGroupMapper {
 			.lastStudyGroupId(condition.lastStudyGroupId())
 			.size(size)
 			.build();
+	}
+
+	public static StudyGroupDto.ReadDto toStudyGroupReadDto(Long studyGroupId) {
+		return new StudyGroupDto.ReadDto(studyGroupId);
+	}
+
+	public static StudyGroupDto.UpdateDto toStudyGroupUpdateDto(Long memberId, Long studyGroupId,
+		StudyGroupRequest.UpdateRequest updateRequest) {
+		return StudyGroupDto.UpdateDto
+			.builder()
+			.memberId(memberId)
+			.studyGroupId(studyGroupId)
+			.title(updateRequest.title())
+			.imageFile(updateRequest.imageFile())
+			.description(updateRequest.description())
+			.build();
+	}
+
+	public static StudyGroupDto.DeleteDto toStudyGroupDeleteDto(Long memberId, Long studyGroupId) {
+		return new StudyGroupDto.DeleteDto(memberId, studyGroupId);
 	}
 }

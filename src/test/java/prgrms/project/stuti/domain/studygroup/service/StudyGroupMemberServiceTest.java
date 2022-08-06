@@ -19,7 +19,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
-import prgrms.project.stuti.domain.studygroup.service.StudyGroupMemberService;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupMemberDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
@@ -64,9 +64,10 @@ class StudyGroupMemberServiceTest extends ServiceTestConfig {
 		//given
 		Long memberId = otherMember.getId();
 		Long studyGroupId = studyGroup.getId();
+		StudyGroupMemberDto.CreateDto createDto = new StudyGroupMemberDto.CreateDto(memberId, studyGroupId);
 
 		//when
-		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.applyForJoinStudyGroup(memberId, studyGroupId);
+		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.applyForJoinStudyGroup(createDto);
 		Optional<StudyGroupMember> studyGroupMember = studyGroupMemberRepository.findStudyGroupMemberById(
 			idResponse.studyGroupMemberId());
 
@@ -81,24 +82,25 @@ class StudyGroupMemberServiceTest extends ServiceTestConfig {
 		//given
 		Long memberId = member.getId();
 		Long studyGroupId = studyGroup.getId();
+		StudyGroupMemberDto.CreateDto createDto = new StudyGroupMemberDto.CreateDto(memberId, studyGroupId);
 
 		//when, then
 		assertThrows(StudyGroupException.class,
-			() -> studyGroupMemberService.applyForJoinStudyGroup(memberId, studyGroupId));
+			() -> studyGroupMemberService.applyForJoinStudyGroup(createDto));
 	}
 
 	@Test
 	@DisplayName("스터디 가입신청을 수락하면 스터디 멤버로 역할이 변경된다.")
 	void testAcceptRequestForJoin() {
 		//given
-		StudyGroupMember studyApplicant = studyGroupMemberRepository.save(
-			new StudyGroupMember(StudyGroupMemberRole.STUDY_APPLICANT, otherMember, studyGroup));
-
+		StudyGroupMember studyApplicant = studyGroupMemberRepository
+			.save(new StudyGroupMember(StudyGroupMemberRole.STUDY_APPLICANT, otherMember, studyGroup));
+		StudyGroupMemberDto.UpdateDto updateDto =
+			new StudyGroupMemberDto.UpdateDto(member.getId(), studyGroup.getId(), studyApplicant.getId());
 		//when
-		StudyGroupMemberIdResponse newStudyGroupMember = studyGroupMemberService.acceptRequestForJoin(member.getId(),
-			studyGroup.getId(), studyApplicant.getId());
-		Optional<StudyGroupMember> retrievedStudyGroupMember = studyGroupMemberRepository.findStudyGroupMemberById(
-			newStudyGroupMember.studyGroupMemberId());
+		StudyGroupMemberIdResponse newStudyGroupMember = studyGroupMemberService.acceptRequestForJoin(updateDto);
+		Optional<StudyGroupMember> retrievedStudyGroupMember =
+			studyGroupMemberRepository.findStudyGroupMemberById(newStudyGroupMember.studyGroupMemberId());
 
 		//then
 		assertEquals(studyApplicant.getId(), newStudyGroupMember.studyGroupMemberId());
@@ -111,10 +113,13 @@ class StudyGroupMemberServiceTest extends ServiceTestConfig {
 	void testDeleteStudyGroupMember() {
 		//given
 		Long studyGroupMemberId = studyLeader.getId();
+		StudyGroupMemberDto.DeleteDto deleteDto =
+			new StudyGroupMemberDto.DeleteDto(member.getId(), studyGroup.getId(), studyGroupMemberId);
 
 		//when
-		studyGroupMemberService.deleteStudyGroupMember(member.getId(), studyGroup.getId(), studyGroupMemberId);
-		Optional<StudyGroupMember> retrievedStudyGroupMember = studyGroupMemberRepository.findStudyGroupMemberById(studyGroupMemberId);
+		studyGroupMemberService.deleteStudyGroupMember(deleteDto);
+		Optional<StudyGroupMember> retrievedStudyGroupMember =
+			studyGroupMemberRepository.findStudyGroupMemberById(studyGroupMemberId);
 
 		//then
 		assertTrue(retrievedStudyGroupMember.isEmpty());
@@ -126,10 +131,11 @@ class StudyGroupMemberServiceTest extends ServiceTestConfig {
 		//given
 		StudyGroupMember studyGroupMember = studyGroupMemberRepository.save(
 			new StudyGroupMember(StudyGroupMemberRole.STUDY_MEMBER, otherMember, studyGroup));
+		StudyGroupMemberDto.DeleteDto deleteDto =
+			new StudyGroupMemberDto.DeleteDto(otherMember.getId(), studyGroup.getId(), studyGroupMember.getId());
 
 		//when, then
 		assertThrows(StudyGroupException.class,
-			() -> studyGroupMemberService.deleteStudyGroupMember(otherMember.getId(), studyGroup.getId(),
-				studyGroupMember.getId()));
+			() -> studyGroupMemberService.deleteStudyGroupMember(deleteDto));
 	}
 }

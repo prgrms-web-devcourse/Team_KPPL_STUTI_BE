@@ -8,19 +8,35 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 
 public record StudyGroupResponse(
 	Long studyGroupId,
-	Long memberId,
-	String thumbnailUrl,
 	String topic,
 	String title,
+	String imageUrl,
+	StudyGroupLeader leader,
 	Set<Mbti> preferredMBTIs,
+	boolean isOnline,
 	String region,
 	LocalDateTime startDateTime,
 	LocalDateTime endDateTime,
 	int numberOfMembers,
-	int numberOfRecruits
+	int numberOfRecruits,
+	String description
 ) {
 
 	@Builder
 	public StudyGroupResponse {
+	}
+
+	public static record StudyGroupLeader(
+		Long memberId,
+		String profileImageUrl,
+		String nickname,
+		String field,
+		String career,
+		Mbti mbti
+	) {
+
+		@Builder
+		public StudyGroupLeader {
+		}
 	}
 }

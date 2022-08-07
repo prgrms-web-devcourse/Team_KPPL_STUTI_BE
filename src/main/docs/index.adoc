@@ -10,3 +10,5 @@ endif::[]
 = STUTI API v1
 
 include::study-group.adoc[]
+include::study-group-member.adoc[]
+include::study-group-question.adoc[]

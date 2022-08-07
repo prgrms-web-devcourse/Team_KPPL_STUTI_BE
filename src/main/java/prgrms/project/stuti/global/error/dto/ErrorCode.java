@@ -18,6 +18,9 @@ public enum ErrorCode {
 	EXISTING_STUDY_GROUP_MEMBER("SG004", "Existing study group member", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_STUDY_GROUP_MEMBER("SG005", "Not found study group member", HttpStatus.NOT_FOUND),
 	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.NOT_FOUND),
+	NOT_MATCH_WRITER("SG007", "Not match writer", HttpStatus.BAD_REQUEST),
+	NOT_MATCH_STUDY_GROUP("SG008", "Not match study group", HttpStatus.BAD_REQUEST),
+	RECRUITMENT_IS_CLOSED("SG009", "Recruitment is closed", HttpStatus.BAD_REQUEST),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
@@ -34,6 +37,7 @@ public enum ErrorCode {
 	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.BAD_REQUEST),
 	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.BAD_REQUEST),
 	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST),
+	NOT_MATCH_MY_PAGE_MEMBER("M007", "Not match with my page member", HttpStatus.BAD_REQUEST),
 
 	//feed
 	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),

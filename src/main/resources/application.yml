@@ -1,13 +1,9 @@
 spring:
   profiles:
-    active: local
+    active: prod
     group:
       local: local, common
       prod: prod, common
 
   jpa:
     defer-datasource-initialization: true
-  sql:
-    init:
-      data-locations: classpath*:sql/MEMBER.sql
-      mode: always

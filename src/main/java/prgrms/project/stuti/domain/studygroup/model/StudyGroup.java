@@ -25,6 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.global.base.BaseEntity;
+import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
 @Entity
 @Getter
@@ -109,6 +110,14 @@ public class StudyGroup extends BaseEntity {
 
 	public void delete() {
 		this.isDeleted = true;
+	}
+
+	public void increaseNumberOfMembers() {
+		if (this.numberOfMembers >= this.numberOfRecruits) {
+			throw StudyGroupException.recruitmentIsClosed(this.numberOfMembers, this.numberOfRecruits);
+		}
+
+		this.numberOfMembers++;
 	}
 
 	@Override

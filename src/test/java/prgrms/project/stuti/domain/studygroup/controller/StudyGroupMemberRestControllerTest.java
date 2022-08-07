@@ -31,7 +31,9 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	private StudyGroupMemberService studyGroupMemberService;
 
 	private final Long studyGroupId = 1L;
+
 	private final Long studyGroupMemberId = 1L;
+
 	private final String studyGroupMemberApiPrefix = "/api/v1/study-groups/{studyGroupId}/members";
 
 	@Test

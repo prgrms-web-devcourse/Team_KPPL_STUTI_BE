@@ -12,43 +12,63 @@ import org.springframework.restdocs.request.ParameterDescriptor;
 public class CommonStudyGroupTestUtils {
 
 	public static HeaderDescriptor contentType() {
-		return headerWithName(HttpHeaders.CONTENT_TYPE).description("컨텐츠 타입");
+		return headerWithName(CONTENT_TYPE).description("컨텐츠 타입");
 	}
 
 	public static HeaderDescriptor host() {
-		return headerWithName(HttpHeaders.HOST).description("호스트");
+		return headerWithName(HOST).description("호스트");
 	}
 
 	public static ParameterDescriptor studyGroupIdPath() {
-		return parameterWithName(STUDY_GROUP_ID.value()).description("스터디 그룹 아이디");
+		return parameterWithName(STUDY_GROUP_ID.field()).description(STUDY_GROUP_ID.description());
 	}
 
 	public static HeaderDescriptor contentLength() {
 		return headerWithName(CONTENT_LENGTH).description("컨텐츠 길이");
 	}
 
-	public static HeaderDescriptor location() {
-		return headerWithName(HttpHeaders.LOCATION).description("생성된 리소스 주소");
-	}
-
 	enum CommonField {
-		TITLE("title"), TOPIC("topic"), IS_ONLINE("isOnline"),
-		REGION("region"), PREFERRED_MBTIS("preferredMBTIs"), STUDY_GROUP_MEMBER_ID("studyGroupMemberId"),
-		NUMBER_OF_RECRUITS("numberOfRecruits"), START_DATE_TIME("startDateTime"),
-		END_DATE_TIME("endDateTime"), DESCRIPTION("description"), IMAGE_FILE("imageFile"),
-		STUDY_GROUP_ID("studyGroupId"), IMAGE_URL("imageUrl"), NUMBER_OF_MEMBERS("numberOfMembers"),
-		MEMBER_ID("memberId"), PROFILE_IMAGE_URL("profileImageUrl"), NICKNAME("nickname"), FIELD("field"),
-		CAREER("career"), MBTI("mbti"), STUDY_GROUP_QUESTION_ID("studyGroupQuestionId"),
-		THUMBNAIL_URL("thumbnailUrl");
+		TITLE("title", "스터디 제목"),
+		TOPIC("topic", "스터디 주제"),
+		IS_ONLINE("isOnline", "온라인 / 오프라인 여부"),
+		REGION("region", "스터디 지역"),
+		PREFERRED_MBTIS("preferredMBTIs", "선호하는 MBTI 목록"),
+		NUMBER_OF_MEMBERS("numberOfMembers", "스터디 현재 인원수"),
+		NUMBER_OF_RECRUITS("numberOfRecruits", "스터디 모집 인원수"),
+		START_DATE_TIME("startDateTime", "스터디 시작일자"),
+		END_DATE_TIME("endDateTime", "스터디 종료일자"),
+		DESCRIPTION("description", "스터디 상세설명"),
+		IMAGE_FILE("imageFile", "스터디 대표 이미지"),
+		IMAGE_URL("imageUrl", "스터디 대표 이미지 url"),
+		PROFILE_IMAGE_URL("profileImageUrl", "프로필 이미지 url"),
+		NICKNAME("nickname", "닉네임"),
+		FIELD("field", "개발분야"),
+		CAREER("career", "개발경력"),
+		MBTI("mbti", "MBTI"),
+		THUMBNAIL_URL("thumbnailUrl", "스터디 그룹 대표 이미지 썸네일 url"),
+		MEMBER_ID("memberId", "멤버 아이디"),
 
-		private final String value;
+		STUDY_GROUP_MEMBER_ID("studyGroupMemberId", "스터디 그룹 멤버 아이디"),
+		STUDY_GROUP_ID("studyGroupId", "스터디 그룹 아이디"),
+		STUDY_GROUP_QUESTION_ID("studyGroupQuestionId", "스터디 그룹 문의댓글 아이디"),
+		PAGE_CONTENTS("contents", "페이지 컨텐츠"),
+		HAS_NEXT("hasNext", "다음 페이지 유무"),
+		SIZE("size", "페이지 리스트 사이즈");
 
-		CommonField(String value) {
-			this.value = value;
+		private final String field;
+		private final String description;
+
+		CommonField(String field, String description) {
+			this.field = field;
+			this.description = description;
 		}
 
-		public String value() {
-			return this.value;
+		public String field() {
+			return this.field;
+		}
+
+		public String description() {
+			return this.description;
 		}
 	}
 }

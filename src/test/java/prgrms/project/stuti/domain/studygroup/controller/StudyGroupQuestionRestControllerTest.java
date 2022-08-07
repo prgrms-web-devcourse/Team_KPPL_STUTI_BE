@@ -188,7 +188,7 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 	}
 
 	private ParameterDescriptor studyGroupQuestionIdPath() {
-		return parameterWithName(STUDY_GROUP_QUESTION_ID.value()).description("스터디 그룹 문의댓글 아이디");
+		return parameterWithName(STUDY_GROUP_QUESTION_ID.field()).description("스터디 그룹 문의댓글 아이디");
 	}
 
 	private FieldDescriptor contents() {
@@ -201,11 +201,11 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 
 	private List<FieldDescriptor> commonQuestionResponse() {
 		return List.of(
-			fieldWithPath(STUDY_GROUP_QUESTION_ID.value()).type(NUMBER).description("스터디 그룹 문의댓글 아이디"),
+			fieldWithPath(STUDY_GROUP_QUESTION_ID.field()).type(NUMBER).description("스터디 그룹 문의댓글 아이디"),
 			parentIdField(),
-			fieldWithPath(PROFILE_IMAGE_URL.value()).type(STRING).description("프로필 이미지 url"),
-			fieldWithPath(MEMBER_ID.value()).type(NUMBER).description("회원 아이디"),
-			fieldWithPath(NICKNAME.value()).type(STRING).description("닉네임"),
+			fieldWithPath(PROFILE_IMAGE_URL.field()).type(STRING).description("프로필 이미지 url"),
+			fieldWithPath(MEMBER_ID.field()).type(NUMBER).description("회원 아이디"),
+			fieldWithPath(NICKNAME.field()).type(STRING).description("닉네임"),
 			contents(),
 			fieldWithPath("updatedAt").type(STRING).description("업데이트 시간")
 		);

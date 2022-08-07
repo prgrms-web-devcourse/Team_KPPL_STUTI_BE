@@ -37,15 +37,15 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	private final String studyGroupMemberApiPrefix = "/api/v1/study-groups/{studyGroupId}/members";
 
 	@Test
-	@DisplayName("스터디 그룹에 가입신청을한다.")
-	void postApplyStudyGroup() throws Exception {
+	@DisplayName("스터디 그룹에 가입신청을 한다.")
+	void applyForJoinStudyGroup() throws Exception {
 		//given
-		StudyGroupMemberIdResponse idResponse = new StudyGroupMemberIdResponse(1L);
+		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse(studyGroupMemberId);
 		given(studyGroupMemberService.applyForJoinStudyGroup(any())).willReturn(idResponse);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(
-			post(studyGroupMemberApiPrefix, studyGroupId).contentType(APPLICATION_JSON));
+		ResultActions resultActions = mockMvc.perform(post(studyGroupMemberApiPrefix, studyGroupId)
+				.contentType(APPLICATION_JSON));
 
 		resultActions
 			.andExpectAll(
@@ -60,7 +60,7 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	}
 
 	@Test
-	@DisplayName("스터디 가입신청을 수락한다.")
+	@DisplayName("스터디 그룹 가입신청을 수락한다.")
 	void acceptRequestForJoin() throws Exception {
 		//given
 		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse(studyGroupMemberId);
@@ -111,10 +111,10 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	}
 
 	private ParameterDescriptor studyGroupMemberIdPath() {
-		return parameterWithName(STUDY_GROUP_MEMBER_ID.value()).description("스터디 그룹 멤버 아이디");
+		return parameterWithName(STUDY_GROUP_MEMBER_ID.field()).description("스터디 그룹 멤버 아이디");
 	}
 
 	private FieldDescriptor studyGroupMemberIdField() {
-		return fieldWithPath(STUDY_GROUP_MEMBER_ID.value()).type(NUMBER).description("스터디 그룹  멤버 아이디");
+		return fieldWithPath(STUDY_GROUP_MEMBER_ID.field()).type(NUMBER).description("스터디 그룹  멤버 아이디");
 	}
 }

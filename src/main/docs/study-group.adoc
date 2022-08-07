@@ -1,18 +1,22 @@
 == 스터디 그룹
 
 === 생성
-operation::post-study-group[snippets='http-request,request-headers,request-parts,request-parameters,response-headers,response-fields,response-body']
+operation::create-study-group[snippets='http-request,request-headers,request-parts,request-parameters,response-headers,response-fields,response-body']
 '''
 
 === 전체조회
 operation::get-study-groups[snippets='http-request,request-headers,request-parameters,response-headers,response-fields,response-body']
 '''
 
+=== 마이 페이지 조회
+operation::get-my-study-groups[snippets='http-request,request-headers,request-parameters,response-headers,response-fields,response-body']
+'''
+
 === 상세조회
 operation::get-study-group[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body'']
 
 === 수정
-operation::patch-study-group[snippets='http-request,request-headers,request-parts,request-parameters,response-headers,response-fields,response-body']
+operation::update-study-group[snippets='http-request,request-headers,request-parts,request-parameters,response-headers,response-fields,response-body']
 '''
 
 === 삭제

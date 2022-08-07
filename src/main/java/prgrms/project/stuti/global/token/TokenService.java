@@ -7,10 +7,9 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -152,18 +151,13 @@ public class TokenService {
 		return token != null ? CoderUtil.decode(token) : null;
 	}
 
-	public void addAccessTokenToCookie(HttpServletResponse response, String accessToken,
-		TokenType tokenType) {
-		Cookie cookie = setCookie(accessToken, tokenType);
-		response.addCookie(cookie);
-	}
-
-	private Cookie setCookie(String accessToken, TokenType tokenType) {
-		Cookie cookie = new Cookie(AUTHORIZATION, CoderUtil.encode(this.tokenWithType(accessToken, tokenType)));
-		cookie.setSecure(true);
-		cookie.setHttpOnly(true);
-		cookie.setMaxAge((int)this.getAccessTokenPeriod());
-
-		return cookie;
+	public ResponseCookie addAccessTokenToCookie(String accessToken, TokenType tokenType) {
+		return ResponseCookie.from(AUTHORIZATION, "1234")
+			.path("/")
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("none")
+			.maxAge(60)
+			.build();
 	}
 }

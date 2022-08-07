@@ -1,8 +1,5 @@
 package prgrms.project.stuti.global.error;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -13,7 +10,9 @@ import org.springframework.web.multipart.MultipartException;
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.global.error.dto.ErrorCode;
 import prgrms.project.stuti.global.error.dto.ErrorResponse;
+import prgrms.project.stuti.global.error.dto.TokenExpirationResponse;
 import prgrms.project.stuti.global.error.exception.BusinessException;
+import prgrms.project.stuti.global.error.exception.TokenException;
 
 @Slf4j
 @RestControllerAdvice
@@ -46,5 +45,12 @@ public class GlobalExceptionHandler {
 		log.error("Got Exception: {}", ex.getMessage(), ex);
 
 		return ErrorResponseMapper.toErrorResponse(ErrorCode.UNKNOWN_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(TokenException.class)
+	protected ResponseEntity<TokenExpirationResponse> handleTokenExpiration(TokenException ex) {
+		log.info("Got TokenExpirationException: {}", ex.getMessage(), ex);
+
+		return ErrorResponseMapper.toTokenExpirationResponse(ex.getErrorCode());
 	}
 }

@@ -1,61 +1,37 @@
 package prgrms.project.stuti.global.security;
 
-import static org.springframework.http.HttpHeaders.*;
-
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.DefaultRedirectStrategy;
-import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.MemberService;
-import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
-import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
-import prgrms.project.stuti.global.token.TokenService;
-import prgrms.project.stuti.global.token.TokenType;
-import prgrms.project.stuti.global.token.Tokens;
 import prgrms.project.stuti.global.util.CoderUtil;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-	private final TokenService tokenService;
 	private final MemberService memberService;
-	private final RefreshTokenRepository refreshTokenRepository;
 	private final TemporaryMemberRepository temporaryMemberRepository;
-	private final ObjectMapper objectMapper;
-	private RedirectStrategy redirectStratgy = new DefaultRedirectStrategy();
 
 	@Value("${app.oauth.domain}")
 	private String domain;
-
-	@Value("${app.oauth.signupPath}")
-	private String signupPath;
-
-	@Value("${app.oauth.loginSuccessPath}")
-	private String loginSuccessPath;
 
 	@Value("${app.oauth.signupTime}")
 	private Long signupTime;
@@ -81,7 +57,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 				.expiration(signupTime)
 				.build();
 
-			// temporarymember 가 없으면 생성
+			// temporary member 가 없으면 생성
 			if (optionalTemporaryMember.isEmpty()) {
 				temporaryMemberRepository.save(temporaryMember);
 			} else {
@@ -93,51 +69,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 			String param1 = "?email=" + CoderUtil.encode(temporaryMemberEmail);
 			String param2 = "&name=" + CoderUtil.encode(name);
-			String targetURI = domain + signupPath + param1 + param2;
-			// 추가 회원가입을 하기 위해 redirect 한다.
-			// db 저장후 refreshtoken 저장 한 후 accesstoken 은 쿠키로 전달한다.
-			redirectStratgy.sendRedirect(request, response, targetURI);
+			String targetUri = domain + "/signup" + param1 + param2;
+
+			response.sendRedirect(targetUri);
 			return;
 		}
 		// 이미 회원가입을 한 유저의 경우
-		// 1. memberId 로 refreshtoken 이 존재하는지 확인한다.
-		// 2. 존재한다면 refreshtoken 을 가지고 accesstoken 을 만든다.
-		// 3. 존재하지 않으면 refreshtoken 을 만들고 accesstoken 을 만든다.
-		// 4. 쿠키에 accesstoken 을 담아 전달한다.
-
 		Long memberId = optionalMember.get().getId();
-		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
-		saveRefreshTokenToRedis(memberId, tokens.accessToken(), tokens.refreshToken());
-		Cookie cookie = addAccessTokenToCookie(tokens.accessToken(), TokenType.JWT_TYPE);
-		response.addCookie(cookie);
 
-		String targetUri = domain + loginSuccessPath + "?value=" + tokens.accessToken();
+		String targetUri = domain + "/login" + "?id=" + memberId;
+		response.sendRedirect(targetUri);
 
-		redirectStratgy.sendRedirect(request, response, targetUri);
-
-	}
-
-	private void saveRefreshTokenToRedis(Long memberId, String accessToken, String refreshTokenValue) {
-		Date now = new Date();
-		RefreshToken refreshToken = RefreshToken.builder()
-			.accessTokenValue(accessToken)
-			.memberId(memberId)
-			.refreshTokenValue(refreshTokenValue)
-			.createdTime(now)
-			.expirationTime(new Date(now.getTime() + tokenService.getRefreshPeriod()))
-			.expiration(tokenService.getRefreshPeriod())
-			.build();
-
-		refreshTokenRepository.save(refreshToken);
-	}
-
-	private Cookie addAccessTokenToCookie(String accessToken, TokenType tokenType) {
-		Cookie cookie = new Cookie(AUTHORIZATION, CoderUtil.encode(tokenService.tokenWithType(accessToken, tokenType)));
-		cookie.setSecure(true);
-		cookie.setHttpOnly(true);
-		cookie.setMaxAge((int)tokenService.getAccessTokenPeriod());
-		cookie.setPath(loginSuccessPath);
-
-		return cookie;
 	}
 }

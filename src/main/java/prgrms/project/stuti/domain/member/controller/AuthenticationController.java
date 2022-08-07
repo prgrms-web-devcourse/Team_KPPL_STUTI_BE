@@ -1,16 +1,12 @@
 package prgrms.project.stuti.domain.member.controller;
 
-import java.io.IOException;
 import java.net.URI;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import prgrms.project.stuti.domain.member.controller.dto.MemberIdRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberSignupResponse;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.AuthenticationService;
-import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
+import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.token.Tokens;
@@ -39,51 +37,47 @@ public class AuthenticationController {
 	private String domain;
 
 	@PostMapping("/signup")
-	public ResponseEntity<MemberIdResponse> singup(HttpServletResponse response,
-		@Valid @RequestBody MemberSaveRequest memberSaveRequest) {
-		MemberIdResponse memberIdResponse = authenticationService.signupMember(
+	public ResponseEntity<MemberSignupResponse> singup(@Valid @RequestBody MemberSaveRequest memberSaveRequest)
+	{
+		MemberResponse memberResponse = authenticationService.signupMember(
 			MemberMapper.toMemberDto(memberSaveRequest));
-		Long memberId = memberIdResponse.memberId();
+		Long memberId = memberResponse.id();
 
 		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
 		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
+		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
+			CoderUtil.encode(tokens.accessToken()));
 
-		// Cookie cookie = setCookie(tokens.accessToken(), TokenType.JWT_TYPE,
-		// 	tokenService.getAccessTokenPeriod());
-		// response.addCookie(cookie);
-
-		ResponseCookie cookie = sameSiteNoneCookie(HttpHeaders.AUTHORIZATION,
-			CoderUtil.encode(TokenType.JWT_TYPE.getTypeValue() + tokens.accessToken()), "oauth-test-xi.vercel.app");
-		response.addHeader("Set-Cookie", cookie.toString());
-
-		URI uri = URI.create(domain + "/");
+		URI uri = URI.create(domain);
 
 		return ResponseEntity
 			.created(uri)
-			.body(memberIdResponse);
+			.body(memberSignupResponse);
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<MemberSignupResponse> login(@Valid @RequestBody MemberIdRequest memberIdRequest) {
+		Long memberId = memberIdRequest.id();
+		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
+		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
+
+		MemberResponse memberResponse = authenticationService.getMemberResponse(memberId);
+		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
+			CoderUtil.encode(tokens.accessToken()));
+
+		return ResponseEntity
+			.ok()
+			.body(memberSignupResponse);
 	}
 
 	@PostMapping("/logout")
-	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public ResponseEntity<Void> logout(HttpServletRequest request) {
 		String accessToken = tokenService.resolveToken(request);
 		String accessTokenWithType = tokenService.tokenWithType(accessToken, TokenType.JWT_BLACKLIST);
 		authenticationService.logout(accessToken, tokenService.getExpiration(accessToken), accessTokenWithType);
 
-		response.sendRedirect(domain + "/");
-	}
-
-	private ResponseCookie sameSiteNoneCookie(String name, String value, String domain) {
-		return ResponseCookie.from(name, value)
-			.path("/").secure(true).httpOnly(true)
-			.sameSite("none").domain(".naver.com").build();
-	}
-
-	private Cookie setCookie(String accessToken, TokenType tokenType, long period) {
-		Cookie cookie = new Cookie(HttpHeaders.AUTHORIZATION, CoderUtil.encode(tokenType.getTypeValue() + accessToken));
-		cookie.setSecure(true);
-		cookie.setHttpOnly(true);
-		cookie.setMaxAge((int)period);
-
-		return cookie;
+		return ResponseEntity.ok()
+			.contentType(MediaType.APPLICATION_JSON)
+			.build();
 	}
 }

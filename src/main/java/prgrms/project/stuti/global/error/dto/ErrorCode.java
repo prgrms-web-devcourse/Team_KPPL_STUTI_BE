@@ -26,12 +26,16 @@ public enum ErrorCode {
 	FAILED_DELETE("F006", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
 
 	// Member
-	TOKEN_EXPIRATION("M001", "Token is expired", HttpStatus.BAD_REQUEST),
-	BLACKLIST_DETECTION("M002", "AccessToken is deprived", HttpStatus.BAD_REQUEST),
-	INVALID_EMAIL("M003", "Email is invalid", HttpStatus.BAD_REQUEST),
-	NOT_FOUND_MEMBER("M004", "Not found member", HttpStatus.BAD_REQUEST),
-	NICKNAME_DUPLICATION("M005", "Nickname Duplication", HttpStatus.BAD_REQUEST),
-	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST),
+	INVALID_EMAIL("M001", "Email is invalid", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_MEMBER("M002", "Not found member", HttpStatus.BAD_REQUEST),
+	NICKNAME_DUPLICATION("M003", "Nickname Duplication", HttpStatus.BAD_REQUEST),
+	REGISTERED_MEMBER("M004", "Member is already registered", HttpStatus.BAD_REQUEST),
+	INVALID_SIGNUP("M005", "Signup time is over", HttpStatus.BAD_REQUEST),
+	BLACKLIST_DETECTION("M006", "AccessToken is deprived", HttpStatus.BAD_REQUEST),
+
+	// Token Expiration
+	ACCESS_TOKEN_EXPIRATION("T001", "Access token is expired", HttpStatus.BAD_REQUEST),
+	REFRESH_TOKEN_EXPIRATION("T002", "Refresh token is expired", HttpStatus.BAD_REQUEST),
 
 	//feed
 	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST);

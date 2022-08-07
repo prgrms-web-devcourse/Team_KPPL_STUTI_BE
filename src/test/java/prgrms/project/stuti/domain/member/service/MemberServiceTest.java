@@ -26,56 +26,6 @@ class MemberServiceTest {
 	@Autowired
 	MemberService memberService;
 
-	@Test
-	@DisplayName("회원가입을 한다.")
-	void testSignup() {
-		// given
-		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
-			.email("test1@test.com")
-			.nickname("test1")
-			.field(Field.ANDROID)
-			.career(Career.JUNIOR)
-			.MBTI(Mbti.ENFJ)
-			.build();
-
-		TemporaryMember temporaryMember = TemporaryMember.builder()
-			.email("test1@test.com")
-			.imageUrl("test1.s3.com")
-			.nickname("test1")
-			.expiration(500000L)
-			.build();
-
-		// when
-		Member savedMember = memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
-
-		// then
-		assertThat(savedMember.getId()).isNotNull();
-	}
-
-	@Test
-	@DisplayName("회원가입 시 동일 nickname 존재시 예외발생한다")
-	void testInvalidSignup() {
-		// given
-		saveMember("test2@test.com", "test2", "test2.s3.com");
-		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
-			.email("test3@test.com")
-			.nickname("test2")
-			.field(Field.ANDROID)
-			.career(Career.JUNIOR)
-			.MBTI(Mbti.ENFJ)
-			.build();
-
-		TemporaryMember temporaryMember = TemporaryMember.builder()
-			.email("test3@test.com")
-			.imageUrl("test3.s3.com")
-			.nickname("test2")
-			.expiration(500000L)
-			.build();
-
-		// when // then
-		assertThrows(MemberException.class,
-			() -> memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember));
-	}
 
 	@Test
 	@DisplayName("이메일을 통해 유저를 가지고 온다")
@@ -179,6 +129,7 @@ class MemberServiceTest {
 			.expiration(500000L)
 			.build();
 
-		return memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
+		// return memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
+		return null;
 	}
 }

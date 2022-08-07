@@ -91,7 +91,8 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 				.description("description")
 				.build());
 
-		StudyGroupDto.FindCondition conditionDto = StudyGroupDto.FindCondition.builder()
+		StudyGroupDto.FindCondition conditionDto = StudyGroupDto.FindCondition
+			.builder()
 			.topic(Topic.NETWORK)
 			.size(20L)
 			.build();

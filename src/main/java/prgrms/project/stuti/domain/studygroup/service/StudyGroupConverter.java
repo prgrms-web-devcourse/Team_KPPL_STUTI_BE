@@ -62,7 +62,8 @@ public class StudyGroupConverter {
 	}
 
 	public static CursorPageResponse<StudyGroupsResponse> toStudyGroupsCursorPageResponse(
-		List<StudyGroupMember> studyGroupMembers, boolean hasNext) {
+		List<StudyGroupMember> studyGroupMembers, boolean hasNext
+	) {
 		return new CursorPageResponse<>(toStudyGroupResponse(studyGroupMembers), hasNext);
 	}
 

@@ -34,8 +34,9 @@ public class StudyGroupRestController {
 	private final StudyGroupService studyGroupService;
 
 	@PostMapping
-	public ResponseEntity<StudyGroupIdResponse> createStudyGroup(@AuthenticationPrincipal Long memberId,
-		@Valid @ModelAttribute StudyGroupRequest.CreateRequest createRequest) {
+	public ResponseEntity<StudyGroupIdResponse> createStudyGroup(
+		@AuthenticationPrincipal Long memberId, @Valid @ModelAttribute StudyGroupRequest.CreateRequest createRequest
+	) {
 		StudyGroupDto.CreateDto createDto = StudyGroupMapper.toStudyGroupCreateDto(memberId, createRequest);
 		StudyGroupIdResponse idResponse = studyGroupService.createStudyGroup(createDto);
 		URI uri = URI.create("/api/v1/study-groups/" + idResponse.studyGroupId());
@@ -45,7 +46,8 @@ public class StudyGroupRestController {
 
 	@GetMapping
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getStudyGroups(
-		@RequestParam(defaultValue = "20") Long size, StudyGroupRequest.FindCondition condition) {
+		@RequestParam(defaultValue = "20") Long size, StudyGroupRequest.FindCondition condition
+	) {
 		StudyGroupDto.FindCondition conditionDto =
 			StudyGroupMapper.toStudyGroupFindConditionDto(null, size, condition);
 		CursorPageResponse<StudyGroupsResponse> studyGroupsResponse = studyGroupService.getStudyGroups(conditionDto);
@@ -56,7 +58,8 @@ public class StudyGroupRestController {
 	@GetMapping("/my-page")
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getMyStudyGroups(
 		@AuthenticationPrincipal Long memberId, @RequestParam(defaultValue = "20") Long size,
-		StudyGroupRequest.FindCondition condition) {
+		StudyGroupRequest.FindCondition condition
+	) {
 		StudyGroupDto.FindCondition conditionDto =
 			StudyGroupMapper.toStudyGroupFindConditionDto(memberId, size, condition);
 		CursorPageResponse<StudyGroupsResponse> studyGroupsResponse = studyGroupService.getStudyGroups(conditionDto);
@@ -73,8 +76,10 @@ public class StudyGroupRestController {
 	}
 
 	@PatchMapping("/{studyGroupId}")
-	public ResponseEntity<StudyGroupIdResponse> updateStudyGroup(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId, @Valid @ModelAttribute StudyGroupRequest.UpdateRequest updateRequest) {
+	public ResponseEntity<StudyGroupIdResponse> updateStudyGroup(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId,
+		@Valid @ModelAttribute StudyGroupRequest.UpdateRequest updateRequest
+	) {
 		StudyGroupDto.UpdateDto updateDto =
 			StudyGroupMapper.toStudyGroupUpdateDto(memberId, studyGroupId, updateRequest);
 		StudyGroupIdResponse idResponse = studyGroupService.updateStudyGroup(updateDto);
@@ -83,8 +88,9 @@ public class StudyGroupRestController {
 	}
 
 	@DeleteMapping("/{studyGroupId}")
-	public ResponseEntity<Void> deleteStudyGroup(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId) {
+	public ResponseEntity<Void> deleteStudyGroup(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId
+	) {
 		StudyGroupDto.DeleteDto deleteDto = StudyGroupMapper.toStudyGroupDeleteDto(memberId, studyGroupId);
 		studyGroupService.deleteStudyGroup(deleteDto);
 

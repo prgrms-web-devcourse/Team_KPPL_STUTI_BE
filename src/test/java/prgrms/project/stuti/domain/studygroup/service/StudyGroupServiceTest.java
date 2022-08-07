@@ -169,8 +169,9 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 			.build();
 	}
 
-	private StudyGroupDto.UpdateDto toUpdateDto(Long memberId, Long studyGroupId, String updateTitle,
-		MultipartFile imageFile, String updateDescription) {
+	private StudyGroupDto.UpdateDto toUpdateDto(
+		Long memberId, Long studyGroupId, String updateTitle, MultipartFile imageFile, String updateDescription
+	) {
 		return StudyGroupDto.UpdateDto
 			.builder()
 			.memberId(memberId)
@@ -182,7 +183,8 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 	}
 
 	private MultipartFile getMultipartFile() throws IOException {
-		File imageFile = new File(Paths.get("src", "test", "resources") + File.separator + "test.png");
+		File imageFile =
+			new File(Paths.get("src", "test", "resources") + File.separator + "test.png");
 		FileInputStream inputStream = new FileInputStream(imageFile);
 		String[] split = imageFile.getName().split("\\.");
 

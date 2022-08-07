@@ -55,7 +55,8 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 
 	@Override
 	public CursorPageResponse<StudyGroupsResponse> dynamicFindAllWithCursorPagination(
-		StudyGroupDto.FindCondition conditionDto) {
+		StudyGroupDto.FindCondition conditionDto
+	) {
 		jpaQueryFactory.selectFrom(studyGroup).join(studyGroup.preferredMBTIs).fetchJoin().fetch();
 
 		List<StudyGroupMember> contents = jpaQueryFactory

@@ -25,8 +25,9 @@ public class StudyGroupMemberRestController {
 	private final StudyGroupMemberService studyGroupMemberService;
 
 	@PostMapping
-	public ResponseEntity<StudyGroupMemberIdResponse> applyForJoinStudyGroup(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId) {
+	public ResponseEntity<StudyGroupMemberIdResponse> applyForJoinStudyGroup(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId
+	) {
 		StudyGroupMemberDto.CreateDto createDto =
 			StudyGroupMemberMapper.toStudyGroupMemberCreateDto(memberId, studyGroupId);
 		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.applyForJoinStudyGroup(createDto);
@@ -35,8 +36,9 @@ public class StudyGroupMemberRestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<StudyGroupMembersResponse> getStudyGroupMembers(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId) {
+	public ResponseEntity<StudyGroupMembersResponse> getStudyGroupMembers(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId
+	) {
 		StudyGroupMemberDto.ReadDto readDto = StudyGroupMemberMapper.toStudyGroupMemberReadDto(memberId, studyGroupId);
 		StudyGroupMembersResponse studyGroupMembersResponse = studyGroupMemberService.getStudyGroupMembers(readDto);
 
@@ -44,8 +46,9 @@ public class StudyGroupMemberRestController {
 	}
 
 	@PatchMapping("/{studyGroupMemberId}")
-	public ResponseEntity<StudyGroupMemberIdResponse> acceptRequestForJoin(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId, @PathVariable Long studyGroupMemberId) {
+	public ResponseEntity<StudyGroupMemberIdResponse> acceptRequestForJoin(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId, @PathVariable Long studyGroupMemberId
+	) {
 		StudyGroupMemberDto.UpdateDto updateDto =
 			StudyGroupMemberMapper.toStudyGroupMemberUpdateDto(memberId, studyGroupId, studyGroupMemberId);
 		StudyGroupMemberIdResponse idResponse = studyGroupMemberService.acceptRequestForJoin(updateDto);
@@ -54,8 +57,9 @@ public class StudyGroupMemberRestController {
 	}
 
 	@DeleteMapping(value = "/{studyGroupMemberId}")
-	public ResponseEntity<Void> deleteStudyGroupMember(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId, @PathVariable Long studyGroupMemberId) {
+	public ResponseEntity<Void> deleteStudyGroupMember(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId, @PathVariable Long studyGroupMemberId
+	) {
 		StudyGroupMemberDto.DeleteDto deleteDto =
 			StudyGroupMemberMapper.toStudyGroupMemberDeleteDto(memberId, studyGroupId, studyGroupMemberId);
 		studyGroupMemberService.deleteStudyGroupMember(deleteDto);

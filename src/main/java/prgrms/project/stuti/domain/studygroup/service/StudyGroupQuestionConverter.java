@@ -14,8 +14,7 @@ import prgrms.project.stuti.global.page.PageResponse;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupQuestionConverter {
 
-	public static StudyGroupQuestionResponse toStudyGroupQuestionResponse(
-		StudyGroupQuestion studyGroupQuestion) {
+	public static StudyGroupQuestionResponse toStudyGroupQuestionResponse(StudyGroupQuestion studyGroupQuestion) {
 		Member member = studyGroupQuestion.getMember();
 
 		return StudyGroupQuestionResponse
@@ -31,12 +30,14 @@ public class StudyGroupQuestionConverter {
 	}
 
 	public static PageResponse<StudyGroupQuestionsResponse> toStudyGroupQuestionsPageResponse(
-		List<StudyGroupQuestion> questions, boolean hasNext, Long totalElements) {
+		List<StudyGroupQuestion> questions, boolean hasNext, Long totalElements
+	) {
 		return new PageResponse<>(toStudyGroupQuestionListResponse(questions), hasNext, totalElements);
 	}
 
 	private static List<StudyGroupQuestionsResponse> toStudyGroupQuestionListResponse(
-		List<StudyGroupQuestion> studyGroupQuestions) {
+		List<StudyGroupQuestion> studyGroupQuestions
+	) {
 		return studyGroupQuestions
 			.stream()
 			.map(parentQuestion -> {
@@ -56,8 +57,7 @@ public class StudyGroupQuestionConverter {
 			}).toList();
 	}
 
-	private static List<StudyGroupQuestionResponse> toStudyGroupQuestionChildren(
-		List<StudyGroupQuestion> children) {
+	private static List<StudyGroupQuestionResponse> toStudyGroupQuestionChildren(List<StudyGroupQuestion> children) {
 		return children.isEmpty()
 			? Collections.emptyList()
 			: children

@@ -30,8 +30,10 @@ public class StudyGroupQuestionRestController {
 	private final StudyGroupQuestionService studyGroupQuestionService;
 
 	@PostMapping
-	public ResponseEntity<StudyGroupQuestionResponse> createStudyGroupQuestion(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId, @Valid @RequestBody StudyGroupQuestionRequest.CreateRequest createRequest) {
+	public ResponseEntity<StudyGroupQuestionResponse> createStudyGroupQuestion(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId,
+		@Valid @RequestBody StudyGroupQuestionRequest.CreateRequest createRequest
+	) {
 		StudyGroupQuestionDto.CreateDto createDto =
 			StudyGroupQuestionMapper.toStudyGroupQuestionCreateDto(memberId, studyGroupId, createRequest);
 		StudyGroupQuestionResponse questionResponse = studyGroupQuestionService.createStudyGroupQuestion(createDto);
@@ -42,7 +44,8 @@ public class StudyGroupQuestionRestController {
 	@GetMapping
 	public ResponseEntity<PageResponse<StudyGroupQuestionsResponse>> getStudyGroupQuestions(
 		@PathVariable Long studyGroupId, @RequestParam(defaultValue = "5") Long size,
-		@RequestParam(required = false) Long lastStudyGroupQuestionId) {
+		@RequestParam(required = false) Long lastStudyGroupQuestionId
+	) {
 		StudyGroupQuestionDto.PageDto pageDto =
 			StudyGroupQuestionMapper.toStudyGroupQuestionPageDto(studyGroupId, size, lastStudyGroupQuestionId);
 		PageResponse<StudyGroupQuestionsResponse> questionsResponse =
@@ -52,9 +55,11 @@ public class StudyGroupQuestionRestController {
 	}
 
 	@PatchMapping("/{studyGroupQuestionId}")
-	public ResponseEntity<StudyGroupQuestionResponse> updateStudyGroupQuestion(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId, @PathVariable Long studyGroupQuestionId,
-		@Valid @RequestBody StudyGroupQuestionRequest.UpdateRequest updateRequest) {
+	public ResponseEntity<StudyGroupQuestionResponse> updateStudyGroupQuestion(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId,
+		@PathVariable Long studyGroupQuestionId,
+		@Valid @RequestBody StudyGroupQuestionRequest.UpdateRequest updateRequest
+	) {
 		StudyGroupQuestionDto.UpdateDto updateDto =
 			StudyGroupQuestionMapper
 				.toStudyGroupQuestionUpdateDto(memberId, studyGroupId, studyGroupQuestionId, updateRequest);
@@ -64,8 +69,9 @@ public class StudyGroupQuestionRestController {
 	}
 
 	@DeleteMapping("/{studyGroupQuestionId}")
-	public ResponseEntity<StudyGroupQuestionResponse> deleteStudyGroupQuestion(@AuthenticationPrincipal Long memberId,
-		@PathVariable Long studyGroupId, @PathVariable Long studyGroupQuestionId) {
+	public ResponseEntity<StudyGroupQuestionResponse> deleteStudyGroupQuestion(
+		@AuthenticationPrincipal Long memberId, @PathVariable Long studyGroupId, @PathVariable Long studyGroupQuestionId
+	) {
 		StudyGroupQuestionDto.DeleteDto deleteDto =
 			StudyGroupQuestionMapper.toStudyGroupQuestionDeleteDto(memberId, studyGroupId, studyGroupQuestionId);
 		StudyGroupQuestionResponse questionResponse =

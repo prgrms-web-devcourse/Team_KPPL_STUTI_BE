@@ -13,7 +13,8 @@ import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 public class StudyGroupMapper {
 
 	public static StudyGroupDto.CreateDto toStudyGroupCreateDto(
-		Long memberId, StudyGroupRequest.CreateRequest createRequest) {
+		Long memberId, StudyGroupRequest.CreateRequest createRequest
+	) {
 		return StudyGroupDto.CreateDto
 			.builder()
 			.memberId(memberId)
@@ -31,8 +32,9 @@ public class StudyGroupMapper {
 			.build();
 	}
 
-	public static StudyGroupDto.FindCondition toStudyGroupFindConditionDto(Long memberId, Long size,
-		StudyGroupRequest.FindCondition condition) {
+	public static StudyGroupDto.FindCondition toStudyGroupFindConditionDto(
+		Long memberId, Long size, StudyGroupRequest.FindCondition condition
+	) {
 		return StudyGroupDto.FindCondition
 			.builder()
 			.mbti(condition.mbti())
@@ -49,8 +51,9 @@ public class StudyGroupMapper {
 		return new StudyGroupDto.ReadDto(studyGroupId);
 	}
 
-	public static StudyGroupDto.UpdateDto toStudyGroupUpdateDto(Long memberId, Long studyGroupId,
-		StudyGroupRequest.UpdateRequest updateRequest) {
+	public static StudyGroupDto.UpdateDto toStudyGroupUpdateDto(
+		Long memberId, Long studyGroupId, StudyGroupRequest.UpdateRequest updateRequest
+	) {
 		return StudyGroupDto.UpdateDto
 			.builder()
 			.memberId(memberId)

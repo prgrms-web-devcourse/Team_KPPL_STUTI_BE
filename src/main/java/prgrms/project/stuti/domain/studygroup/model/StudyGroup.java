@@ -79,8 +79,10 @@ public class StudyGroup extends BaseEntity {
 	private boolean isDeleted;
 
 	@Builder
-	public StudyGroup(String imageUrl, String thumbnailUrl, String title, Topic topic, boolean isOnline, Region region,
-		int numberOfRecruits, StudyPeriod studyPeriod, Set<Mbti> preferredMBTIs, String description) {
+	public StudyGroup(
+		String imageUrl, String thumbnailUrl, String title, Topic topic, boolean isOnline, Region region,
+		int numberOfRecruits, StudyPeriod studyPeriod, Set<Mbti> preferredMBTIs, String description
+	) {
 		this.imageUrl = imageUrl;
 		this.thumbnailUrl = thumbnailUrl;
 		this.title = title;

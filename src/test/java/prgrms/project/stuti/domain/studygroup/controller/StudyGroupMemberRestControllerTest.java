@@ -180,11 +180,11 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	}
 
 	private ParameterDescriptor studyGroupMemberIdPath() {
-		return parameterWithName(STUDY_GROUP_MEMBER_ID.field()).description("스터디 그룹 멤버 아이디");
+		return parameterWithName(STUDY_GROUP_MEMBER_ID.field()).description(STUDY_GROUP_MEMBER_ID.description());
 	}
 
 	private FieldDescriptor studyGroupMemberIdField() {
-		return fieldWithPath(STUDY_GROUP_MEMBER_ID.field()).type(NUMBER).description("스터디 그룹  멤버 아이디");
+		return fieldWithPath(STUDY_GROUP_MEMBER_ID.field()).type(NUMBER).description(STUDY_GROUP_MEMBER_ID.description());
 	}
 
 	private List<FieldDescriptor> studyGroupMembersFields() {

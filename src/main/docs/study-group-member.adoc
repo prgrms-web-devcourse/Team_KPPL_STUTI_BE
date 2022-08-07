@@ -6,6 +6,7 @@ operation::apply-for-join-study-group[snippets='http-request,request-headers,pat
 
 === 관리 페이지 (멤버 조회)
 operation::get-study-group-members[snippets=http-request,request-headers,path-parameters,http-response,response-headers,response-body,response-fields']
+'''
 
 === 가입수락 (스터디 멤버 수정)
 operation::accept-request-for-join[snippets='http-request,request-headers,path-parameters,http-response,response-headers,response-body,response-fields']

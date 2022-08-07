@@ -246,6 +246,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 					.numberOfMembers(3)
 					.numberOfRecruits(5)
 					.build(),
+
 				StudyGroupsResponse
 					.builder()
 					.studyGroupId(studyGroupId)
@@ -293,8 +294,12 @@ class StudyGroupRestControllerTest extends TestConfig {
 	}
 
 	private byte[] getMockImageFileBytes() throws IOException {
-		return new MockMultipartFile("testImageFile", "testImageFile.png",
-			"image/png", "test".getBytes()).getBytes();
+		return new MockMultipartFile(
+			"testImageFile",
+			"testImageFile.png",
+			"image/png",
+			"test".getBytes())
+			.getBytes();
 	}
 
 	private MultiValueMap<String, String> toStudyGroupCreateParams() {

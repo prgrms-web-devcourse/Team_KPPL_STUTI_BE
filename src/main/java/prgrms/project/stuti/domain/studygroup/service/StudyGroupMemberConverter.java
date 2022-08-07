@@ -24,7 +24,8 @@ public class StudyGroupMemberConverter {
 
 	public static StudyGroupMembersResponse toStudyGroupMembersResponse(
 		List<StudyGroupMember> studyGroupMembers) {
-		Map<StudyGroupMemberRole, List<StudyGroupMember>> studyGroupMemberMap = studyGroupMembers.stream()
+		Map<StudyGroupMemberRole, List<StudyGroupMember>> studyGroupMemberMap = studyGroupMembers
+			.stream()
 			.collect(Collectors.groupingBy(StudyGroupMember::getStudyGroupMemberRole));
 
 		StudyGroupMember studyLeader = studyGroupMemberMap.get(StudyGroupMemberRole.STUDY_LEADER).get(0);
@@ -47,8 +48,7 @@ public class StudyGroupMemberConverter {
 			.build();
 	}
 
-	private static List<StudyGroupMemberResponse> toStudyGroupMemberResponse(
-		List<StudyGroupMember> studyGroupMembers) {
+	private static List<StudyGroupMemberResponse> toStudyGroupMemberResponse(List<StudyGroupMember> studyGroupMembers) {
 		return studyGroupMembers.isEmpty()
 			? Collections.emptyList()
 			: studyGroupMembers.stream().map(studyGroupMember -> {

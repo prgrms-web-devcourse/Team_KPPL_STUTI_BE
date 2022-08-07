@@ -15,13 +15,15 @@ public class StudyGroupMemberMapper {
 		return new StudyGroupMemberDto.ReadDto(memberId, studyGroupId);
 	}
 
-	public static StudyGroupMemberDto.UpdateDto toStudyGroupMemberUpdateDto(Long memberId, Long studyGroupId,
-		Long studyGroupMemberId) {
+	public static StudyGroupMemberDto.UpdateDto toStudyGroupMemberUpdateDto(
+		Long memberId, Long studyGroupId, Long studyGroupMemberId
+	) {
 		return new StudyGroupMemberDto.UpdateDto(memberId, studyGroupId, studyGroupMemberId);
 	}
 
-	public static StudyGroupMemberDto.DeleteDto toStudyGroupMemberDeleteDto(Long memberId, Long studyGroupId,
-		Long studyGroupMemberId) {
+	public static StudyGroupMemberDto.DeleteDto toStudyGroupMemberDeleteDto(
+		Long memberId, Long studyGroupId, Long studyGroupMemberId
+	) {
 		return new StudyGroupMemberDto.DeleteDto(memberId, studyGroupId, studyGroupMemberId);
 	}
 }

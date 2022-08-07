@@ -45,9 +45,8 @@ public class CommonStudyGroupTestUtils {
 		FIELD("field", "개발분야"),
 		CAREER("career", "개발경력"),
 		MBTI("mbti", "MBTI"),
-		THUMBNAIL_URL("thumbnailUrl", "스터디 그룹 대표 이미지 썸네일 url"),
+		STUDY_GROUP_MEMBER_ROLE("studyGroupMemberRole", "스터디 그룹 멤버 역할"),
 		MEMBER_ID("memberId", "멤버 아이디"),
-
 		STUDY_GROUP_MEMBER_ID("studyGroupMemberId", "스터디 그룹 멤버 아이디"),
 		STUDY_GROUP_ID("studyGroupId", "스터디 그룹 아이디"),
 		STUDY_GROUP_QUESTION_ID("studyGroupQuestionId", "스터디 그룹 문의댓글 아이디"),

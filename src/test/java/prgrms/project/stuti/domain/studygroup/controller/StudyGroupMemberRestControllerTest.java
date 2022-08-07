@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
 import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,8 +23,15 @@ import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.test.web.servlet.ResultActions;
 
 import prgrms.project.stuti.config.TestConfig;
+import prgrms.project.stuti.domain.member.model.Career;
+import prgrms.project.stuti.domain.member.model.Field;
+import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
+import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupMemberService;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse.StudyGroupMemberResponse;
 
 @WebMvcTest(controllers = StudyGroupMemberRestController.class)
 class StudyGroupMemberRestControllerTest extends TestConfig {
@@ -40,12 +49,12 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	@DisplayName("스터디 그룹에 가입신청을 한다.")
 	void applyForJoinStudyGroup() throws Exception {
 		//given
-		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse(studyGroupMemberId);
+		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse();
 		given(studyGroupMemberService.applyForJoinStudyGroup(any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(post(studyGroupMemberApiPrefix, studyGroupId)
-				.contentType(APPLICATION_JSON));
+			.contentType(APPLICATION_JSON));
 
 		resultActions
 			.andExpectAll(
@@ -60,10 +69,35 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 	}
 
 	@Test
+	@DisplayName("스터디 그룹 멤버를 전체조회한다.")
+	void getStudyGroupMembers() throws Exception {
+		//given
+		StudyGroupMembersResponse membersResponse = toStudyGroupMembersResponse();
+		given(studyGroupMemberService.getStudyGroupMembers(any())).willReturn(membersResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(get(studyGroupMemberApiPrefix, studyGroupId)
+			.contentType(APPLICATION_JSON));
+
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().json(objectMapper.writeValueAsString(membersResponse)))
+			.andDo(
+				document(COMMON_DOCS_NAME,
+					requestHeaders(contentType(), host()),
+					pathParameters(studyGroupIdPath()),
+					responseHeaders(contentType()),
+					responseFields(studyGroupMembersFields())
+						.andWithPrefix("studyMembers[*].", studyGroupMemberFields())
+						.andWithPrefix("studyApplicants[*].", studyGroupMemberFields())));
+	}
+
+	@Test
 	@DisplayName("스터디 그룹 가입신청을 수락한다.")
 	void acceptRequestForJoin() throws Exception {
 		//given
-		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse(studyGroupMemberId);
+		StudyGroupMemberIdResponse idResponse = toStudyGroupMemberIdResponse();
 		given(studyGroupMemberService.acceptRequestForJoin(any())).willReturn(idResponse);
 
 		//when
@@ -106,8 +140,43 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 				responseHeaders(contentType())));
 	}
 
-	private StudyGroupMemberIdResponse toStudyGroupMemberIdResponse(Long studyGroupMemberId) {
+	private StudyGroupMemberIdResponse toStudyGroupMemberIdResponse() {
 		return new StudyGroupMemberIdResponse(studyGroupMemberId);
+	}
+
+	private StudyGroupMembersResponse toStudyGroupMembersResponse() {
+		StudyGroupMemberResponse studyMember = StudyGroupMemberResponse
+			.builder()
+			.studyGroupMemberId(2L)
+			.profileImageUrl("test profile image url")
+			.nickname("test nickname")
+			.field(Field.ANDROID.getFieldValue())
+			.career(Career.JUNIOR.getCareerValue())
+			.mbti(Mbti.ENFJ)
+			.studyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER.getValue())
+			.build();
+
+		StudyGroupMemberResponse studyApplicant = StudyGroupMemberResponse
+			.builder()
+			.studyGroupMemberId(3L)
+			.profileImageUrl("test profile image url2")
+			.nickname("test nickname2")
+			.field(Field.IOS.getFieldValue())
+			.career(Career.MASTER.getCareerValue())
+			.mbti(Mbti.INFJ)
+			.studyGroupMemberRole(StudyGroupMemberRole.STUDY_APPLICANT.getValue())
+			.build();
+		return StudyGroupMembersResponse
+			.builder()
+			.studyGroupId(studyGroupId)
+			.topic(Topic.BACKEND.getValue())
+			.title("test title")
+			.numberOfMembers(2)
+			.numberOfRecruits(5)
+			.studyMembers(List.of(studyMember))
+			.numberOfApplicants(1)
+			.studyApplicants(List.of(studyApplicant))
+			.build();
 	}
 
 	private ParameterDescriptor studyGroupMemberIdPath() {
@@ -116,5 +185,28 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 
 	private FieldDescriptor studyGroupMemberIdField() {
 		return fieldWithPath(STUDY_GROUP_MEMBER_ID.field()).type(NUMBER).description("스터디 그룹  멤버 아이디");
+	}
+
+	private List<FieldDescriptor> studyGroupMembersFields() {
+		return List.of(
+			fieldWithPath(STUDY_GROUP_ID.field()).type(NUMBER).description(STUDY_GROUP_ID.description()),
+			fieldWithPath(TOPIC.field()).type(STRING).description(TOPIC.description()),
+			fieldWithPath(TITLE.field()).type(STRING).description(TITLE.description()),
+			fieldWithPath(NUMBER_OF_MEMBERS.field()).type(NUMBER).description(NUMBER_OF_MEMBERS.description()),
+			fieldWithPath(NUMBER_OF_RECRUITS.field()).type(NUMBER).description(NUMBER_OF_RECRUITS.description()),
+			fieldWithPath("studyMembers").type(ARRAY).description("스터디 그룹 멤버 리스트"),
+			fieldWithPath("numberOfApplicants").type(NUMBER).description("스터디 그룹 지원자 수"),
+			fieldWithPath("studyApplicants").type(ARRAY).description("스터디 그룹 신청자 리스트"));
+	}
+
+	private List<FieldDescriptor> studyGroupMemberFields() {
+		return List.of(
+			fieldWithPath(STUDY_GROUP_MEMBER_ID.field()).type(NUMBER).description(STUDY_GROUP_MEMBER_ID.description()),
+			fieldWithPath(PROFILE_IMAGE_URL.field()).type(STRING).description(PROFILE_IMAGE_URL.description()),
+			fieldWithPath(NICKNAME.field()).type(STRING).description(NICKNAME.description()),
+			fieldWithPath(FIELD.field()).type(STRING).description(FIELD.description()),
+			fieldWithPath(CAREER.field()).type(STRING).description(CAREER.description()),
+			fieldWithPath(MBTI.field()).type(STRING).description(MBTI.description()),
+			fieldWithPath(STUDY_GROUP_MEMBER_ROLE.field()).type(STRING).description(STUDY_GROUP_MEMBER_ROLE.description()));
 	}
 }

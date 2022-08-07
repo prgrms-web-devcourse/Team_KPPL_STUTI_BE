@@ -355,7 +355,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 			parameterWithName(MBTI.field()).description(MBTI.description()),
 			parameterWithName(TOPIC.field()).description(TOPIC.description()),
 			parameterWithName(REGION.field()).description(REGION.description()),
-			parameterWithName("studyGroupMemberRole").description("검색 스터디 그룹 멤버 역할"),
+			parameterWithName(STUDY_GROUP_MEMBER_ROLE.field()).description(STUDY_GROUP_MEMBER_ROLE.description()),
 			parameterWithName("lastStudyGroupId").description("마지막으로 본 스터디 그룹 아이디"),
 			parameterWithName(SIZE.field()).description(SIZE.description())
 		);

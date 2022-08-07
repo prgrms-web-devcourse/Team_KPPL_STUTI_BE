@@ -117,17 +117,20 @@ class FeedServiceTest {
 	@Test
 	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
 	void testGetAllPosts() {
+		Long lastPostId = null;
 		for (int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
-			feedRepository.save(feed);
+			Feed savedFeed = feedRepository.save(feed);
 			feedImageRepository.save(feedImage);
+			if (i == 9)
+				lastPostId = savedFeed.getId();
 		}
 
-		FeedResponse allPosts = feedService.getAllPosts(8L, 2);
+		FeedResponse allPosts = feedService.getAllPosts(lastPostId, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
-		assertThat(allPosts.posts().get(0).postId()).isEqualTo(7L);
+		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글8");
 		assertThat(allPosts.hasNext()).isTrue();
 	}
 

@@ -14,8 +14,8 @@ public record PostDto(
 	String contents,
 	String postImageUrl,
 	LocalDateTime createdAt,
-	int totalLikes,
-	int totalComments,
+	Long totalLikes,
+	Long totalComments,
 	boolean isliked
 ) {
 	@Builder

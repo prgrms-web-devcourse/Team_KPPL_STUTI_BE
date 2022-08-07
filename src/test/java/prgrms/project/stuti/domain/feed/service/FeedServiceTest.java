@@ -23,9 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
+import prgrms.project.stuti.domain.feed.model.FeedLike;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
@@ -56,6 +58,9 @@ class FeedServiceTest {
 	private CommentRepository commentRepository;
 
 	@Autowired
+	private PostLikeRepository postLikeRepository;
+
+	@Autowired
 	private FeedService feedService;
 
 	private static Member savedMember;
@@ -79,6 +84,8 @@ class FeedServiceTest {
 	@AfterEach
 	void deleteAllPost() {
 		feedImageRepository.deleteAll();
+		commentRepository.deleteAll();
+		postLikeRepository.deleteAll();
 		feedRepository.deleteAll();
 	}
 
@@ -118,6 +125,7 @@ class FeedServiceTest {
 	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
 	void testGetAllPosts() {
 		Long lastPostId = null;
+		Feed likedAndCommentPost = null;
 		for (int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
@@ -125,13 +133,23 @@ class FeedServiceTest {
 			feedImageRepository.save(feedImage);
 			if (i == 9)
 				lastPostId = savedFeed.getId();
+			if (i == 8) {
+				likedAndCommentPost = feed;
+			}
 		}
+		FeedLike feedLike = new FeedLike(savedMember,likedAndCommentPost);
+		Comment comment = new Comment("게시글 8에 대한 댓글입니다.", null, savedMember, likedAndCommentPost);
+		commentRepository.save(comment);
+		postLikeRepository.save(feedLike);
 
 		FeedResponse allPosts = feedService.getAllPosts(lastPostId, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글8");
 		assertThat(allPosts.hasNext()).isTrue();
+		assertThat(allPosts.posts().get(0).totalComments()).isEqualTo(1L);
+		assertThat(allPosts.posts().get(0).totalLikes()).isEqualTo(1L);
+		assertThat(allPosts.posts().get(0).isliked()).isTrue();
 	}
 
 	@Test

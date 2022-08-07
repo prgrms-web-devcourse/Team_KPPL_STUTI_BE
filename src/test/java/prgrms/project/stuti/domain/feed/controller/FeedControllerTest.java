@@ -65,8 +65,8 @@ class FeedControllerTest extends TestConfig {
 			.contents("테스트게시글")
 			.postImageUrl("testPost.jpg")
 			.createdAt(LocalDateTime.now())
-			.totalComments(1)
-			.totalLikes(1)
+			.totalComments(1L)
+			.totalLikes(1L)
 			.isliked(true)
 			.build();
 		posts.add(postDto);
@@ -120,8 +120,8 @@ class FeedControllerTest extends TestConfig {
 			.contents("테스트게시글")
 			.postImageUrl("testPost.jpg")
 			.createdAt(LocalDateTime.now())
-			.totalComments(1)
-			.totalLikes(1)
+			.totalComments(1L)
+			.totalLikes(1L)
 			.isliked(true)
 			.build();
 		posts.add(postDto);

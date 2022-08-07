@@ -20,8 +20,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
+import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
@@ -34,6 +36,7 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
+import prgrms.project.stuti.global.error.exception.FeedException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -48,6 +51,9 @@ class FeedServiceTest {
 
 	@Autowired
 	private FeedImageRepository feedImageRepository;
+
+	@Autowired
+	private CommentRepository commentRepository;
 
 	@Autowired
 	private FeedService feedService;
@@ -177,6 +183,23 @@ class FeedServiceTest {
 		assertThat(changedImages).isEmpty();
 	}
 
+	@Test
+	@DisplayName("게시글과 게시글 이미지를 삭제한다")
+	void TestDeletePost() throws IOException {
+		PostIdResponse postIdResponse = savePost();
+
+		feedService.deletePost(postIdResponse.postId());
+		List<Feed> allPosts = feedRepository.findAll();
+
+		assertThat(allPosts).isEmpty();
+	}
+
+	@Test
+	@DisplayName("없는게시글을 삭제하려고하면 에러를 리턴한다")
+	void TestDeletePostWithUnknownPostId() {
+		assertThrows(FeedException.class, () -> feedService.deletePost(1L));
+	}
+
 	private PostIdResponse savePost() throws IOException {
 		String testFilePath = Paths.get("src", "test", "resources").toString();
 		File originalImageFile = new File(testFilePath + File.separator + "test.png");
@@ -188,6 +211,54 @@ class FeedServiceTest {
 			.imageFile(testOriginalMultipartFile)
 			.build();
 		return feedService.registerPost(postDto);
+	}
+
+	@Test
+	@DisplayName("게시글 삭제시 게시글에 붙은 댓글도 전부 삭제처리한다.")
+	void testDeletePostWithComments() {
+		Feed feed = new Feed("울랄라 테스트 게시글", savedMember);
+		feedRepository.save(feed);
+		Comment comment = new Comment("댓글", null, savedMember, feed);
+		commentRepository.save(comment);
+
+		feedService.deletePost(feed.getId());
+		Optional<Comment> foundComment = commentRepository.findById(comment.getId());
+
+		assertThat(foundComment).isEmpty();
+	}
+
+	@Test
+	@DisplayName("내 게시글을 정상 조회힌다")
+	void testGetMyPosts() {
+		Member differentMember = Member.builder()
+			.email("differentMember@gmail.com")
+			.nickName("다른멤버")
+			.career(Career.JUNIOR)
+			.profileImageUrl("www.differentMember.com")
+			.githubUrl("www.differentMember.com")
+			.blogUrl("www.differentMember.com")
+			.memberRole(MemberRole.ROLE_MEMBER)
+			.field(Field.FRONTEND)
+			.mbti(Mbti.INTP)
+			.build();
+		memberRepository.save(differentMember);
+		Feed savedFeed = null;
+		for (int i = 0; i < 10; i++) {
+			Feed feed;
+			if (i % 2 == 0) {
+				feed = new Feed("게시글" + i, differentMember);
+			} else {
+				feed = new Feed("게시글" + i, savedMember);
+			}
+			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
+			savedFeed = feedRepository.save(feed);
+			feedImageRepository.save(feedImage);
+		}
+
+		FeedResponse myPosts = feedService.getMyPosts(savedMember.getId(), savedFeed.getId(), 3);
+
+		assertThat(myPosts.hasNext()).isTrue();
+		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");
 	}
 
 	private MultipartFile getMockMultipartFile(File testFile) throws IOException {

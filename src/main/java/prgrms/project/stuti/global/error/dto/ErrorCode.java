@@ -14,8 +14,13 @@ public enum ErrorCode {
 	//study group
 	INVALID_STUDY_PERIOD("SG001", "Invalid study period", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_STUDY_GROUP("SG002", "Not found study group", HttpStatus.NOT_FOUND),
-	NOT_LEADER("SG003", "Not leader", HttpStatus.BAD_REQUEST),
-	EXISTING_STUDY_MEMBER("SG004", "Existing study member", HttpStatus.BAD_REQUEST),
+	NOT_STUDY_LEADER("SG003", "Not study leader", HttpStatus.BAD_REQUEST),
+	EXISTING_STUDY_GROUP_MEMBER("SG004", "Existing study group member", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_STUDY_GROUP_MEMBER("SG005", "Not found study group member", HttpStatus.NOT_FOUND),
+	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.NOT_FOUND),
+	NOT_MATCH_WRITER("SG007", "Not match writer", HttpStatus.BAD_REQUEST),
+	NOT_MATCH_STUDY_GROUP("SG008", "Not match study group", HttpStatus.BAD_REQUEST),
+	RECRUITMENT_IS_CLOSED("SG009", "Recruitment is closed", HttpStatus.BAD_REQUEST),
 
 	//file
 	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
@@ -32,13 +37,20 @@ public enum ErrorCode {
 	REGISTERED_MEMBER("M004", "Member is already registered", HttpStatus.BAD_REQUEST),
 	INVALID_SIGNUP("M005", "Signup time is over", HttpStatus.BAD_REQUEST),
 	BLACKLIST_DETECTION("M006", "AccessToken is deprived", HttpStatus.BAD_REQUEST),
+	NOT_MATCH_MY_PAGE_MEMBER("M007", "Not match with my page member", HttpStatus.BAD_REQUEST),
 
 	// Token Expiration
 	ACCESS_TOKEN_EXPIRATION("T001", "Access token is expired", HttpStatus.BAD_REQUEST),
 	REFRESH_TOKEN_EXPIRATION("T002", "Refresh token is expired", HttpStatus.BAD_REQUEST),
 
 	//feed
-	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST);
+	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),
+	FEED_LIKE_DUPLICATED("F002", "already liked this post", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_FEED_LIKE("F003","not found feed like", HttpStatus.BAD_REQUEST),
+
+	//(feed)comment
+	PARENT_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST),
+	COMMENT_NOT_FOUND("FC002", "not exist comment", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

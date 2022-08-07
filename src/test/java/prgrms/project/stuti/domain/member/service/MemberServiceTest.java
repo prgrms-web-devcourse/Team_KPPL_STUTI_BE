@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import prgrms.project.stuti.config.ServiceTestConfig;
 import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.controller.MemberMapper;
@@ -16,22 +17,21 @@ import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
+import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.error.exception.MemberException;
 
-@SpringBootTest
-class MemberServiceTest {
+class MemberServiceTest extends ServiceTestConfig {
 
 	@Autowired
 	MemberService memberService;
-
 
 	@Test
 	@DisplayName("이메일을 통해 유저를 가지고 온다")
 	void testGetUserByEmail() {
 		// given
-		String testEmail = saveMember("test4@test.com", "test4", "test4.s3.com").getEmail();
+		String testEmail = "test@gmail.com";
 
 		// when
 		Member member = memberService.getMember(new Email(testEmail))
@@ -39,12 +39,12 @@ class MemberServiceTest {
 
 		// then
 		assertAll(
-			() -> assertThat(member.getEmail()).isEqualTo("test4@test.com"),
-			() -> assertThat(member.getNickName()).isEqualTo("test4"),
+			() -> assertThat(member.getEmail()).isEqualTo("test@gmail.com"),
+			() -> assertThat(member.getNickName()).isEqualTo("nickname"),
 			() -> assertThat(member.getField()).isEqualTo(Field.ANDROID),
 			() -> assertThat(member.getCareer()).isEqualTo(Career.JUNIOR),
 			() -> assertThat(member.getMbti()).isEqualTo(Mbti.ENFJ),
-			() -> assertThat(member.getProfileImageUrl()).isEqualTo("test4.s3.com")
+			() -> assertThat(member.getProfileImageUrl()).isEqualTo("www.s3.com")
 		);
 	}
 
@@ -52,13 +52,11 @@ class MemberServiceTest {
 	@DisplayName("멤버를 수정한다")
 	void testInvalidPutMember() {
 		// given
-		Member member = saveMember("test6@test.com", "test6", "test6.s3.com");
-
 		Long memberId = member.getId();
 
 		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
 			.id(memberId)
-			.email("test6@test.com")
+			.email("notchanged")
 			.profileImageUrl("s3.edit3.com")
 			.nickname("test6")
 			.field(Field.ANDROID)
@@ -75,7 +73,7 @@ class MemberServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(memberResponse.id()).isEqualTo(memberId),
-			() -> assertThat(memberResponse.email()).isEqualTo("test6@test.com"),
+			() -> assertThat(memberResponse.email()).isEqualTo("test@gmail.com"),
 			() -> assertThat(memberResponse.profileImageUrl()).isEqualTo("s3.edit3.com"),
 			() -> assertThat(memberResponse.nickname()).isEqualTo("test6"),
 			() -> assertThat(memberResponse.field()).isEqualTo(Field.ANDROID),
@@ -90,16 +88,14 @@ class MemberServiceTest {
 	@DisplayName("멤버 수정 시 다른 유저와 동일한 닉네임은 사용할 수 없다")
 	void testPutMember() {
 		// given
-		Member member = saveMember("test7@test.com", "test7", "test7.s3.com");
-		saveMember("test8@test.com", "test8", "test8.s3.com");
-
 		Long memberId = member.getId();
+		String duplicatedNickname = otherMember.getNickName();
 
 		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
 			.id(memberId)
-			.email("test7@test.com")
+			.email("not changed")
 			.profileImageUrl("s3.edit3.com")
-			.nickname("test8")
+			.nickname(duplicatedNickname)
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
 			.MBTI(Mbti.ENFJ)
@@ -111,25 +107,5 @@ class MemberServiceTest {
 		assertThrows(MemberException.class, () -> {
 			memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
 		});
-	}
-
-	private Member saveMember(String email, String nickname, String url) {
-		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
-			.email(email)
-			.nickname(nickname)
-			.field(Field.ANDROID)
-			.career(Career.JUNIOR)
-			.MBTI(Mbti.ENFJ)
-			.build();
-
-		TemporaryMember temporaryMember = TemporaryMember.builder()
-			.email(email)
-			.imageUrl(url)
-			.nickname(nickname)
-			.expiration(500000L)
-			.build();
-
-		// return memberService.signup(MemberMapper.toMemberDto(memberSaveRequest), temporaryMember);
-		return null;
 	}
 }

@@ -4,9 +4,11 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -44,7 +46,7 @@ public class FeedController {
 		@RequestParam(value = "lastPostId", required = false) Long lastPostId,
 		@RequestParam(defaultValue = "10") int size) {
 		FeedResponse postResponse = feedService.getAllPosts(lastPostId, size);
-
+		
 		return ResponseEntity.ok().body(postResponse);
 	}
 
@@ -55,5 +57,24 @@ public class FeedController {
 		PostIdResponse postIdResponse = feedService.changePost(postChangeDto);
 
 		return ResponseEntity.ok().body(postIdResponse);
+	}
+
+	@DeleteMapping("/api/v1/posts/{postId}")
+	public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+		feedService.deletePost(postId);
+
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+		return ResponseEntity.noContent().headers(httpHeaders).build();
+	}
+
+	@GetMapping("/api/v1/posts/myposts")
+	public ResponseEntity<FeedResponse> getMyPosts(@AuthenticationPrincipal Long memberId,
+		@RequestParam(value = "lastPostId", required = false) Long lastPostId,
+		@RequestParam(defaultValue = "10") int size) {
+		FeedResponse feedResponse = feedService.getMyPosts(memberId, lastPostId, size);
+
+		return ResponseEntity.ok().body(feedResponse);
 	}
 }

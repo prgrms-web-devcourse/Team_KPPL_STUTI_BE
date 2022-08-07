@@ -1,5 +1,8 @@
 package prgrms.project.stuti.domain.member.model;
 
+import lombok.Getter;
+
+@Getter
 public enum Career {
 	JUNIOR("0년차~3년차"),
 	INTERMEDIATE("3년차~5년차"),

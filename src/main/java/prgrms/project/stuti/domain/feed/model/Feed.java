@@ -28,7 +28,7 @@ public class Feed extends BaseEntity {
 	@Column(name = "feed_id", unique = true, nullable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "content", length = 1000, nullable = false)
+	@Column(name = "contents", length = 1000, nullable = false)
 	private String content;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -49,7 +49,7 @@ public class Feed extends BaseEntity {
 		return new ToStringBuilder(this,
 			ToStringStyle.SHORT_PREFIX_STYLE)
 			.append("id", id)
-			.append("content", content)
+			.append("contents", content)
 			.append("member", member)
 			.toString();
 	}

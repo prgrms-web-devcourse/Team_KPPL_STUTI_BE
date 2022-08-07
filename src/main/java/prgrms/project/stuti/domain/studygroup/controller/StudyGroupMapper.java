@@ -3,11 +3,15 @@ package prgrms.project.stuti.domain.studygroup.controller;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupCreateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupFindCondition;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionCreateRequest;
+import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupQuestionUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupUpdateRequest;
 import prgrms.project.stuti.domain.studygroup.model.Region;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupApplyDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDeleteDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionCreateDto;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionUpdateDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -42,11 +46,39 @@ public class StudyGroupMapper {
 			.build();
 	}
 
-	public static StudyGroupApplyDto toStudyGroupApplyDto(Long memberId, Long studyGroupId) {
-		return new StudyGroupApplyDto(memberId, studyGroupId);
+	public static StudyGroupQuestionCreateDto toStudyGroupQuestionCreateDto(Long memberId, Long studyGroupId,
+		StudyGroupQuestionCreateRequest createRequest) {
+		return StudyGroupQuestionCreateDto
+			.builder()
+			.memberId(memberId)
+			.studyGroupId(studyGroupId)
+			.parentId(createRequest.parentId())
+			.contents(createRequest.contents())
+			.build();
 	}
 
-	public static StudyGroupDeleteDto toStudyGroupDeleteDto(Long memberId, Long studyGroupId) {
-		return new StudyGroupDeleteDto(memberId, studyGroupId);
+	public static StudyGroupQuestionUpdateDto toStudyGroupQuestionUpdateDto(Long memberId, Long studyGroupId,
+		Long studyGroupQuestionId, StudyGroupQuestionUpdateRequest updateRequest) {
+		return StudyGroupQuestionUpdateDto
+			.builder()
+			.memberId(memberId)
+			.studyGroupId(studyGroupId)
+			.studyGroupQuestionId(studyGroupQuestionId)
+			.contents(updateRequest.contents())
+			.build();
+	}
+
+	public static StudyGroupFindConditionDto toStudyGroupFindConditionDto(Long memberId, Long size,
+		StudyGroupFindCondition condition) {
+		return StudyGroupFindConditionDto
+			.builder()
+			.mbti(condition.mbti())
+			.topic(condition.topic())
+			.region(condition.region())
+			.studyGroupMemberRole(condition.studyGroupMemberRole())
+			.memberId(memberId)
+			.lastStudyGroupId(condition.lastStudyGroupId())
+			.size(size)
+			.build();
 	}
 }

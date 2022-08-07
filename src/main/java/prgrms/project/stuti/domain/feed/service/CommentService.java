@@ -61,7 +61,8 @@ public class CommentService {
 	public PageResponse<CommentParentContents> getPostComments(CommentGetDto commentGetDto) {
 		feedRepository.findById(commentGetDto.postId()).orElseThrow(FeedException::FEED_NOT_FOUND);
 
-		return commentRepository.findAllByFeedIdAndParentIdIsNUllWithNoOffset(commentGetDto.postId(),
+		return commentRepository.findAllByFeedIdAndParentIdIsNUllWithNoOffset(
+			commentGetDto.postId(),
 			commentGetDto.lastCommentId(), commentGetDto.size());
 	}
 

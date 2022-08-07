@@ -37,14 +37,19 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 			.limit(size)
 			.fetch();
 
-		List<Long> result = jpaQueryFactory.select(comment.count())
+		Long totalParentComments = jpaQueryFactory.select(comment.count())
 			.from(comment)
 			.where(comment.feed.id.eq(postId), comment.parent.isNull())
-			.fetch();
-		Long totalParentComments = result.get(0);
-		Long lastCalledComment = comments.get(comments.size() - 1).getId();
+			.fetchOne();
 
-		return CommentConverter.toCommentResponse(comments, hasNext(postId, lastCalledComment), totalParentComments);
+		Long lastCalledComment = comments.get(comments.size() - 1).getId();
+		boolean hasNext = hasNext(postId, lastCalledComment);
+		for(Comment comment : comments) {
+			List<Comment> childComments = findByParentId(comment.getId());
+			comment.findChildren(childComments);
+		}
+
+		return CommentConverter.toCommentResponse(comments, hasNext, totalParentComments);
 	}
 
 	private boolean hasNext(Long postId, Long lastCommentId) {
@@ -54,5 +59,11 @@ public class CommentCustomRepositoryImpl implements CommentCustomRepository {
 			.fetch();
 
 		return !comments.isEmpty();
+	}
+
+	private List<Comment> findByParentId(Long parentId) {
+		return jpaQueryFactory.selectFrom(comment)
+			.where(comment.parent.id.eq(parentId))
+			.fetch();
 	}
 }

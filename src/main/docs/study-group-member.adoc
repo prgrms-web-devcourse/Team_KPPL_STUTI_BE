@@ -1,13 +1,16 @@
 == 스터디 그룹 멤버
 
-=== 신청 (스터디 멤버 생성)
-operation::post-apply-study-group[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body']
+=== 가입신청 (스터디 멤버 생성)
+operation::apply-for-join-study-group[snippets='http-request,request-headers,path-parameters,http-response,response-headers,response-body,response-fields']
 '''
 
+=== 관리 페이지 (멤버 조회)
+operation::get-study-group-members[snippets=http-request,request-headers,path-parameters,http-response,response-headers,response-body,response-fields']
+
 === 가입수락 (스터디 멤버 수정)
-operation::post-apply-study-group[snippets='http-request,request-headers,path-parameters,response-headers,response-fields,response-body']
+operation::accept-request-for-join[snippets='http-request,request-headers,path-parameters,http-response,response-headers,response-body,response-fields']
 '''
 
 === 삭제
-operation::delete-study-group-member[snippets='http-request,request-headers,path-parameters,response-headers']
+operation::delete-study-group-member[snippets='http-request,request-headers,path-parameters,http-response,response-headers']
 '''

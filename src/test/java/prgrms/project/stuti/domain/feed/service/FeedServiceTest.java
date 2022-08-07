@@ -173,9 +173,10 @@ class FeedServiceTest {
 	}
 
 	@Test
-	@DisplayName("업로드 이미지를 보내주지않으면 삭제로 인지하여 삭제한다")
+	@DisplayName("업로드 이미지를 보내주지않으면 삭제하지 않는다. - 원래 이미지를 가지고있는다")
 	void testChangePostWithOutImages() throws IOException {
 		PostIdResponse postIdResponse = savePost();
+		List<FeedImage> originImages = feedImageRepository.findByFeedId(postIdResponse.postId());
 		PostChangeDto postChangeDto = new PostChangeDto(postIdResponse.postId(), "게시글 내용이 변경되었습니다.", null);
 		PostIdResponse changePostIdResponse = feedService.changePost(postChangeDto);
 
@@ -183,7 +184,7 @@ class FeedServiceTest {
 		Feed changedFeed = feedRepository.findById(changePostIdResponse.postId()).get();
 
 		assertThat(changedFeed.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
-		assertThat(changedImages).isEmpty();
+		assertThat(changedImages.get(0).getImageUrl()).isEqualTo(originImages.get(0).getImageUrl());
 	}
 
 	@Test

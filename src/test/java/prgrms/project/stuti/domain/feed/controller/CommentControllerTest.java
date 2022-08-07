@@ -20,6 +20,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.controller.dto.CommentRequest;
 import prgrms.project.stuti.domain.feed.service.CommentService;
+import prgrms.project.stuti.domain.feed.service.dto.CommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
 import prgrms.project.stuti.global.page.offset.PageResponse;
@@ -107,4 +108,17 @@ class CommentControllerTest extends TestConfig {
 			.andExpect(status().isOk())
 			.andDo(print());
 	}
+
+	@Test
+	@DisplayName("댓글 id로 댓글의 내용을 반환한다")
+	void testGetCommentContents() throws Exception {
+		CommentContentsResponse commentContentsResponse = new CommentContentsResponse(1L, 1L, "테스트 댓글입니다.");
+
+		when(commentService.getCommentContents(anyLong(), anyLong())).thenReturn(commentContentsResponse);
+
+		mockMvc.perform(get("/api/v1/posts/{postId}/comments/{commentId}", 1L, 1L))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
+
 }

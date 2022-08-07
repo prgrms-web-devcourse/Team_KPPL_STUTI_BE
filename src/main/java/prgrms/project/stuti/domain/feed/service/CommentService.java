@@ -8,6 +8,7 @@ import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.service.dto.CommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
@@ -64,6 +65,15 @@ public class CommentService {
 		return commentRepository.findAllByFeedIdAndParentIdIsNUllWithNoOffset(
 			commentGetDto.postId(),
 			commentGetDto.lastCommentId(), commentGetDto.size());
+	}
+
+	@Transactional(readOnly = true)
+	public CommentContentsResponse getCommentContents(Long postId, Long commentId) {
+		feedRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
+		Comment comment = commentRepository.findById(commentId)
+			.orElseThrow(() -> CommentException.COMMENT_NOT_FOUND(commentId));
+
+		return CommentConverter.toCommentContentsResponse(comment);
 	}
 
 	private Comment getParentComment(Long parentCommentId) {

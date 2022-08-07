@@ -16,6 +16,7 @@ import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.service.dto.CommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
@@ -216,6 +217,32 @@ class CommentServiceTest extends ServiceTestConfig {
 		assertThat(pageResponse.contents().get(0).contents()).isEqualTo("댓글10");
 		assertThat(pageResponse.contents().get(0).children()).hasSize(10);
 		System.out.println(pageResponse);
+	}
+
+	@Test
+	@DisplayName("댓글의 내용을 반환한다.")
+	void testGetCommentContents() {
+		Feed post = createPost(member);
+		Comment comment = new Comment("댓글입니다.", null, member, post);
+		commentRepository.save(comment);
+
+		CommentContentsResponse commentContents = commentService.getCommentContents(post.getId(), comment.getId());
+
+		assertThat(commentContents.contents()).isEqualTo(comment.getContent());
+	}
+
+	@Test
+	@DisplayName("존재하지 않는 게시글이라면 댓글의 내용을 반환할 수 없다.")
+	void testGetCommentContentsWithUnknownPostId() {
+		assertThrows(FeedException.class, () -> commentService.getCommentContents(1L, 2L));
+	}
+
+	@Test
+	@DisplayName("존재하지 않는 게시글이라면 댓글의 내용을 반환할 수 없다.")
+	void testGetCommentContentsWithUnknownCommentId() {
+		Feed post = createPost(member);
+
+		assertThrows(CommentException.class, () -> commentService.getCommentContents(post.getId(), 1L));
 	}
 
 	private Feed createPost(Member member) {

@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.CommentRequest;
 import prgrms.project.stuti.domain.feed.service.CommentConverter;
 import prgrms.project.stuti.domain.feed.service.CommentService;
+import prgrms.project.stuti.domain.feed.service.dto.CommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
@@ -47,7 +48,8 @@ public class CommentController {
 	@PatchMapping("/api/v1/posts/{postId}/comments/{commentId}")
 	public ResponseEntity<CommentResponse> changeComment(@PathVariable Long postId, @PathVariable Long commentId,
 		@Valid @RequestBody CommentRequest commentRequest, @AuthenticationPrincipal Long memberId) {
-		CommentUpdateDto commentUpdateDto = CommentMapper.toCommentUpdateDto(commentRequest, postId, commentId, memberId);
+		CommentUpdateDto commentUpdateDto = CommentMapper.toCommentUpdateDto(commentRequest, postId, commentId,
+			memberId);
 		CommentResponse commentResponse = commentService.changeComment(commentUpdateDto);
 
 		return ResponseEntity.ok().body(commentResponse);
@@ -71,5 +73,14 @@ public class CommentController {
 		PageResponse<CommentParentContents> commentResponse = commentService.getPostComments(commentGetDto);
 
 		return ResponseEntity.ok().body(commentResponse);
+	}
+
+	@GetMapping("/api/v1/posts/{postId}/comments/{commentId}")
+	public ResponseEntity<CommentContentsResponse> getCommentContents(
+		@PathVariable Long postId, @PathVariable Long commentId
+	) {
+		CommentContentsResponse commentContents = commentService.getCommentContents(postId, commentId);
+
+		return ResponseEntity.ok().body(commentContents);
 	}
 }

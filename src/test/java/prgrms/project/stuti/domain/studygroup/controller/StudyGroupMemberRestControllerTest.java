@@ -9,8 +9,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.CommonField.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.*;
 
 import java.util.List;
 
@@ -89,8 +89,8 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 					pathParameters(studyGroupIdPath()),
 					responseHeaders(contentType()),
 					responseFields(studyGroupMembersFields())
-						.andWithPrefix("studyMembers[*].", studyGroupMemberFields())
-						.andWithPrefix("studyApplicants[*].", studyGroupMemberFields())));
+						.andWithPrefix(STUDY_MEMBERS.field(), studyGroupMemberFields())
+						.andWithPrefix(STUDY_APPLICANTS.field(), studyGroupMemberFields())));
 	}
 
 	@Test
@@ -194,9 +194,9 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 			fieldWithPath(TITLE.field()).type(STRING).description(TITLE.description()),
 			fieldWithPath(NUMBER_OF_MEMBERS.field()).type(NUMBER).description(NUMBER_OF_MEMBERS.description()),
 			fieldWithPath(NUMBER_OF_RECRUITS.field()).type(NUMBER).description(NUMBER_OF_RECRUITS.description()),
-			fieldWithPath("studyMembers").type(ARRAY).description("스터디 그룹 멤버 리스트"),
+			fieldWithPath(STUDY_MEMBERS.field()).type(ARRAY).description(STUDY_MEMBERS.description()),
 			fieldWithPath("numberOfApplicants").type(NUMBER).description("스터디 그룹 지원자 수"),
-			fieldWithPath("studyApplicants").type(ARRAY).description("스터디 그룹 신청자 리스트"));
+			fieldWithPath(STUDY_APPLICANTS.field()).type(ARRAY).description(STUDY_APPLICANTS.description()));
 	}
 
 	private List<FieldDescriptor> studyGroupMemberFields() {
@@ -207,6 +207,7 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 			fieldWithPath(FIELD.field()).type(STRING).description(FIELD.description()),
 			fieldWithPath(CAREER.field()).type(STRING).description(CAREER.description()),
 			fieldWithPath(MBTI.field()).type(STRING).description(MBTI.description()),
-			fieldWithPath(STUDY_GROUP_MEMBER_ROLE.field()).type(STRING).description(STUDY_GROUP_MEMBER_ROLE.description()));
+			fieldWithPath(STUDY_GROUP_MEMBER_ROLE.field()).type(STRING)
+				.description(STUDY_GROUP_MEMBER_ROLE.description()));
 	}
 }

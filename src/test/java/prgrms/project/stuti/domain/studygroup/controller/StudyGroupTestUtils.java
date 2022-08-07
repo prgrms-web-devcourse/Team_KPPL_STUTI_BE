@@ -3,13 +3,12 @@ package prgrms.project.stuti.domain.studygroup.controller;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.CommonField.*;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 
-public class CommonStudyGroupTestUtils {
+public class StudyGroupTestUtils {
 
 	public static HeaderDescriptor contentType() {
 		return headerWithName(CONTENT_TYPE).description("컨텐츠 타입");
@@ -52,7 +51,11 @@ public class CommonStudyGroupTestUtils {
 		STUDY_GROUP_QUESTION_ID("studyGroupQuestionId", "스터디 그룹 문의댓글 아이디"),
 		PAGE_CONTENTS("contents", "페이지 컨텐츠"),
 		HAS_NEXT("hasNext", "다음 페이지 유무"),
-		SIZE("size", "페이지 리스트 사이즈");
+		SIZE("size", "페이지 리스트 사이즈"),
+		LAST_STUDY_GROUP_ID("lastStudyGroupId", "마지막으로 본 스터디 그룹 아이디"),
+		LAST_STUDY_GROUP_QUESTION_ID("lastStudyGroupQuestionId", "마지막으로 본 스터디 그룹 문의댓글 아이디"),
+		STUDY_MEMBERS("studyMembers[*]", "스터디 그룹 멤버 목록"),
+		STUDY_APPLICANTS("studyApplicants[*]", "스터디 그룹 신청자 목록");
 
 		private final String field;
 		private final String description;

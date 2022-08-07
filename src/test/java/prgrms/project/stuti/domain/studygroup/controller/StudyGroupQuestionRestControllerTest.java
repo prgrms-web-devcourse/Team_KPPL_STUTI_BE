@@ -9,8 +9,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.CommonField.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,19 +46,18 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 
 	@Test
 	@DisplayName("스터디 그룹 문의 댓글을 생성한다.")
-	void postStudyGroupQuestion() throws Exception {
+	void createStudyGroupQuestion() throws Exception {
 		//given
-		StudyGroupQuestionResponse questionResponse = toQuestionResponse();
+		StudyGroupQuestionResponse questionResponse = toStudyGroupQuestionResponse();
 		StudyGroupQuestionRequest.CreateRequest createRequest =
 			new StudyGroupQuestionRequest.CreateRequest(null, "test contents");
-		String requestJsonString = objectMapper.writeValueAsString(createRequest);
+		String jsonRequestString = objectMapper.writeValueAsString(createRequest);
 		given(studyGroupQuestionService.createStudyGroupQuestion(any())).willReturn(questionResponse);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(
-			post(studyGroupQuestionApiPrefix, studyGroupId)
-				.content(requestJsonString)
-				.contentType(APPLICATION_JSON));
+		ResultActions resultActions = mockMvc.perform(post(studyGroupQuestionApiPrefix, studyGroupId)
+			.content(jsonRequestString)
+			.contentType(APPLICATION_JSON));
 
 		//then
 		resultActions
@@ -71,22 +70,20 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 				pathParameters(studyGroupIdPath()),
 				requestFields(parentIdField(), contents()),
 				responseHeaders(contentType(), contentLength()),
-				responseFields(commonQuestionResponse())));
-
+				responseFields(studyGroupQuestionFields())));
 	}
 
 	@Test
-	@DisplayName("스터디 그룹 문의 댓글 페이징 조회한다.")
+	@DisplayName("스터디 그룹 문의 댓글을 페이징 조회한다.")
 	void getStudyGroupQuestions() throws Exception {
 		//given
-		PageResponse<StudyGroupQuestionsResponse> questionsResponse = toListResponse();
+		PageResponse<StudyGroupQuestionsResponse> questionsResponse = toStudyGroupQuestionsResponse();
 		given(studyGroupQuestionService.getStudyGroupQuestions(any())).willReturn(questionsResponse);
 
 		//when
-		ResultActions resultActions = mockMvc.perform(
-			get(studyGroupQuestionApiPrefix, studyGroupId)
-				.queryParams(toPageRequestParams())
-				.contentType(APPLICATION_JSON));
+		ResultActions resultActions = mockMvc.perform(get(studyGroupQuestionApiPrefix, studyGroupId)
+			.queryParams(toStudyGroupQuestionPageParams())
+			.contentType(APPLICATION_JSON));
 
 		//then
 		resultActions
@@ -97,24 +94,24 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 			.andDo(document(COMMON_DOCS_NAME,
 				requestHeaders(contentType(), host()),
 				pathParameters(studyGroupIdPath()),
-				requestParameters(pageRequestParameters()),
+				requestParameters(pageRequestParams()),
 				responseHeaders(contentType(), contentLength()),
-				responseFields(pageResponseFields())));
-
+				responseFields(studyGroupQuestionsFields())));
 	}
 
 	@Test
 	@DisplayName("스터디 그룹 문의 댓글을 수정한다.")
-	void patchStudyGroupQuestion() throws Exception {
+	void updateStudyGroupQuestion() throws Exception {
 		//given
-		StudyGroupQuestionResponse questionResponse = toQuestionResponse();
-		StudyGroupQuestionRequest.UpdateRequest updateRequest = new StudyGroupQuestionRequest.UpdateRequest(
-			"test contents");
+		StudyGroupQuestionResponse questionResponse = toStudyGroupQuestionResponse();
+		StudyGroupQuestionRequest.UpdateRequest updateRequest =
+			new StudyGroupQuestionRequest.UpdateRequest("test contents");
 		given(studyGroupQuestionService.updateStudyGroupQuestion(any())).willReturn(questionResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			patch(studyGroupQuestionApiPrefix + "/{studyGroupQuestionId}", studyGroupId, studyGroupQuestionId)
+			patch(studyGroupQuestionApiPrefix + "/{studyGroupQuestionId}",
+				studyGroupId, studyGroupQuestionId)
 				.content(objectMapper.writeValueAsString(updateRequest))
 				.contentType(APPLICATION_JSON));
 
@@ -129,19 +126,20 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 				pathParameters(studyGroupIdPath(), studyGroupQuestionIdPath()),
 				requestFields(contents()),
 				responseHeaders(contentType(), contentLength()),
-				responseFields(commonQuestionResponse())));
+				responseFields(studyGroupQuestionFields())));
 	}
 
 	@Test
 	@DisplayName("스터디 그룹 문의 댓글을 삭제한다.")
 	void deleteStudyGroupQuestion() throws Exception {
 		//given
-		StudyGroupQuestionResponse questionResponse = toQuestionResponse();
+		StudyGroupQuestionResponse questionResponse = toStudyGroupQuestionResponse();
 		given(studyGroupQuestionService.deleteStudyGroupQuestion(any())).willReturn(questionResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			delete(studyGroupQuestionApiPrefix + "/{studyGroupQuestionId}", studyGroupId, studyGroupQuestionId)
+			delete(studyGroupQuestionApiPrefix + "/{studyGroupQuestionId}",
+				studyGroupId, studyGroupQuestionId)
 				.contentType(APPLICATION_JSON_VALUE));
 
 		//then
@@ -153,10 +151,10 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 				requestHeaders(contentType(), host()),
 				pathParameters(studyGroupIdPath(), studyGroupQuestionIdPath()),
 				responseHeaders(contentType()),
-				responseFields(commonQuestionResponse())));
+				responseFields(studyGroupQuestionFields())));
 	}
 
-	private StudyGroupQuestionResponse toQuestionResponse() {
+	private StudyGroupQuestionResponse toStudyGroupQuestionResponse() {
 		return StudyGroupQuestionResponse
 			.builder()
 			.studyGroupQuestionId(1L)
@@ -169,7 +167,7 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 			.build();
 	}
 
-	private PageResponse<StudyGroupQuestionsResponse> toListResponse() {
+	private PageResponse<StudyGroupQuestionsResponse> toStudyGroupQuestionsResponse() {
 		final List<StudyGroupQuestionsResponse> contents =
 			List.of(
 				StudyGroupQuestionsResponse
@@ -180,15 +178,18 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 					.profileImageUrl("test profile image url")
 					.nickname("test nickname")
 					.contents("test contents")
-					.updatedAt(LocalDateTime.now())
-					.children(List.of(toQuestionResponse()))
+					.updatedAt(LocalDateTime.now().minusDays(10))
+					.children(List.of(
+						toStudyGroupQuestionResponse(),
+						toStudyGroupQuestionResponse(),
+						toStudyGroupQuestionResponse()))
 					.build());
 
 		return new PageResponse<>(contents, false, 10);
 	}
 
 	private ParameterDescriptor studyGroupQuestionIdPath() {
-		return parameterWithName(STUDY_GROUP_QUESTION_ID.field()).description("스터디 그룹 문의댓글 아이디");
+		return parameterWithName(STUDY_GROUP_QUESTION_ID.field()).description(STUDY_GROUP_QUESTION_ID.description());
 	}
 
 	private FieldDescriptor contents() {
@@ -199,38 +200,38 @@ class StudyGroupQuestionRestControllerTest extends TestConfig {
 		return fieldWithPath("parentId").type(NULL).description("상위 문의댓글 아이디");
 	}
 
-	private List<FieldDescriptor> commonQuestionResponse() {
+	private List<FieldDescriptor> studyGroupQuestionFields() {
 		return List.of(
-			fieldWithPath(STUDY_GROUP_QUESTION_ID.field()).type(NUMBER).description("스터디 그룹 문의댓글 아이디"),
+			fieldWithPath(STUDY_GROUP_QUESTION_ID.field()).type(NUMBER)
+				.description(STUDY_GROUP_QUESTION_ID.description()),
 			parentIdField(),
-			fieldWithPath(PROFILE_IMAGE_URL.field()).type(STRING).description("프로필 이미지 url"),
-			fieldWithPath(MEMBER_ID.field()).type(NUMBER).description("회원 아이디"),
-			fieldWithPath(NICKNAME.field()).type(STRING).description("닉네임"),
+			fieldWithPath(PROFILE_IMAGE_URL.field()).type(STRING).description(PROFILE_IMAGE_URL.description()),
+			fieldWithPath(MEMBER_ID.field()).type(NUMBER).description(MEMBER_ID.description()),
+			fieldWithPath(NICKNAME.field()).type(STRING).description(NICKNAME.description()),
 			contents(),
-			fieldWithPath("updatedAt").type(STRING).description("업데이트 시간")
+			fieldWithPath("updatedAt").type(STRING).description("마지막으로 수정된 시간")
 		);
 	}
 
-	private MultiValueMap<String, String> toPageRequestParams() {
+	private MultiValueMap<String, String> toStudyGroupQuestionPageParams() {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add("size", "10");
-		map.add("lastStudyGroupQuestionId", "1");
+		map.add(SIZE.field(), "10");
+		map.add(LAST_STUDY_GROUP_QUESTION_ID.field(), "1");
 
 		return map;
 	}
 
-	private List<ParameterDescriptor> pageRequestParameters() {
+	private List<ParameterDescriptor> pageRequestParams() {
 		return List.of(
-			parameterWithName("size").description("페이지 사이즈"),
-			parameterWithName("lastStudyGroupQuestionId").description("마지막으로 본 스터디 그룹 문의댓글 아이디")
-		);
+			parameterWithName(SIZE.field()).description(SIZE.description()),
+			parameterWithName(LAST_STUDY_GROUP_QUESTION_ID.field())
+				.description(LAST_STUDY_GROUP_QUESTION_ID.description()));
 	}
 
-	private List<FieldDescriptor> pageResponseFields() {
+	private List<FieldDescriptor> studyGroupQuestionsFields() {
 		return List.of(
-			subsectionWithPath("contents").type(ARRAY).description("페이징 컨텐츠"),
-			fieldWithPath("hasNext").type(BOOLEAN).description("다음 컨텐츠 유무"),
-			fieldWithPath("totalElements").type(NUMBER).description("총 컨텐츠 수")
-		);
+			subsectionWithPath(PAGE_CONTENTS.field()).type(ARRAY).description(PAGE_CONTENTS.description()),
+			fieldWithPath(HAS_NEXT.field()).type(BOOLEAN).description(HAS_NEXT.description()),
+			fieldWithPath("totalElements").type(NUMBER).description("총 컨텐츠 수"));
 	}
 }

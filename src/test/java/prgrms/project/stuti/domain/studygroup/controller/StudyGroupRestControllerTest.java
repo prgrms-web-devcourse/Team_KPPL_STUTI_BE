@@ -11,8 +11,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.CommonField.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -56,8 +56,6 @@ class StudyGroupRestControllerTest extends TestConfig {
 	private final String studyGroupApiPrefix = "/api/v1/study-groups";
 
 	private final Long studyGroupId = 1L;
-
-	private final Long memberId = 1L;
 
 	private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -103,7 +101,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 			get(studyGroupApiPrefix)
-				.queryParams(toGetStudyGroupsParams())
+				.queryParams(toStudyGroupFindConditionParams())
 				.contentType(APPLICATION_JSON));
 
 		//then
@@ -129,7 +127,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 		//when
 		ResultActions resultActions = mockMvc.perform(
 			get(studyGroupApiPrefix + "/my-page")
-				.queryParams(toGetStudyGroupsParams())
+				.queryParams(toStudyGroupFindConditionParams())
 				.contentType(APPLICATION_JSON));
 
 		//then
@@ -314,14 +312,14 @@ class StudyGroupRestControllerTest extends TestConfig {
 		return map;
 	}
 
-	private MultiValueMap<String, String> toGetStudyGroupsParams() {
+	private MultiValueMap<String, String> toStudyGroupFindConditionParams() {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
 		map.add(MBTI.field(), null);
 		map.add(TOPIC.field(), null);
 		map.add(REGION.field(), null);
-		map.add("studyGroupMemberRole", "STUDY_LEADER");
-		map.add("lastStudyGroupId", null);
-		map.add("size", "10");
+		map.add(STUDY_GROUP_MEMBER_ROLE.field(), "STUDY_LEADER");
+		map.add(LAST_STUDY_GROUP_ID.field(), null);
+		map.add(SIZE.field(), "10");
 
 		return map;
 	}
@@ -356,7 +354,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 			parameterWithName(TOPIC.field()).description(TOPIC.description()),
 			parameterWithName(REGION.field()).description(REGION.description()),
 			parameterWithName(STUDY_GROUP_MEMBER_ROLE.field()).description(STUDY_GROUP_MEMBER_ROLE.description()),
-			parameterWithName("lastStudyGroupId").description("마지막으로 본 스터디 그룹 아이디"),
+			parameterWithName(LAST_STUDY_GROUP_ID.field()).description(LAST_STUDY_GROUP_ID.description()),
 			parameterWithName(SIZE.field()).description(SIZE.description())
 		);
 	}

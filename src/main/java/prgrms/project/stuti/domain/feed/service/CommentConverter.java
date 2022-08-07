@@ -5,6 +5,7 @@ import java.util.List;
 import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.service.dto.CommentChildContents;
+import prgrms.project.stuti.domain.feed.service.dto.CommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.CommentResponse;
@@ -65,5 +66,13 @@ public class CommentConverter {
 						.build()
 				).toList()).build()
 		).toList();
+	}
+
+	public static CommentContentsResponse toCommentContentsResponse(Comment comment) {
+		Long parentId = null;
+		if(comment.getParent() != null) {
+			parentId = comment.getParent().getId();
+		}
+		return new CommentContentsResponse(comment.getId(), parentId, comment.getContent());
 	}
 }

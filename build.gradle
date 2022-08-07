@@ -111,6 +111,11 @@ task copyPrivate(type: Copy) {
         into 'src/main/resources'
     }
 }
+
+jar {
+    enabled = false
+}
+
 // querydsl
 
 def querydslDir = "$buildDir/generated/querydsl"

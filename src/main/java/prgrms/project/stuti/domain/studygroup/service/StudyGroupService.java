@@ -33,9 +33,8 @@ public class StudyGroupService {
 	@Transactional
 	public StudyGroupIdResponse createStudyGroup(StudyGroupDto.CreateDto createDto) {
 		String imageUrl = imageUploader.upload(createDto.imageFile(), ImageDirectory.STUDY_GROUP);
-		String thumbnailUrl = imageUploader.createThumbnail(imageUrl);
 
-		StudyGroup studyGroup = saveStudyGroup(createDto, imageUrl, thumbnailUrl);
+		StudyGroup studyGroup = saveStudyGroup(createDto, imageUrl);
 		saveStudyGroupLeader(createDto.memberId(), studyGroup);
 
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());
@@ -76,8 +75,8 @@ public class StudyGroupService {
 		updateToDeleted(studyGroupId);
 	}
 
-	private StudyGroup saveStudyGroup(StudyGroupDto.CreateDto createDto, String imageUrl, String thumbnailUrl) {
-		StudyGroup studyGroup = StudyGroupConverter.toStudyGroup(createDto, imageUrl, thumbnailUrl);
+	private StudyGroup saveStudyGroup(StudyGroupDto.CreateDto createDto, String imageUrl) {
+		StudyGroup studyGroup = StudyGroupConverter.toStudyGroup(createDto, imageUrl);
 
 		return studyGroupRepository.save(studyGroup);
 	}
@@ -95,9 +94,8 @@ public class StudyGroupService {
 		}
 
 		String imageUrl = imageUploader.upload(imageFile, ImageDirectory.STUDY_GROUP);
-		String thumbnailUrl = imageUploader.createThumbnail(imageUrl);
 
-		studyGroup.updateImage(imageUrl, thumbnailUrl);
+		studyGroup.updateImage(imageUrl);
 	}
 
 	private void updateTitleAndDescription(String title, String description, StudyGroup studyGroup) {

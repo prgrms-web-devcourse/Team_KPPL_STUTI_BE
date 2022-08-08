@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.repository;
+package prgrms.project.stuti.domain.studygroup.repository.studyquestion;
 
 import static prgrms.project.stuti.domain.member.model.QMember.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;

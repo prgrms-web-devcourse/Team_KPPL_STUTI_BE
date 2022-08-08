@@ -1,8 +1,5 @@
 package prgrms.project.stuti.global.error;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -20,8 +17,7 @@ import prgrms.project.stuti.global.error.exception.BusinessException;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(BindException.class)
-	protected ResponseEntity<ErrorResponse> handleBindException(BindException ex,
-		BindingResult bindingResult) {
+	protected ResponseEntity<ErrorResponse> handleBindException(BindException ex, BindingResult bindingResult) {
 		log.info("Got BindException: {}", ex.getMessage(), ex);
 
 		return ErrorResponseMapper.toErrorResponse(ErrorCode.INVALID_METHOD_ARGUMENT, bindingResult);

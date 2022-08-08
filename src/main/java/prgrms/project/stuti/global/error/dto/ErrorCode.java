@@ -39,18 +39,19 @@ public enum ErrorCode {
 	BLACKLIST_DETECTION("M006", "AccessToken is deprived", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_MY_PAGE_MEMBER("M007", "Not match with my page member", HttpStatus.BAD_REQUEST),
 
+	//post
+	POST_NOT_FOUND("P001", "not exist post", HttpStatus.BAD_REQUEST),
+	POST_LIKE_DUPLICATED("P002", "already liked this post", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_POST_LIKE("P003","not found feed like", HttpStatus.BAD_REQUEST),
+
+	//post comment
+	PARENT_POST_COMMENT_NOT_FOUND("PC001", "parent comment not exist", HttpStatus.BAD_REQUEST),
+	POST_COMMENT_NOT_FOUND("PC002", "not exist comment", HttpStatus.BAD_REQUEST),
+
 	// Token Expiration
 	ACCESS_TOKEN_EXPIRATION("T001", "Access token is expired", HttpStatus.BAD_REQUEST),
-	REFRESH_TOKEN_EXPIRATION("T002", "Refresh token is expired", HttpStatus.BAD_REQUEST),
+	REFRESH_TOKEN_EXPIRATION("T002", "Refresh token is expired", HttpStatus.BAD_REQUEST);
 
-	//feed
-	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),
-	FEED_LIKE_DUPLICATED("F002", "already liked this post", HttpStatus.BAD_REQUEST),
-	NOT_FOUND_FEED_LIKE("F003","not found feed like", HttpStatus.BAD_REQUEST),
-
-	//(feed)comment
-	PARENT_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST),
-	COMMENT_NOT_FOUND("FC002", "not exist comment", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

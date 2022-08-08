@@ -47,7 +47,7 @@ class PostLikeControllerTest extends TestConfig {
 		doNothing().when(postLikeService).cancelPostLike(anyLong(), anyLong());
 
 		mockMvc.perform(delete("/api/v1/posts/{postId}/likes", 1L))
-			.andExpect(status().isNoContent())
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 }

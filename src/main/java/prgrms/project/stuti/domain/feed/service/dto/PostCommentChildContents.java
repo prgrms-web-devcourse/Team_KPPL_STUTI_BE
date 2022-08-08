@@ -1,21 +1,19 @@
 package prgrms.project.stuti.domain.feed.service.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.Builder;
 
-public record CommentParentContents(
-	Long postCommentId,
+public record PostCommentChildContents(
 	Long parentId,
+	Long postCommentId,
 	String profileImageUrl,
 	Long memberId,
 	String nickname,
 	String contents,
-	LocalDateTime updatedAt,
-	List<PostCommentChildContents> children
+	LocalDateTime updatedAt
 ) {
 	@Builder
-	public CommentParentContents {
+	public PostCommentChildContents {
 	}
 }

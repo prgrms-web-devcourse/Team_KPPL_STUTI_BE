@@ -4,15 +4,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.feed.controller.PostLikeController;
-import prgrms.project.stuti.domain.feed.model.Feed;
-import prgrms.project.stuti.domain.feed.model.FeedLike;
-import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.model.Post;
+import prgrms.project.stuti.domain.feed.model.PostLike;
+import prgrms.project.stuti.domain.feed.repository.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.FeedException;
+import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 
 @Service
@@ -20,26 +19,26 @@ import prgrms.project.stuti.global.error.exception.MemberException;
 public class PostLikeService {
 
 	private final MemberRepository memberRepository;
-	private final FeedRepository postRepository;
+	private final PostRepository postRepository;
 	private final PostLikeRepository postLikeRepository;
 
 	@Transactional
 	public PostLikeIdResponse createPostLike(Long postId, Long memberId) {
-		Feed feed = postRepository.findById(postId).orElseThrow(FeedException::FEED_NOT_FOUND);
+		Post post = postRepository.findById(postId).orElseThrow(PostException::POST_NOT_FOUND);
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
-		postLikeRepository.findByFeedIdAndMemberId(postId, memberId)
-			.ifPresent(l -> FeedException.FEED_LIKE_DUPLICATED());
+		postLikeRepository.findByPostIdAndMemberId(postId, memberId)
+			.ifPresent(l -> PostException.POST_LIKE_DUPLICATED());
 
-		FeedLike feedLike = PostLikeConverter.toFeedLike(member, feed);
-		FeedLike savedPostLike = postLikeRepository.save(feedLike);
+		PostLike postLike = PostLikeConverter.toPostLike(member, post);
+		PostLike savedPostLike = postLikeRepository.save(postLike);
 
 		return PostLikeConverter.toPostLikeIdResponse(savedPostLike.getId());
 	}
 
 	@Transactional
 	public void cancelPostLike(Long postId, Long memberId) {
-		FeedLike feedLike = postLikeRepository.findByFeedIdAndMemberId(postId, memberId)
-			.orElseThrow(FeedException::NOT_FOUND_FEED_LIKE);
-		postLikeRepository.deleteById(feedLike.getId());
+		PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId)
+			.orElseThrow(PostException::NOT_FOUND_POST_LIKE);
+		postLikeRepository.deleteById(postLike.getId());
 	}
 }

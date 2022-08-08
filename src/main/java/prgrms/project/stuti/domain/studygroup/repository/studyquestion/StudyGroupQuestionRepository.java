@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.studygroup.repository;
+package prgrms.project.stuti.domain.studygroup.repository.studyquestion;
 
 import java.util.Optional;
 

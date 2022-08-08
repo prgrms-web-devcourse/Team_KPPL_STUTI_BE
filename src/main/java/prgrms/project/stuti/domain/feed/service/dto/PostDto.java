@@ -1,6 +1,7 @@
 package prgrms.project.stuti.domain.feed.service.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Builder;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -14,9 +15,8 @@ public record PostDto(
 	String contents,
 	String postImageUrl,
 	LocalDateTime createdAt,
-	Long totalLikes,
 	Long totalComments,
-	boolean isliked
+	List<Long> likedMembers
 ) {
 	@Builder
 	public PostDto {

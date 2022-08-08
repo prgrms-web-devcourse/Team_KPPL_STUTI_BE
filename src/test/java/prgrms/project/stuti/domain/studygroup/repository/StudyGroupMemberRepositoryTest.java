@@ -38,7 +38,6 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 			StudyGroup
 				.builder()
 				.imageUrl("imageUrl")
-				.thumbnailUrl("thumbnailUrl")
 				.title("test title")
 				.topic(Topic.NETWORK)
 				.isOnline(true)

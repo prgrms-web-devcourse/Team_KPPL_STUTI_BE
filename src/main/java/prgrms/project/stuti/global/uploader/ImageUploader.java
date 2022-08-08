@@ -12,7 +12,5 @@ public interface ImageUploader {
 
 	List<String> uploadAll(List<MultipartFile> multipartFiles, ImageDirectory imageDirectory);
 
-	String createThumbnail(String imageUrl);
-
 	void delete(String imageUrl);
 }

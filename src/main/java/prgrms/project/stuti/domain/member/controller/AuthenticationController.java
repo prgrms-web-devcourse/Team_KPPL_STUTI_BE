@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,5 +83,15 @@ public class AuthenticationController {
 		return ResponseEntity.ok()
 			.contentType(MediaType.APPLICATION_JSON)
 			.build();
+	}
+
+	@GetMapping("/auth")
+	public ResponseEntity<MemberResponse> memberInfo(HttpServletRequest request) {
+		String accessToken = tokenService.resolveToken(request);
+		String memberId = tokenService.getUid(accessToken);
+
+		MemberResponse memberResponse = authenticationService.getMemberResponse(Long.parseLong(memberId));
+
+		return ResponseEntity.ok(memberResponse);
 	}
 }

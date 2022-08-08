@@ -11,12 +11,12 @@ public class CommentException extends BusinessException{
 	}
 
 	public static final CommentException PARENT_COMMENT_NOT_FOUND(Long postCommentId) {
-		throw new CommentException(ErrorCode.PARENT_COMMENT_NOT_FOUND,
+		throw new CommentException(ErrorCode.PARENT_POST_COMMENT_NOT_FOUND,
 			MessageFormat.format("상위 댓글이 존재하지 않습니다. ({0})", postCommentId));
 	}
 
 	public static final CommentException COMMENT_NOT_FOUND(Long postCommentId) {
-		throw new CommentException(ErrorCode.COMMENT_NOT_FOUND,
+		throw new CommentException(ErrorCode.POST_COMMENT_NOT_FOUND,
 			MessageFormat.format("댓글이 존재하지 않습니다. ({0})", postCommentId));
 	}
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum ImageDirectory {
-	MEMBER("images/members"), FEED("images/feeds"), STUDY_GROUP("images/study-groups"), BASIC("images/basic");
+	MEMBER("images/members"), POST("images/posts"), STUDY_GROUP("images/study-groups"), BASIC("images/basic");
 
 	private final String directory;
 

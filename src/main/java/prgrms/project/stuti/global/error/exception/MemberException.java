@@ -47,3 +47,4 @@ public class MemberException extends BusinessException {
 			MessageFormat.format("마이 페이지의 회원정보와 일치하지 않는 회원입니다. (authMemberId: {0})", authMemberId));
 	}
 }
+

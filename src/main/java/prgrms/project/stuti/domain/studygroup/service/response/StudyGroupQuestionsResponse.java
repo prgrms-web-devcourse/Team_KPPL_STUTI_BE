@@ -5,7 +5,7 @@ import java.util.List;
 
 import lombok.Builder;
 
-public record StudyGroupQuestionListResponse(
+public record StudyGroupQuestionsResponse(
 	Long studyGroupQuestionId,
 	Long parentId,
 	String profileImageUrl,
@@ -17,6 +17,6 @@ public record StudyGroupQuestionListResponse(
 ) {
 
 	@Builder
-	public StudyGroupQuestionListResponse {
+	public StudyGroupQuestionsResponse {
 	}
 }

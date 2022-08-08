@@ -7,17 +7,14 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupFindCondition;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupCreateDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupUpdateDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 import prgrms.project.stuti.global.page.CursorPageResponse;
@@ -34,7 +31,7 @@ public class StudyGroupService {
 	private final StudyGroupMemberRepository studyGroupMemberRepository;
 
 	@Transactional
-	public StudyGroupIdResponse createStudyGroup(StudyGroupCreateDto createDto) {
+	public StudyGroupIdResponse createStudyGroup(StudyGroupDto.CreateDto createDto) {
 		String imageUrl = imageUploader.upload(createDto.imageFile(), ImageDirectory.STUDY_GROUP);
 		String thumbnailUrl = imageUploader.createThumbnail(imageUrl);
 
@@ -45,20 +42,21 @@ public class StudyGroupService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPageResponse<StudyGroupResponse> getStudyGroups(StudyGroupFindConditionDto conditionDto) {
+	public CursorPageResponse<StudyGroupsResponse> getStudyGroups(StudyGroupDto.FindCondition conditionDto) {
 		return studyGroupRepository.dynamicFindAllWithCursorPagination(conditionDto);
 	}
 
 	@Transactional(readOnly = true)
-	public StudyGroupDetailResponse getStudyGroup(Long studyGroupId) {
+	public StudyGroupResponse getStudyGroup(StudyGroupDto.ReadDto readDto) {
+		Long studyGroupId = readDto.studyGroupId();
 		StudyGroupMember studyGroupDetail = studyGroupRepository.findStudyGroupDetailById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 
-		return StudyGroupConverter.toStudyGroupDetailResponse(studyGroupDetail);
+		return StudyGroupConverter.toStudyGroupResponse(studyGroupDetail);
 	}
 
 	@Transactional
-	public StudyGroupIdResponse updateStudyGroup(StudyGroupUpdateDto updateDto) {
+	public StudyGroupIdResponse updateStudyGroup(StudyGroupDto.UpdateDto updateDto) {
 		StudyGroup studyGroup = findStudyGroup(updateDto.studyGroupId());
 
 		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
@@ -70,12 +68,15 @@ public class StudyGroupService {
 	}
 
 	@Transactional
-	public void deleteStudyGroup(Long memberId, Long studyGroupId) {
+	public void deleteStudyGroup(StudyGroupDto.DeleteDto deleteDto) {
+		Long memberId = deleteDto.memberId();
+		Long studyGroupId = deleteDto.studyGroupId();
+
 		validateLeader(memberId, studyGroupId);
 		updateToDeleted(studyGroupId);
 	}
 
-	private StudyGroup saveStudyGroup(StudyGroupCreateDto createDto, String imageUrl, String thumbnailUrl) {
+	private StudyGroup saveStudyGroup(StudyGroupDto.CreateDto createDto, String imageUrl, String thumbnailUrl) {
 		StudyGroup studyGroup = StudyGroupConverter.toStudyGroup(createDto, imageUrl, thumbnailUrl);
 
 		return studyGroupRepository.save(studyGroup);

@@ -2,6 +2,7 @@ package prgrms.project.stuti.domain.studygroup.controller;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -10,8 +11,8 @@ import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.CommonField.*;
-import static prgrms.project.stuti.domain.studygroup.controller.CommonStudyGroupTestUtils.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.CommonField.*;
+import static prgrms.project.stuti.domain.studygroup.controller.StudyGroupTestUtils.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -23,7 +24,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.headers.HeaderDescriptor;
@@ -36,14 +36,15 @@ import org.springframework.util.MultiValueMap;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.member.model.Career;
+import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupLeaderResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse.StudyGroupLeader;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @WebMvcTest(controllers = StudyGroupRestController.class)
@@ -59,16 +60,16 @@ class StudyGroupRestControllerTest extends TestConfig {
 	private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	@Test
-	@DisplayName("새로운 스터디 그룹을 생성한다.")
-	void postStudyGroup() throws Exception {
+	@DisplayName("스터디 그룹을 생성한다.")
+	void createStudyGroup() throws Exception {
 		//given
-		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(studyGroupId);
-		MultiValueMap<String, String> createParams = toCreateParams();
+		StudyGroupIdResponse idResponse = toStudyGroupIdResponse();
+		MultiValueMap<String, String> createParams = toStudyGroupCreateParams();
 		given(studyGroupService.createStudyGroup(any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(multipart(studyGroupApiPrefix)
-			.file("imageFile", getMultipartFileBytes())
+			.file(IMAGE_FILE.field(), getMockImageFileBytes())
 			.params(createParams)
 			.contentType(MediaType.MULTIPART_FORM_DATA)
 			.with(requestPostProcessor -> {
@@ -84,24 +85,24 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.andDo(
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
-					requestParts(imageFile()),
-					requestParameters(title()).and(parametersOfCreateStudyGroup()).and(description()),
-					responseHeaders(contentType()).and(location()),
+					requestParts(imageFilePart()),
+					requestParameters(studyGroupCreateParams()),
+					responseHeaders(contentType(), location()),
 					responseFields(studyGroupIdField())));
 	}
 
 	@Test
-	@DisplayName("전체 스터디 그룹을 동적으로 페이징 조회한다.")
+	@DisplayName("전체 스터디 그룹을 페이징 조회한다.")
 	void getStudyGroups() throws Exception {
 		//given
-		CursorPageResponse<StudyGroupResponse> pageResponse = toStudyGroupPageResponse();
+		CursorPageResponse<StudyGroupsResponse> pageResponse = toStudyGroupPageResponse();
 		given(studyGroupService.getStudyGroups(any())).willReturn(pageResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
 			get(studyGroupApiPrefix)
-				.queryParams(toGetStudyGroupsParams())
-			.contentType(APPLICATION_JSON));
+				.queryParams(toStudyGroupFindConditionParams())
+				.contentType(APPLICATION_JSON));
 
 		//then
 		resultActions
@@ -111,18 +112,43 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.andDo(
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
-					requestParameters(conditionParams()),
+					requestParameters(findConditionParams()),
 					responseHeaders(contentType(), contentLength()),
-					responseFields(pageResponseFields())
-				));
+					responseFields(pageFields())));
+	}
+
+	@Test
+	@DisplayName("나의 스터디 그룹을 페이징 조회한다.")
+	void getMyStudyGroups() throws Exception {
+		//given
+		CursorPageResponse<StudyGroupsResponse> pageResponse = toStudyGroupPageResponse();
+		given(studyGroupService.getStudyGroups(any())).willReturn(pageResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(
+			get(studyGroupApiPrefix + "/my-page")
+				.queryParams(toStudyGroupFindConditionParams())
+				.contentType(APPLICATION_JSON));
+
+		//then
+		resultActions
+			.andExpectAll(
+				status().isOk(),
+				content().json(objectMapper.writeValueAsString(pageResponse)))
+			.andDo(
+				document(COMMON_DOCS_NAME,
+					requestHeaders(contentType(), host()),
+					requestParameters(findConditionParams()),
+					responseHeaders(contentType(), contentLength()),
+					responseFields(pageFields())));
 	}
 
 	@Test
 	@DisplayName("스터디 그룹을 상세조회한다.")
 	void getStudyGroup() throws Exception {
 		//given
-		StudyGroupDetailResponse detailResponse = toDetailResponse();
-		given(studyGroupService.getStudyGroup(any())).willReturn(detailResponse);
+		StudyGroupResponse studyGroupResponse = toStudyGroupResponse();
+		given(studyGroupService.getStudyGroup(any())).willReturn(studyGroupResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -133,29 +159,28 @@ class StudyGroupRestControllerTest extends TestConfig {
 		resultActions
 			.andExpectAll(
 				status().isOk(),
-				content().json(objectMapper.writeValueAsString(detailResponse)))
+				content().json(objectMapper.writeValueAsString(studyGroupResponse)))
 			.andDo(
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
 					pathParameters(studyGroupIdPath()),
-					responseHeaders(contentType()),
-					responseFields(studyGroupDetailResponseFields())
-						.andWithPrefix("leader.", leaderResponseFields())
-				));
+					responseHeaders(contentType(), contentLength()),
+					responseFields(studyGroupFields())
+						.andWithPrefix("leader.", leaderFields())));
 	}
 
 	@Test
 	@DisplayName("스터디 그룹을 업데이트한다.")
-	void patchStudyGroup() throws Exception {
+	void updateStudyGroup() throws Exception {
 		//given
-		StudyGroupIdResponse idResponse = new StudyGroupIdResponse(studyGroupId);
-		MultiValueMap<String, String> updateParams = toUpdateParams();
+		StudyGroupIdResponse idResponse = toStudyGroupIdResponse();
+		MultiValueMap<String, String> updateParams = toStudyGroupUpdateParams();
 		given(studyGroupService.updateStudyGroup(any())).willReturn(idResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
 			multipart(studyGroupApiPrefix + "/{studyGroupId}", idResponse.studyGroupId())
-				.file("imageFile", getMultipartFileBytes())
+				.file("imageFile", getMockImageFileBytes())
 				.params(updateParams)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
 				.with(requestPostProcessor -> {
@@ -171,9 +196,9 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.andDo(
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
-					requestParts(imageFile()),
-					requestParameters(title(), description()),
-					responseHeaders(contentType()),
+					requestParts(imageFilePart()),
+					requestParameters(titleParam(), descriptionParam()),
+					responseHeaders(contentType(), contentLength()),
 					responseFields(studyGroupIdField())));
 	}
 
@@ -181,7 +206,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 	@DisplayName("스터디 그룹을 삭제한다.")
 	void deleteStudyGroup() throws Exception {
 		//given
-		doNothing().when(studyGroupService).deleteStudyGroup(any(), any());
+		doNothing().when(studyGroupService).deleteStudyGroup(any());
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -200,47 +225,60 @@ class StudyGroupRestControllerTest extends TestConfig {
 					responseHeaders(contentType())));
 	}
 
-	private MultiValueMap<String, String> toCreateParams() {
-		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add(TITLE.value(), "test title");
-		map.add(TOPIC.value(), String.valueOf(Topic.AI));
-		map.add(IS_ONLINE.value(), "false");
-		map.add(REGION.value(), String.valueOf(Region.SEOUL));
-		map.add(PREFERRED_MBTIS.value(), "INFJ, ENFP");
-		map.add(NUMBER_OF_RECRUITS.value(), "5");
-		map.add(START_DATE_TIME.value(), LocalDateTime.now().plusDays(10).format(dateTimeFormatter));
-		map.add(END_DATE_TIME.value(), LocalDateTime.now().plusMonths(10).format(dateTimeFormatter));
-		map.add(DESCRIPTION.value(), "test description");
-
-		return map;
+	private StudyGroupIdResponse toStudyGroupIdResponse() {
+		return new StudyGroupIdResponse(studyGroupId);
 	}
 
-	private MultiValueMap<String, String> toGetStudyGroupsParams() {
-		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add(MBTI.value(), null);
-		map.add(TOPIC.value(), null);
-		map.add(REGION.value(), null);
-		map.add("studyGroupMemberRole", "STUDY_LEADER");
-		map.add("lastStudyGroupId", null);
-		map.add("size", "10");
+	private CursorPageResponse<StudyGroupsResponse> toStudyGroupPageResponse() {
+		List<StudyGroupsResponse> studyGroupResponses =
+			List.of(
+				StudyGroupsResponse
+					.builder()
+					.studyGroupId(studyGroupId)
+					.memberId(1L)
+					.thumbnailUrl("test thumbnail url")
+					.topic(Topic.DEV_OPS.getValue())
+					.title("test title")
+					.preferredMBTIs(Set.of(Mbti.ENFJ, Mbti.ESFJ, Mbti.ENTJ))
+					.region(Region.SEOUL.getValue())
+					.startDateTime(LocalDateTime.now().plusDays(10))
+					.endDateTime(LocalDateTime.now().plusMonths(10))
+					.numberOfMembers(3)
+					.numberOfRecruits(5)
+					.build(),
 
-		return map;
+				StudyGroupsResponse
+					.builder()
+					.studyGroupId(studyGroupId)
+					.memberId(1L)
+					.thumbnailUrl("test thumbnail url")
+					.topic(Topic.DEV_OPS.getValue())
+					.title("test title")
+					.preferredMBTIs(Set.of(Mbti.ENFJ, Mbti.ESFJ, Mbti.ENTJ))
+					.region(Region.SEOUL.getValue())
+					.startDateTime(LocalDateTime.now().plusDays(10))
+					.endDateTime(LocalDateTime.now().plusMonths(10))
+					.numberOfMembers(3)
+					.numberOfRecruits(5)
+					.build());
+
+		return new CursorPageResponse<>(studyGroupResponses, true);
 	}
 
-	private StudyGroupDetailResponse toDetailResponse() {
+	private StudyGroupResponse toStudyGroupResponse() {
 
-		return StudyGroupDetailResponse
+		return StudyGroupResponse
 			.builder()
 			.studyGroupId(studyGroupId)
 			.topic(Topic.DEV_OPS.getValue())
 			.title("test title")
 			.imageUrl("test image url")
 			.leader(
-				StudyGroupLeaderResponse.builder()
+				StudyGroupLeader.builder()
 					.memberId(1L)
 					.profileImageUrl("test profile image url")
 					.nickname("nickname")
-					.field("BACKEND")
+					.field(Field.BACKEND.getFieldValue())
 					.career(Career.JUNIOR.getCareerValue())
 					.mbti(Mbti.ENFJ)
 					.build())
@@ -255,111 +293,126 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.build();
 	}
 
-	private MultiValueMap<String, String> toUpdateParams() {
+	private byte[] getMockImageFileBytes() throws IOException {
+		return new MockMultipartFile(
+			"testImageFile",
+			"testImageFile.png",
+			"image/png",
+			"test".getBytes())
+			.getBytes();
+	}
+
+	private MultiValueMap<String, String> toStudyGroupCreateParams() {
 		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-		map.add(TITLE.value(), "update title");
-		map.add(DESCRIPTION.value(), "update description");
+		map.add(TITLE.field(), "test title");
+		map.add(TOPIC.field(), String.valueOf(Topic.AI));
+		map.add(IS_ONLINE.field(), "false");
+		map.add(REGION.field(), String.valueOf(Region.SEOUL));
+		map.add(PREFERRED_MBTIS.field(), "INFJ, ENFP");
+		map.add(NUMBER_OF_RECRUITS.field(), "5");
+		map.add(START_DATE_TIME.field(), LocalDateTime.now().plusDays(10).format(dateTimeFormatter));
+		map.add(END_DATE_TIME.field(), LocalDateTime.now().plusMonths(10).format(dateTimeFormatter));
+		map.add(DESCRIPTION.field(), "test description");
 
 		return map;
 	}
 
-	private byte[] getMultipartFileBytes() throws IOException {
-		return new MockMultipartFile("testImageFile", "testImageFile.png",
-			"image/png", "test".getBytes()).getBytes();
+	private MultiValueMap<String, String> toStudyGroupFindConditionParams() {
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+		map.add(MBTI.field(), null);
+		map.add(TOPIC.field(), null);
+		map.add(REGION.field(), null);
+		map.add(STUDY_GROUP_MEMBER_ROLE.field(), "STUDY_LEADER");
+		map.add(LAST_STUDY_GROUP_ID.field(), null);
+		map.add(SIZE.field(), "10");
+
+		return map;
 	}
 
-	private CursorPageResponse<StudyGroupResponse> toStudyGroupPageResponse() {
-		final List<StudyGroupResponse> studyGroupResponses = List.of(StudyGroupResponse
-			.builder()
-			.studyGroupId(studyGroupId)
-			.memberId(1L)
-			.thumbnailUrl("test thumbnail url")
-			.topic(Topic.DEV_OPS.getValue())
-			.title("test title")
-			.preferredMBTIs(Set.of(Mbti.ENFJ, Mbti.ESFJ, Mbti.ENTJ))
-			.region(Region.SEOUL.getValue())
-			.startDateTime(LocalDateTime.now().plusDays(10))
-			.endDateTime(LocalDateTime.now().plusMonths(10))
-			.numberOfMembers(3)
-			.numberOfRecruits(5)
-			.build());
+	private MultiValueMap<String, String> toStudyGroupUpdateParams() {
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+		map.add(TITLE.field(), "update title");
+		map.add(DESCRIPTION.field(), "update description");
 
-		return new CursorPageResponse<>(studyGroupResponses, true);
+		return map;
 	}
 
 	private HeaderDescriptor location() {
-		return headerWithName(HttpHeaders.LOCATION).description("생성된 리소스 주소");
+		return headerWithName(LOCATION).description("생성된 리소스 주소");
 	}
 
-	private ParameterDescriptor title() {
-		return parameterWithName(TITLE.value()).description("스터디 그룹 제목");
+	private RequestPartDescriptor imageFilePart() {
+		return partWithName(IMAGE_FILE.field()).description(IMAGE_FILE.description());
 	}
 
-	private ParameterDescriptor description() {
-		return parameterWithName(DESCRIPTION.value()).description("스터디 그룹 설명");
+	private ParameterDescriptor titleParam() {
+		return parameterWithName(TITLE.field()).description(TITLE.description());
 	}
 
-	private List<ParameterDescriptor> parametersOfCreateStudyGroup() {
-		return List.of(parameterWithName(TOPIC.value()).description("스터디 주제"),
-			parameterWithName(IS_ONLINE.value()).description("온라인 / 오프라인 여부"),
-			parameterWithName(REGION.value()).description("지역"),
-			parameterWithName(PREFERRED_MBTIS.value()).description("선호하는 MBTI 목록"),
-			parameterWithName(NUMBER_OF_RECRUITS.value()).description("모집 인원수"),
-			parameterWithName(START_DATE_TIME.value()).description("스터디 시작일자"),
-			parameterWithName(END_DATE_TIME.value()).description("스터디 종료일자"));
+	private ParameterDescriptor descriptionParam() {
+		return parameterWithName(DESCRIPTION.field()).description(DESCRIPTION.description());
 	}
 
-	private RequestPartDescriptor imageFile() {
-		return partWithName(IMAGE_FILE.value()).description("이미지 파일");
+	private List<ParameterDescriptor> findConditionParams() {
+		return List.of(
+			parameterWithName(MBTI.field()).description(MBTI.description()),
+			parameterWithName(TOPIC.field()).description(TOPIC.description()),
+			parameterWithName(REGION.field()).description(REGION.description()),
+			parameterWithName(STUDY_GROUP_MEMBER_ROLE.field()).description(STUDY_GROUP_MEMBER_ROLE.description()),
+			parameterWithName(LAST_STUDY_GROUP_ID.field()).description(LAST_STUDY_GROUP_ID.description()),
+			parameterWithName(SIZE.field()).description(SIZE.description())
+		);
+	}
+
+	private List<ParameterDescriptor> studyGroupCreateParams() {
+		return List.of(
+			titleParam(),
+			parameterWithName(TOPIC.field()).description(TOPIC.description()),
+			parameterWithName(IS_ONLINE.field()).description(IS_ONLINE.description()),
+			parameterWithName(REGION.field()).description(REGION.description()),
+			parameterWithName(NUMBER_OF_RECRUITS.field()).description(NUMBER_OF_RECRUITS.description()),
+			parameterWithName(START_DATE_TIME.field()).description(START_DATE_TIME.description()),
+			parameterWithName(END_DATE_TIME.field()).description(END_DATE_TIME.description()),
+			parameterWithName(PREFERRED_MBTIS.field()).description(PREFERRED_MBTIS.description()),
+			descriptionParam());
 	}
 
 	private FieldDescriptor studyGroupIdField() {
-		return fieldWithPath(STUDY_GROUP_ID.value()).type(NUMBER).description("스터디 그룹 아이디");
+		return fieldWithPath(STUDY_GROUP_ID.field()).type(NUMBER).description(STUDY_GROUP_ID.description());
 	}
 
-	private List<FieldDescriptor> studyGroupDetailResponseFields() {
+	private List<FieldDescriptor> studyGroupFields() {
 		return List.of(
 			studyGroupIdField(),
-			fieldWithPath(TITLE.value()).type(STRING).description("스터디 그룹 제목"),
-			fieldWithPath(TOPIC.value()).type(STRING).description("스터디 주제"),
-			fieldWithPath(IMAGE_URL.value()).type(STRING).description("스터디 이미지 url"),
-			fieldWithPath(PREFERRED_MBTIS.value()).type(ARRAY).description("선호하는 MBTI 목록"),
-			fieldWithPath(IS_ONLINE.value()).type(BOOLEAN).description("온라인 / 오프라인 여부"),
-			fieldWithPath(REGION.value()).type(STRING).description("지역"),
-			fieldWithPath(START_DATE_TIME.value()).type(STRING).description("스터디 시작일자"),
-			fieldWithPath(END_DATE_TIME.value()).type(STRING).description("스터디 종료일자"),
-			fieldWithPath(NUMBER_OF_MEMBERS.value()).type(NUMBER).description("스터디 멤버 인원수"),
-			fieldWithPath(NUMBER_OF_RECRUITS.value()).type(NUMBER).description("모집 인원수"),
-			fieldWithPath(DESCRIPTION.value()).type(STRING).description("스터디 그룹 설명")
+			fieldWithPath(TITLE.field()).type(STRING).description(TITLE.description()),
+			fieldWithPath(TOPIC.field()).type(STRING).description(TOPIC.description()),
+			fieldWithPath(IMAGE_URL.field()).type(STRING).description(IMAGE_URL.description()),
+			fieldWithPath(PREFERRED_MBTIS.field()).type(ARRAY).description(PREFERRED_MBTIS.description()),
+			fieldWithPath(IS_ONLINE.field()).type(BOOLEAN).description(IS_ONLINE.description()),
+			fieldWithPath(REGION.field()).type(STRING).description(REGION.description()),
+			fieldWithPath(START_DATE_TIME.field()).type(STRING).description(START_DATE_TIME.description()),
+			fieldWithPath(END_DATE_TIME.field()).type(STRING).description(END_DATE_TIME.description()),
+			fieldWithPath(NUMBER_OF_MEMBERS.field()).type(NUMBER).description(NUMBER_OF_MEMBERS.description()),
+			fieldWithPath(NUMBER_OF_RECRUITS.field()).type(NUMBER).description(NUMBER_OF_RECRUITS.description()),
+			fieldWithPath(DESCRIPTION.field()).type(STRING).description(DESCRIPTION.description())
 		);
 	}
 
-	private List<FieldDescriptor> leaderResponseFields() {
+	private List<FieldDescriptor> leaderFields() {
 		return List.of(
-			fieldWithPath(MEMBER_ID.value()).type(NUMBER).description("회원 아이디"),
-			fieldWithPath(PROFILE_IMAGE_URL.value()).type(STRING).description("프로필 이미지 url"),
-			fieldWithPath(NICKNAME.value()).type(STRING).description("닉네임"),
-			fieldWithPath(FIELD.value()).type(STRING).description("업무분야"),
-			fieldWithPath(CAREER.value()).type(STRING).description("개발경력"),
-			fieldWithPath(MBTI.value()).type(STRING).description("MBTI")
+			fieldWithPath(MEMBER_ID.field()).type(NUMBER).description(MEMBER_ID.description()),
+			fieldWithPath(PROFILE_IMAGE_URL.field()).type(STRING).description(PROFILE_IMAGE_URL.description()),
+			fieldWithPath(NICKNAME.field()).type(STRING).description(NICKNAME.description()),
+			fieldWithPath(FIELD.field()).type(STRING).description(FIELD.description()),
+			fieldWithPath(CAREER.field()).type(STRING).description(CAREER.description()),
+			fieldWithPath(MBTI.field()).type(STRING).description(MBTI.description())
 		);
 	}
 
-	private List<FieldDescriptor> pageResponseFields() {
+	private List<FieldDescriptor> pageFields() {
 		return List.of(
-			subsectionWithPath("contents").type(ARRAY).description("페이징 컨텐츠"),
-			fieldWithPath("hasNext").type(BOOLEAN).description("다음 컨텐츠 유무")
-		);
-	}
-
-	private List<ParameterDescriptor> conditionParams() {
-		return List.of(
-			parameterWithName(MBTI.value()).description("검색 mbti"),
-			parameterWithName(TOPIC.value()).description("검색 스터디 주제"),
-			parameterWithName(REGION.value()).description("검색 스터디 지역"),
-			parameterWithName("studyGroupMemberRole").description("검색 스터디 그룹 멤버 역할"),
-			parameterWithName("lastStudyGroupId").description("마지막으로 본 스터디 그룹 아이디"),
-			parameterWithName("size").description("스터디 그룹 리스트 사이즈")
+			subsectionWithPath(PAGE_CONTENTS.field()).type(ARRAY).description(PAGE_CONTENTS.description()),
+			fieldWithPath(HAS_NEXT.field()).type(BOOLEAN).description(HAS_NEXT.description())
 		);
 	}
 }

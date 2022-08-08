@@ -14,8 +14,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
-import prgrms.project.stuti.domain.studygroup.service.StudyGroupConverter;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionListResponse;
+import prgrms.project.stuti.domain.studygroup.service.StudyGroupQuestionConverter;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionsResponse;
 import prgrms.project.stuti.global.page.PageResponse;
 
 @RequiredArgsConstructor
@@ -24,20 +25,19 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public PageResponse<StudyGroupQuestionListResponse> findAllWithPagination(Long studyGroupId, Long size,
-		Long lastStudyGroupQuestionId) {
+	public PageResponse<StudyGroupQuestionsResponse> findAllWithPagination(StudyGroupQuestionDto.PageDto pageDto) {
 
 		List<StudyGroupQuestion> studyGroupQuestions = jpaQueryFactory
 			.selectFrom(studyGroupQuestion)
 			.join(studyGroupQuestion.member, member).fetchJoin()
 			.join(studyGroupQuestion.studyGroup, studyGroup).fetchJoin()
-			.where(parentIdIsNull(), equalStudyGroup(studyGroupId),
-				greaterThanLastStudyGroupQuestionId(lastStudyGroupQuestionId))
+			.where(parentIdIsNull(), equalStudyGroup(pageDto.studyGroupId()),
+				greaterThanLastStudyGroupQuestionId(pageDto.lastStudyGroupQuestionId()))
 			.orderBy(studyGroupQuestion.id.asc())
-			.limit(size + NumberUtils.LONG_ONE)
+			.limit(pageDto.size() + NumberUtils.LONG_ONE)
 			.fetch();
 
-		boolean hasNext = studyGroupQuestions.size() > size;
+		boolean hasNext = studyGroupQuestions.size() > pageDto.size();
 
 		if (hasNext) {
 			studyGroupQuestions.remove(studyGroupQuestions.size() - 1);
@@ -46,10 +46,11 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 		Long totalElements = jpaQueryFactory
 			.select(studyGroupQuestion.count())
 			.from(studyGroupQuestion)
-			.where(parentIdIsNull(), equalStudyGroup(studyGroupId))
+			.where(parentIdIsNull(), equalStudyGroup(pageDto.studyGroupId()))
 			.fetchOne();
 
-		return StudyGroupConverter.toStudyGroupQuestionPageResponse(studyGroupQuestions, hasNext, totalElements);
+		return StudyGroupQuestionConverter
+			.toStudyGroupQuestionsPageResponse(studyGroupQuestions, hasNext, totalElements);
 	}
 
 	private BooleanExpression parentIdIsNull() {

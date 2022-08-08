@@ -6,23 +6,21 @@ import java.util.Set;
 import lombok.Builder;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record StudyGroupDetailResponse(
+public record StudyGroupsResponse(
 	Long studyGroupId,
+	Long memberId,
+	String thumbnailUrl,
 	String topic,
 	String title,
-	String imageUrl,
-	StudyGroupLeaderResponse leader,
 	Set<Mbti> preferredMBTIs,
-	boolean isOnline,
 	String region,
 	LocalDateTime startDateTime,
 	LocalDateTime endDateTime,
 	int numberOfMembers,
-	int numberOfRecruits,
-	String description
+	int numberOfRecruits
 ) {
 
 	@Builder
-	public StudyGroupDetailResponse {
+	public StudyGroupsResponse {
 	}
 }

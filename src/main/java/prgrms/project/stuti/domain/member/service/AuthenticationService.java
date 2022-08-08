@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
+import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
@@ -27,6 +28,21 @@ public class AuthenticationService {
 	private final BlackListTokenRepository blackListTokenRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final TemporaryMemberRepository temporaryMemberRepository;
+
+	// 임시 테스트용
+	@Transactional
+	public MemberResponse testMember(MemberDto memberDto) {
+		Member member = memberRepository.save(Member.builder()
+			.email(memberDto.email())
+			.nickName(memberDto.nickname())
+			.mbti(memberDto.MBTI())
+			.career(memberDto.career())
+			.field(memberDto.field())
+			.memberRole(MemberRole.ROLE_MEMBER)
+			.profileImageUrl(memberDto.email() + "test")
+			.build());
+		return MemberConverter.toMemberResponse(member);
+	}
 
 	@Transactional
 	public MemberResponse signupMember(MemberDto memberDto) {

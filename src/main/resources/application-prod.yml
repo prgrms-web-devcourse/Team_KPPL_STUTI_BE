@@ -20,9 +20,9 @@ spring:
       client:
         registration:
           naver:
-            redirect-uri: http://13.125.116.214/login/oauth2/code/naver
+            redirect-uri: https://stuti.o-r.kr/login/oauth2/code/naver
           google:
-            redirect-uri: http://13.125.116.214/login/oauth2/code/google
+            redirect-uri: https://stuti.o-r.kr/login/oauth2/code/google
 
   flyway:
     enabled: true

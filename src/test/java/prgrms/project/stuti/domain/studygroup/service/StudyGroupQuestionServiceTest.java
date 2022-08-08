@@ -16,7 +16,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQuestionRepository;
+import prgrms.project.stuti.domain.studygroup.repository.studyquestion.StudyGroupQuestionRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;

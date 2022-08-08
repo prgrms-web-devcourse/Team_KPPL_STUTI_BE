@@ -1,6 +1,7 @@
 package prgrms.project.stuti.domain.member.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
@@ -16,6 +17,7 @@ import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
+import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
 import prgrms.project.stuti.global.token.Tokens;
@@ -39,6 +41,7 @@ class AuthenticationServiceTest {
 			.MBTI(Mbti.ENFJ)
 			.build();
 
+
 		TemporaryMember temporaryMember = TemporaryMember.builder()
 			.email("test@test.com")
 			.imageUrl("test.s3.com")
@@ -48,10 +51,18 @@ class AuthenticationServiceTest {
 
 		given(temporaryMemberRepository.findById("test@test.com")).willReturn(Optional.of(temporaryMember));
 		// when
-		MemberIdResponse memberIdResponse = authenticationService.signupMember(memberDto);
+		MemberResponse memberResponse = authenticationService.signupMember(memberDto);
 
 		// then
-		assertThat(memberIdResponse.memberId()).isNotNull();
+		assertAll(
+			() -> assertThat(memberResponse.id()).isNotNull(),
+			() -> assertThat(memberResponse.email()).isEqualTo("test@test.com"),
+			() -> assertThat(memberResponse.profileImageUrl()).isEqualTo("test.s3.com"),
+			() -> assertThat(memberResponse.nickname()).isEqualTo("test"),
+			() -> assertThat(memberResponse.field()).isEqualTo(Field.ANDROID),
+			() -> assertThat(memberResponse.career()).isEqualTo(Career.JUNIOR),
+			() -> assertThat(memberResponse.MBTI()).isEqualTo(Mbti.ENFJ)
+		);
 	}
 
 	@Test
@@ -69,4 +80,5 @@ class AuthenticationServiceTest {
 		assertThat(madeTokens.accessToken()).isEqualTo("accessToken");
 		assertThat(madeTokens.refreshToken()).isEqualTo("refreshToken");
 	}
+
 }

@@ -9,7 +9,7 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 public record StudyGroupsResponse(
 	Long studyGroupId,
 	Long memberId,
-	String thumbnailUrl,
+	String imageUrl,
 	String topic,
 	String title,
 	Set<Mbti> preferredMBTIs,

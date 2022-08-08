@@ -15,6 +15,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.MemberRole;
@@ -55,7 +58,7 @@ public class WebSecurityConfig {
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-			.cors().and()
+			.cors().configurationSource(corsConfigurationSource()).and()
 			.formLogin(AbstractHttpConfigurer::disable)
 			.logout(AbstractHttpConfigurer::disable)
 			.rememberMe(AbstractHttpConfigurer::disable)
@@ -67,7 +70,7 @@ public class WebSecurityConfig {
 			)
 			.authorizeRequests(
 				authorizeRequests -> authorizeRequests
-					.antMatchers("/api/**") // 개발 서버용
+					.antMatchers("/**") // 개발 서버용
 					.permitAll()
 
 					.antMatchers(GET, "/redis/**")
@@ -86,5 +89,19 @@ public class WebSecurityConfig {
 				UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+
+		configuration.addAllowedOrigin(domain);
+		configuration.addAllowedHeader("*");
+		configuration.addAllowedMethod("*");
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 }

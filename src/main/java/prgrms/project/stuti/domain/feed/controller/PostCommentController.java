@@ -1,10 +1,7 @@
 package prgrms.project.stuti.domain.feed.controller;
 
-import java.net.URI;
-
 import javax.validation.Valid;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,10 +18,10 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentConverter;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
+import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.global.page.offset.PageResponse;
@@ -40,9 +37,8 @@ public class PostCommentController {
 		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
 		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toCommentCreateDto(postCommentRequest, postId, memberId);
 		PostCommentResponse postCommentResponse = postCommentService.createComment(postCommentCreateDto);
-		URI uri = URI.create("/api/v1/posts/" + postId + "/comments/" + postCommentResponse.postCommentId());
 
-		return ResponseEntity.created(uri).body(postCommentResponse);
+		return ResponseEntity.ok(postCommentResponse);
 	}
 
 	@PatchMapping("/api/v1/posts/{postId}/comments/{commentId}")
@@ -59,10 +55,8 @@ public class PostCommentController {
 	public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
 		@AuthenticationPrincipal Long memberId) {
 		postCommentService.deleteComment(postId, commentId, memberId);
-		final HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-		return ResponseEntity.noContent().headers(httpHeaders).build();
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
 	}
 
 	@GetMapping("/api/v1/posts/{postId}/comments")

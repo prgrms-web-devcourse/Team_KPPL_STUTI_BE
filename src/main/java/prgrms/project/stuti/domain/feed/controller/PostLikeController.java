@@ -1,6 +1,5 @@
 package prgrms.project.stuti.domain.feed.controller;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,18 +22,14 @@ public class PostLikeController {
 	public ResponseEntity<PostLikeIdResponse> createPostLike(@PathVariable Long postId,
 		@AuthenticationPrincipal Long memberId) {
 		PostLikeIdResponse postLikeIdResponse = postLikeService.createPostLike(postId, memberId);
-		//URI uri = URI.create("/api/v1/post/" + postId + "/like/" + postLikeIdResponse.postLikeId());
 
-		//return ResponseEntity.created(uri).body(postLikeIdResponse);
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postLikeIdResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/likes")
 	public ResponseEntity<Void> cancelPostLike(@PathVariable Long postId, @AuthenticationPrincipal Long memberId) {
 		postLikeService.cancelPostLike(postId, memberId);
-		final HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-		return ResponseEntity.noContent().headers(httpHeaders).build();
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
 	}
 }

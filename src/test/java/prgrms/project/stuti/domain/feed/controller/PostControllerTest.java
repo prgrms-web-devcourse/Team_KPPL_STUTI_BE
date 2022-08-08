@@ -23,9 +23,9 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.PostConverter;
 import prgrms.project.stuti.domain.feed.service.PostService;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
 @WebMvcTest(PostController.class)
@@ -48,7 +48,7 @@ class PostControllerTest extends TestConfig {
 					.file(file)
 					.param("contents", "게시글")
 					.with(SecurityMockMvcRequestPostProcessors.csrf()))
-			.andExpect(status().isCreated())
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 
@@ -101,7 +101,7 @@ class PostControllerTest extends TestConfig {
 		doNothing().when(postService).deletePost(any());
 
 		mockMvc.perform(delete("/api/v1/posts/{postId}", 1L))
-			.andExpect(status().isNoContent())
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 

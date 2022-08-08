@@ -53,7 +53,7 @@ class PostCommentControllerTest extends TestConfig {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody)
 				.characterEncoding(StandardCharsets.UTF_8))
-			.andExpect(status().isCreated())
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 
@@ -90,7 +90,7 @@ class PostCommentControllerTest extends TestConfig {
 		doNothing().when(postCommentService).deleteComment(anyLong(), anyLong(), anyLong());
 
 		mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L))
-			.andExpect(status().isNoContent())
+			.andExpect(status().isOk())
 			.andDo(print());
 	}
 

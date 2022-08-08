@@ -1,10 +1,7 @@
 package prgrms.project.stuti.domain.feed.controller;
 
-import java.net.URI;
-
 import javax.validation.Valid;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,10 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.PostRequest;
 import prgrms.project.stuti.domain.feed.service.PostService;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,9 +33,8 @@ public class PostController {
 		@AuthenticationPrincipal Long memberId) {
 		PostCreateDto postCreateDto = PostMapper.toPostCreateDto(registerPostRequest, memberId);
 		PostIdResponse postIdResponse = postService.registerPost(postCreateDto);
-		URI returnUri = URI.create("/api/v1/post/" + postIdResponse.postId());
 
-		return ResponseEntity.created(returnUri).body(postIdResponse);
+		return ResponseEntity.ok(postIdResponse);
 	}
 
 	@GetMapping("/api/v1/posts")
@@ -63,10 +59,7 @@ public class PostController {
 	public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
 		postService.deletePost(postId);
 
-		final HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-		return ResponseEntity.noContent().headers(httpHeaders).build();
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
 	}
 
 	@GetMapping("/api/v1/posts/myposts")

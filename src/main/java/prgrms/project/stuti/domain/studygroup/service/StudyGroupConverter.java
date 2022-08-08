@@ -18,11 +18,10 @@ import prgrms.project.stuti.global.page.CursorPageResponse;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StudyGroupConverter {
 
-	public static StudyGroup toStudyGroup(StudyGroupDto.CreateDto createDto, String imageUrl, String thumbnailUrl) {
+	public static StudyGroup toStudyGroup(StudyGroupDto.CreateDto createDto, String imageUrl) {
 		return StudyGroup
 			.builder()
 			.imageUrl(imageUrl)
-			.thumbnailUrl(thumbnailUrl)
 			.title(createDto.title())
 			.topic(createDto.topic())
 			.isOnline(createDto.isOnline())
@@ -91,7 +90,7 @@ public class StudyGroupConverter {
 					.builder()
 					.studyGroupId(studyGroup.getId())
 					.memberId(member.getId())
-					.thumbnailUrl(studyGroup.getThumbnailUrl())
+					.imageUrl(studyGroup.getImageUrl())
 					.topic(studyGroup.getTopic().getValue())
 					.title(studyGroup.getTitle())
 					.preferredMBTIs(studyGroup.getPreferredMBTIs())

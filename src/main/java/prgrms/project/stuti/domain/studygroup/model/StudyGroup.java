@@ -40,9 +40,6 @@ public class StudyGroup extends BaseEntity {
 	@Column(name = "image_url", length = 150)
 	private String imageUrl;
 
-	@Column(name = "thumbnail_url", length = 150)
-	private String thumbnailUrl;
-
 	@Column(name = "title", length = 100, nullable = false)
 	private String title;
 
@@ -63,6 +60,9 @@ public class StudyGroup extends BaseEntity {
 	@Column(name = "number_of_recruits", nullable = false)
 	private int numberOfRecruits;
 
+	@Column(name = "number_of_applicants", nullable = false)
+	private int numberOfApplicants;
+
 	@Embedded
 	private StudyPeriod studyPeriod;
 
@@ -80,26 +80,25 @@ public class StudyGroup extends BaseEntity {
 
 	@Builder
 	public StudyGroup(
-		String imageUrl, String thumbnailUrl, String title, Topic topic, boolean isOnline, Region region,
+		String imageUrl, String title, Topic topic, boolean isOnline, Region region,
 		int numberOfRecruits, StudyPeriod studyPeriod, Set<Mbti> preferredMBTIs, String description
 	) {
 		this.imageUrl = imageUrl;
-		this.thumbnailUrl = thumbnailUrl;
 		this.title = title;
 		this.topic = topic;
 		this.isOnline = isOnline;
 		this.region = region;
 		this.numberOfMembers = NumberUtils.INTEGER_ZERO;
 		this.numberOfRecruits = numberOfRecruits;
+		this.numberOfApplicants = NumberUtils.INTEGER_ZERO;
 		this.preferredMBTIs = preferredMBTIs;
 		this.studyPeriod = studyPeriod;
 		this.description = description;
 		this.isDeleted = false;
 	}
 
-	public void updateImage(String imageUrl, String thumbnailUrl) {
+	public void updateImage(String imageUrl) {
 		this.imageUrl = imageUrl;
-		this.thumbnailUrl = thumbnailUrl;
 	}
 
 	public void updateTitle(String title) {
@@ -128,7 +127,6 @@ public class StudyGroup extends BaseEntity {
 			ToStringStyle.SHORT_PREFIX_STYLE)
 			.append("id", id)
 			.append("imageUrl", imageUrl)
-			.append("thumbnailUrl", thumbnailUrl)
 			.append("title", title)
 			.append("topic", topic)
 			.append("isOnline", isOnline)

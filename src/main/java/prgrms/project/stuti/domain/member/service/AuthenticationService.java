@@ -29,21 +29,6 @@ public class AuthenticationService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final TemporaryMemberRepository temporaryMemberRepository;
 
-	// 임시 테스트용
-	@Transactional
-	public MemberResponse testMember(MemberDto memberDto) {
-		Member member = memberRepository.save(Member.builder()
-			.email(memberDto.email())
-			.nickName(memberDto.nickname())
-			.mbti(memberDto.MBTI())
-			.career(memberDto.career())
-			.field(memberDto.field())
-			.memberRole(MemberRole.ROLE_MEMBER)
-			.profileImageUrl(memberDto.email() + "test")
-			.build());
-		return MemberConverter.toMemberResponse(member);
-	}
-
 	@Transactional
 	public MemberResponse signupMember(MemberDto memberDto) {
 		Optional<TemporaryMember> optionalMember = temporaryMemberRepository.findById(memberDto.email());

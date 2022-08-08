@@ -40,34 +40,10 @@ public class AuthenticationController {
 	@Value("${app.oauth.domain}")
 	private String domain;
 
-	// 테스트용 임시 메서드
-	@PostMapping("/test/{email}")
-	public ResponseEntity<MemberSignupResponse> temporaryMember(@PathVariable String email) {
-		MemberSaveRequest memberSaveRequest = MemberSaveRequest.builder()
-			.email(email + "@google.com")
-			.nickname(email + "user")
-			.career(Career.JUNIOR)
-			.MBTI(Mbti.ENFJ)
-			.field(Field.ANDROID)
-			.build();
-		MemberResponse memberResponse = authenticationService.testMember(MemberMapper.toMemberDto(memberSaveRequest));
-		Long memberId = memberResponse.id();
-
-		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
-		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
-		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
-			CoderUtil.encode(tokens.accessToken()));
-
-		URI uri = URI.create(domain);
-
-		return ResponseEntity
-			.created(uri)
-			.body(memberSignupResponse);
-
-	}
-
 	@PostMapping("/signup")
-	public ResponseEntity<MemberSignupResponse> singup(@Valid @RequestBody MemberSaveRequest memberSaveRequest) {
+	public ResponseEntity<MemberSignupResponse> singup(@Valid @RequestBody MemberSaveRequest memberSaveRequest,
+		HttpServletRequest request
+	) {
 		MemberResponse memberResponse = authenticationService.signupMember(
 			MemberMapper.toMemberDto(memberSaveRequest));
 		Long memberId = memberResponse.id();
@@ -77,7 +53,7 @@ public class AuthenticationController {
 		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
 			CoderUtil.encode(tokens.accessToken()));
 
-		URI uri = URI.create(domain);
+		URI uri = URI.create(request.getHeader("Referer"));
 
 		return ResponseEntity
 			.created(uri)

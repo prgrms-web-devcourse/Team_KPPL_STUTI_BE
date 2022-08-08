@@ -23,9 +23,11 @@ import org.springframework.web.multipart.MultipartFile;
 import prgrms.project.stuti.domain.feed.model.Comment;
 import prgrms.project.stuti.domain.feed.model.Feed;
 import prgrms.project.stuti.domain.feed.model.FeedImage;
+import prgrms.project.stuti.domain.feed.model.FeedLike;
 import prgrms.project.stuti.domain.feed.repository.CommentRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedImageRepository;
 import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.service.dto.FeedResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
@@ -56,6 +58,9 @@ class FeedServiceTest {
 	private CommentRepository commentRepository;
 
 	@Autowired
+	private PostLikeRepository postLikeRepository;
+
+	@Autowired
 	private FeedService feedService;
 
 	private static Member savedMember;
@@ -79,6 +84,8 @@ class FeedServiceTest {
 	@AfterEach
 	void deleteAllPost() {
 		feedImageRepository.deleteAll();
+		commentRepository.deleteAll();
+		postLikeRepository.deleteAll();
 		feedRepository.deleteAll();
 	}
 
@@ -117,18 +124,32 @@ class FeedServiceTest {
 	@Test
 	@DisplayName("전체 포스트리스트를 커서방식으로 페이징하여 가져온다")
 	void testGetAllPosts() {
+		Long lastPostId = null;
+		Feed likedAndCommentPost = null;
 		for (int i = 0; i < 10; i++) {
 			Feed feed = new Feed("게시글" + i, savedMember);
 			FeedImage feedImage = new FeedImage(i + "test.jpg", feed);
-			feedRepository.save(feed);
+			Feed savedFeed = feedRepository.save(feed);
 			feedImageRepository.save(feedImage);
+			if (i == 9)
+				lastPostId = savedFeed.getId();
+			if (i == 8) {
+				likedAndCommentPost = feed;
+			}
 		}
+		FeedLike feedLike = new FeedLike(savedMember,likedAndCommentPost);
+		Comment comment = new Comment("게시글 8에 대한 댓글입니다.", null, savedMember, likedAndCommentPost);
+		commentRepository.save(comment);
+		postLikeRepository.save(feedLike);
 
-		FeedResponse allPosts = feedService.getAllPosts(8L, 2);
+		FeedResponse allPosts = feedService.getAllPosts(lastPostId, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
-		assertThat(allPosts.posts().get(0).postId()).isEqualTo(7L);
+		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글8");
 		assertThat(allPosts.hasNext()).isTrue();
+		assertThat(allPosts.posts().get(0).totalComments()).isEqualTo(1L);
+		assertThat(allPosts.posts().get(0).totalLikes()).isEqualTo(1L);
+		assertThat(allPosts.posts().get(0).isliked()).isTrue();
 	}
 
 	@Test
@@ -170,9 +191,10 @@ class FeedServiceTest {
 	}
 
 	@Test
-	@DisplayName("업로드 이미지를 보내주지않으면 삭제로 인지하여 삭제한다")
+	@DisplayName("업로드 이미지를 보내주지않으면 삭제하지 않는다. - 원래 이미지를 가지고있는다")
 	void testChangePostWithOutImages() throws IOException {
 		PostIdResponse postIdResponse = savePost();
+		List<FeedImage> originImages = feedImageRepository.findByFeedId(postIdResponse.postId());
 		PostChangeDto postChangeDto = new PostChangeDto(postIdResponse.postId(), "게시글 내용이 변경되었습니다.", null);
 		PostIdResponse changePostIdResponse = feedService.changePost(postChangeDto);
 
@@ -180,7 +202,7 @@ class FeedServiceTest {
 		Feed changedFeed = feedRepository.findById(changePostIdResponse.postId()).get();
 
 		assertThat(changedFeed.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
-		assertThat(changedImages).isEmpty();
+		assertThat(changedImages.get(0).getImageUrl()).isEqualTo(originImages.get(0).getImageUrl());
 	}
 
 	@Test

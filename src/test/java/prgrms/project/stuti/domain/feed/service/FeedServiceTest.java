@@ -148,8 +148,8 @@ class FeedServiceTest {
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글8");
 		assertThat(allPosts.hasNext()).isTrue();
 		assertThat(allPosts.posts().get(0).totalComments()).isEqualTo(1L);
-		assertThat(allPosts.posts().get(0).totalLikes()).isEqualTo(1L);
-		assertThat(allPosts.posts().get(0).isliked()).isTrue();
+		assertThat(allPosts.posts().get(0).likedMembers().size()).isEqualTo(1);
+		assertThat(allPosts.posts().get(0).likedMembers().get(0)).isEqualTo(savedMember.getId());
 	}
 
 	@Test

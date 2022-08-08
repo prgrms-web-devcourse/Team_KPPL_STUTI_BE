@@ -66,8 +66,7 @@ class FeedControllerTest extends TestConfig {
 			.postImageUrl("testPost.jpg")
 			.createdAt(LocalDateTime.now())
 			.totalComments(1L)
-			.totalLikes(1L)
-			.isliked(true)
+			.likedMembers(List.of(1L, 2L))
 			.build();
 		posts.add(postDto);
 		FeedResponse postsResponse = new FeedResponse(posts, true);
@@ -121,8 +120,7 @@ class FeedControllerTest extends TestConfig {
 			.postImageUrl("testPost.jpg")
 			.createdAt(LocalDateTime.now())
 			.totalComments(1L)
-			.totalLikes(1L)
-			.isliked(true)
+			.likedMembers(List.of(1L, 2L))
 			.build();
 		posts.add(postDto);
 		FeedResponse postsResponse = new FeedResponse(posts, true);

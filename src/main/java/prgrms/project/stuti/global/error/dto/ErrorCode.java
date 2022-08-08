@@ -39,14 +39,14 @@ public enum ErrorCode {
 	REGISTERED_MEMBER("M006", "Member is already registered", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_MY_PAGE_MEMBER("M007", "Not match with my page member", HttpStatus.BAD_REQUEST),
 
-	//feed
-	FEED_NOT_FOUND("F001", "not exist post", HttpStatus.BAD_REQUEST),
-	FEED_LIKE_DUPLICATED("F002", "already liked this post", HttpStatus.BAD_REQUEST),
-	NOT_FOUND_FEED_LIKE("F003","not found feed like", HttpStatus.BAD_REQUEST),
+	//post
+	POST_NOT_FOUND("P001", "not exist post", HttpStatus.BAD_REQUEST),
+	POST_LIKE_DUPLICATED("F002", "already liked this post", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_POST_LIKE("F003","not found feed like", HttpStatus.BAD_REQUEST),
 
-	//(feed)comment
-	PARENT_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST),
-	COMMENT_NOT_FOUND("FC002", "not exist comment", HttpStatus.BAD_REQUEST);
+	//(post)comment
+	PARENT_POST_COMMENT_NOT_FOUND("FC001", "parent comment not exist", HttpStatus.BAD_REQUEST),
+	POST_COMMENT_NOT_FOUND("FC002", "not exist comment", HttpStatus.BAD_REQUEST);
 
 	private final String code;
 	private final String message;

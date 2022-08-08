@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import prgrms.project.stuti.config.ServiceTestConfig;
-import prgrms.project.stuti.domain.feed.model.Feed;
-import prgrms.project.stuti.domain.feed.model.FeedLike;
-import prgrms.project.stuti.domain.feed.repository.FeedRepository;
+import prgrms.project.stuti.domain.feed.model.Post;
+import prgrms.project.stuti.domain.feed.model.PostLike;
+import prgrms.project.stuti.domain.feed.repository.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.global.error.exception.FeedException;
+import prgrms.project.stuti.global.error.exception.PostException;
 
 @SpringBootTest
 class PostLikeServiceTest extends ServiceTestConfig {
@@ -26,7 +26,7 @@ class PostLikeServiceTest extends ServiceTestConfig {
 	private PostLikeService postLikeService;
 
 	@Autowired
-	private FeedRepository feedRepository;
+	private PostRepository postRepository;
 
 	@Autowired
 	private PostLikeRepository postLikeRepository;
@@ -34,10 +34,10 @@ class PostLikeServiceTest extends ServiceTestConfig {
 	@Test
 	@DisplayName("좋아요를 등록한다.")
 	void testCreatePostLike() {
-		Feed post = createPost(member);
+		Post post = createPost(member);
 
 		PostLikeIdResponse postLike = postLikeService.createPostLike(post.getId(), member.getId());
-		Optional<FeedLike> foundLike = postLikeRepository.findById(postLike.postLikeId());
+		Optional<PostLike> foundLike = postLikeRepository.findById(postLike.postLikeId());
 
 		assertThat(foundLike).isNotEmpty();
 		assertThat(foundLike.get().getId()).isEqualTo(postLike.postLikeId());
@@ -48,27 +48,27 @@ class PostLikeServiceTest extends ServiceTestConfig {
 	void testCreatePostLikeWithUnknownPost() {
 		Long memberId = member.getId();
 
-		assertThrows(FeedException.class, () -> postLikeService.createPostLike(0L, memberId));
+		assertThrows(PostException.class, () -> postLikeService.createPostLike(0L, memberId));
 	}
 
 	@Test
 	@DisplayName("중복으로 좋아요를 등록할 수 없다.")
 	void testCreatePostDuplicateException() {
-		Feed post = createPost(member);
+		Post post = createPost(member);
 
 		postLikeService.createPostLike(post.getId(), member.getId());
 
-		assertThrows(FeedException.class, () -> postLikeService.createPostLike(post.getId(), member.getId()));
+		assertThrows(PostException.class, () -> postLikeService.createPostLike(post.getId(), member.getId()));
 	}
 
 	@Test
 	@DisplayName("좋아요를 취소한다.")
 	void testCancelPostLike() {
-		Feed post = createPost(member);
+		Post post = createPost(member);
 		PostLikeIdResponse postLike = postLikeService.createPostLike(post.getId(), member.getId());
 
 		postLikeService.cancelPostLike(post.getId(), member.getId());
-		Optional<FeedLike> foundPostLike = postLikeRepository.findById(postLike.postLikeId());
+		Optional<PostLike> foundPostLike = postLikeRepository.findById(postLike.postLikeId());
 
 		assertThat(foundPostLike).isEmpty();
 	}
@@ -76,14 +76,14 @@ class PostLikeServiceTest extends ServiceTestConfig {
 	@Test
 	@DisplayName("좋아요 하지 않은 게시글을 좋아요 취소 할 수 없다.")
 	void testCancelPostLikeWithUnknownLike() {
-		Feed post = createPost(member);
+		Post post = createPost(member);
 
-		assertThrows(FeedException.class, () -> postLikeService.cancelPostLike(post.getId(), member.getId()));
+		assertThrows(PostException.class, () -> postLikeService.cancelPostLike(post.getId(), member.getId()));
 	}
 
-	private Feed createPost(Member member) {
-		Feed feed = new Feed("테스트 게시글 1번", member);
-		return feedRepository.save(feed);
+	private Post createPost(Member member) {
+		Post post = new Post("테스트 게시글 1번", member);
+		return postRepository.save(post);
 	}
 
 }

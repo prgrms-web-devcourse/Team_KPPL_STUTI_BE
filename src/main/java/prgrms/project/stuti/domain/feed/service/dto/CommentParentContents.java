@@ -6,13 +6,13 @@ import java.util.List;
 import lombok.Builder;
 
 public record CommentParentContents(
-	Long commentId,
+	Long postCommentId,
 	Long parentId,
 	String profileImageUrl,
 	Long memberId,
 	String nickname,
 	String contents,
-	LocalDateTime createdAt,
+	LocalDateTime updatedAt,
 	List<PostCommentChildContents> children
 ) {
 	@Builder

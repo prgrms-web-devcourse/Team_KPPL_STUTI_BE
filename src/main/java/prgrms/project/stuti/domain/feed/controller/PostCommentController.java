@@ -67,9 +67,9 @@ public class PostCommentController {
 
 	@GetMapping("/api/v1/posts/{postId}/comments")
 	public ResponseEntity<PageResponse<CommentParentContents>> getPostComments(@PathVariable Long postId,
-		@RequestParam(value = "lastPostId", required = false) Long lastPostId,
+		@RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
 		@RequestParam(defaultValue = "10") int size) {
-		PostCommentGetDto postCommentGetDto = PostCommentConverter.toCommentGetDto(postId, lastPostId, size);
+		PostCommentGetDto postCommentGetDto = PostCommentConverter.toCommentGetDto(postId, lastCommentId, size);
 		PageResponse<CommentParentContents> commentResponse = postCommentService.getPostComments(postCommentGetDto);
 
 		return ResponseEntity.ok().body(commentResponse);

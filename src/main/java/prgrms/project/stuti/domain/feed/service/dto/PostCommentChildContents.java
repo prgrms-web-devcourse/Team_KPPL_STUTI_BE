@@ -6,12 +6,12 @@ import lombok.Builder;
 
 public record PostCommentChildContents(
 	Long parentId,
-	Long commentId,
+	Long postCommentId,
 	String profileImageUrl,
 	Long memberId,
 	String nickname,
 	String contents,
-	LocalDateTime createdAt
+	LocalDateTime updatedAt
 ) {
 	@Builder
 	public PostCommentChildContents {

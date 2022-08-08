@@ -33,8 +33,8 @@ public class PostCommentConverter {
 			.build();
 	}
 
-	public static PostCommentGetDto toCommentGetDto(Long postId, Long lastPostId, int size) {
-		return new PostCommentGetDto(postId, lastPostId, size);
+	public static PostCommentGetDto toCommentGetDto(Long postId, Long lastCommentId, int size) {
+		return new PostCommentGetDto(postId, lastCommentId, size);
 	}
 
 	public static PageResponse<CommentParentContents> toCommentResponse(List<PostComment> postComments, boolean hasNext,
@@ -47,22 +47,22 @@ public class PostCommentConverter {
 	private static List<CommentParentContents> createContents(List<PostComment> postComments) {
 		return postComments.stream().map(
 			comment -> CommentParentContents.builder()
-				.commentId(comment.getId())
+				.postCommentId(comment.getId())
 				.parentId(null)
 				.profileImageUrl(comment.getMember().getProfileImageUrl())
 				.memberId(comment.getMember().getId())
 				.nickname(comment.getMember().getNickName())
 				.contents(comment.getContent())
-				.createdAt(comment.getCreatedAt())
+				.updatedAt(comment.getUpdatedAt())
 				.children(comment.getChildren().stream().map(
 					childComment -> PostCommentChildContents.builder()
 						.parentId(childComment.getParent().getId())
-						.commentId(childComment.getId())
+						.postCommentId(childComment.getId())
 						.profileImageUrl(childComment.getMember().getProfileImageUrl())
 						.memberId(childComment.getMember().getId())
 						.nickname(childComment.getMember().getNickName())
 						.contents(childComment.getContent())
-						.createdAt(childComment.getCreatedAt())
+						.updatedAt(childComment.getUpdatedAt())
 						.build()
 				).toList()).build()
 		).toList();
@@ -70,7 +70,7 @@ public class PostCommentConverter {
 
 	public static PostCommentContentsResponse toCommentContentsResponse(PostComment postComment) {
 		Long parentId = null;
-		if(postComment.getParent() != null) {
+		if (postComment.getParent() != null) {
 			parentId = postComment.getParent().getId();
 		}
 		return new PostCommentContentsResponse(postComment.getId(), parentId, postComment.getContent());

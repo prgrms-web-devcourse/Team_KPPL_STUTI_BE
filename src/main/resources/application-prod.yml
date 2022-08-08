@@ -1,12 +1,11 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+    url: # rds url
+    username: # rds username
+    password: # rds password
   redis:
-    host: ${REDIS_ENDPOINT}
+    host: # elastiCache endpoint
     port: 6379
   jpa:
     database: mysql

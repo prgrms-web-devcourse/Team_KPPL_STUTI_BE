@@ -7,7 +7,3 @@ spring:
 
   jpa:
     defer-datasource-initialization: true
-  sql:
-    init:
-      data-locations: classpath*:sql/MEMBER.sql
-      mode: always

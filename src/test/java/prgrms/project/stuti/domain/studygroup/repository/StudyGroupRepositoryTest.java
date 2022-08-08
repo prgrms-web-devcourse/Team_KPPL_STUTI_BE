@@ -21,8 +21,8 @@ import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
-import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupFindConditionDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
 class StudyGroupRepositoryTest extends RepositoryTestConfig {
@@ -91,14 +91,15 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 				.description("description")
 				.build());
 
-		StudyGroupFindConditionDto conditionDto = StudyGroupFindConditionDto.builder()
+		StudyGroupDto.FindCondition conditionDto = StudyGroupDto.FindCondition
+			.builder()
 			.topic(Topic.NETWORK)
 			.size(20L)
 			.build();
 
 		//when
-		CursorPageResponse<StudyGroupResponse> pageResponse = studyGroupRepository.dynamicFindAllWithCursorPagination(
-			conditionDto);
+		CursorPageResponse<StudyGroupsResponse> pageResponse =
+			studyGroupRepository.dynamicFindAllWithCursorPagination(conditionDto);
 
 		//then
 		assertFalse(pageResponse.contents().isEmpty());

@@ -19,8 +19,7 @@ import prgrms.project.stuti.global.error.exception.TokenException;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(BindException.class)
-	protected ResponseEntity<ErrorResponse> handleBindException(BindException ex,
-		BindingResult bindingResult) {
+	protected ResponseEntity<ErrorResponse> handleBindException(BindException ex, BindingResult bindingResult) {
 		log.info("Got BindException: {}", ex.getMessage(), ex);
 
 		return ErrorResponseMapper.toErrorResponse(ErrorCode.INVALID_METHOD_ARGUMENT, bindingResult);

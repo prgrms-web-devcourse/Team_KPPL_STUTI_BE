@@ -33,7 +33,7 @@ class PostLikeControllerTest extends TestConfig {
 		when(postLikeService.createPostLike(anyLong(), anyLong()))
 			.thenReturn(postLikeIdResponse);
 
-		mockMvc.perform(post("/api/v1/posts/{postId}/like", 1L)
+		mockMvc.perform(post("/api/v1/posts/{postId}/likes", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding(StandardCharsets.UTF_8))
 			.andExpect(status().isOk())
@@ -46,7 +46,7 @@ class PostLikeControllerTest extends TestConfig {
 	void testCancelPostLike() throws Exception {
 		doNothing().when(postLikeService).cancelPostLike(anyLong(), anyLong());
 
-		mockMvc.perform(delete("/api/v1/posts/{postId}/like", 1L))
+		mockMvc.perform(delete("/api/v1/posts/{postId}/likes", 1L))
 			.andExpect(status().isNoContent())
 			.andDo(print());
 	}

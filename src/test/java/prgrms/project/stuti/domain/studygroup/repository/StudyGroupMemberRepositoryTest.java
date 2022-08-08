@@ -103,8 +103,8 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 		Long studyGroupMemberId = studyGroupMember.getId();
 
 		//when
-		Optional<StudyGroupMember> studyGroupMember = studyGroupMemberRepository.findStudyGroupMemberById(
-			studyGroupMemberId);
+		Optional<StudyGroupMember> studyGroupMember = studyGroupMemberRepository
+			.findStudyGroupMemberById(studyGroupMemberId);
 
 		//then
 		assertTrue(studyGroupMember.isPresent());
@@ -115,15 +115,15 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 	@DisplayName("참여하고 있는 스터디 그룹이 삭제되면 해당 스터디의 스터디 그룹 멤버를 찾을 수 없다.")
 	void testFindStudyGroupMemberByIdWithDeletedStudyGroup() {
 		//given
-		StudyGroupMember studyGroupMember = studyGroupMemberRepository.save(
-			new StudyGroupMember(StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
+		StudyGroupMember studyGroupMember = studyGroupMemberRepository
+			.save(new StudyGroupMember(StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
 		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
 		studyGroup.delete();
 		Long studyGroupMemberId = studyGroupMember.getId();
 
 		//when
-		Optional<StudyGroupMember> retrievedStudyGroupMember = studyGroupMemberRepository.findStudyGroupMemberById(
-			studyGroupMemberId);
+		Optional<StudyGroupMember> retrievedStudyGroupMember = studyGroupMemberRepository
+			.findStudyGroupMemberById(studyGroupMemberId);
 
 		//then
 		assertTrue(retrievedStudyGroupMember.isEmpty());

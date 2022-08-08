@@ -87,29 +87,6 @@ class ImageUploaderTest {
 	}
 
 	@Test
-	@DisplayName("업로드된 이미지파일 중 첫 번째 이미지 파일을 썸네일로 만든다.")
-	void testCreateThumbnail() throws IOException {
-		//given
-		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
-
-		String imageFileUrl = imageUploader.upload(testMultipartFile, ImageDirectory.STUDY_GROUP);
-
-		String fullPath = rootPath + File.separator + imageFileUrl;
-		imageFile = new File(fullPath);
-
-		//when
-		String thumbnailFileUrl = imageUploader.createThumbnail(imageFileUrl);
-
-		String thumbnailFullPath = rootPath + File.separator + thumbnailFileUrl;
-		File thumbnailImageFile = new File(thumbnailFullPath);
-
-		//then
-		assertThat(thumbnailImageFile).isFile();
-
-		Files.deleteIfExists(Paths.get(rootPath, thumbnailFileUrl));
-	}
-
-	@Test
 	@DisplayName("업로드된 이미지 파일을 삭제한다.")
 	void testDelete() throws IOException {
 		//given

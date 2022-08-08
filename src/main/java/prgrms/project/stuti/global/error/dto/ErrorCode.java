@@ -13,11 +13,11 @@ public enum ErrorCode {
 
 	//study group
 	INVALID_STUDY_PERIOD("SG001", "Invalid study period", HttpStatus.BAD_REQUEST),
-	NOT_FOUND_STUDY_GROUP("SG002", "Not found study group", HttpStatus.NOT_FOUND),
+	NOT_FOUND_STUDY_GROUP("SG002", "Not found study group", HttpStatus.BAD_REQUEST),
 	NOT_STUDY_LEADER("SG003", "Not study leader", HttpStatus.BAD_REQUEST),
 	EXISTING_STUDY_GROUP_MEMBER("SG004", "Existing study group member", HttpStatus.BAD_REQUEST),
-	NOT_FOUND_STUDY_GROUP_MEMBER("SG005", "Not found study group member", HttpStatus.NOT_FOUND),
-	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.NOT_FOUND),
+	NOT_FOUND_STUDY_GROUP_MEMBER("SG005", "Not found study group member", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_WRITER("SG007", "Not match writer", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_STUDY_GROUP("SG008", "Not match study group", HttpStatus.BAD_REQUEST),
 	RECRUITMENT_IS_CLOSED("SG009", "Recruitment is closed", HttpStatus.BAD_REQUEST),

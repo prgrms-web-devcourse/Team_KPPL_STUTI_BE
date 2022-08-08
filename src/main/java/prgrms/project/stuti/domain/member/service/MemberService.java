@@ -10,10 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberPutDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.cache.model.TemporaryMember;
 import prgrms.project.stuti.global.error.exception.MemberException;
 
 @Slf4j
@@ -33,13 +31,6 @@ public class MemberService {
 		Member member = memberRepository.findMemberById(id).orElseThrow(() -> MemberException.notFoundMember(id));
 
 		return MemberConverter.toMemberResponse(member);
-	}
-
-	@Transactional
-	public Member signup(MemberDto memberDto, TemporaryMember temporaryMember) {
-		checkDuplicatedNickname(memberDto.nickname(), memberDto.email());
-
-		return memberRepository.save(MemberConverter.toMember(memberDto,temporaryMember));
 	}
 
 	@Transactional

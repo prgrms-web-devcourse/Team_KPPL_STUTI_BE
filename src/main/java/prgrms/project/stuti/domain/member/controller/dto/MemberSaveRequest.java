@@ -1,5 +1,6 @@
 package prgrms.project.stuti.domain.member.controller.dto;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
@@ -8,10 +9,10 @@ import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
 public record MemberSaveRequest(
-	@NotNull
+	@NotBlank
 	String email,
 
-	@NotNull
+	@NotBlank
 	String nickname,
 
 	@NotNull

@@ -88,31 +88,30 @@ create table FEED_LIKE
 
 create table STUDY_GROUP
 (
-    STUDY_GROUP_ID     bigint auto_increment
+    STUDY_GROUP_ID       bigint auto_increment
         primary key,
-    CREATED_AT         datetime(6)   not null,
-    UPDATED_AT         datetime(6)   not null,
-    CREATED_BY         bigint        not null,
-    UPDATED_BY         bigint        not null,
-    DESCRIPTION        varchar(1000) not null,
-    IMAGE_URL          varchar(150)  null,
-    IS_DELETED         bit           not null,
-    IS_ONLINE          bit           not null,
-    NUMBER_OF_MEMBERS  int           not null,
-    NUMBER_OF_RECRUITS int           not null,
-    REGION             varchar(16)   null,
-    END_DATE_TIME      datetime(6)   not null,
-    START_DATE_TIME    datetime(6)   not null,
-    THUMBNAIL_URL      varchar(150)  null,
-    TITLE              varchar(100)  not null,
-    TOPIC              varchar(20)   not null
+    CREATED_AT           datetime(6)   not null,
+    UPDATED_AT           datetime(6)   not null,
+    CREATED_BY           bigint        not null,
+    UPDATED_BY           bigint        not null,
+    DESCRIPTION          varchar(1000) not null,
+    IMAGE_URL            varchar(150)  null,
+    IS_DELETED           bit           not null,
+    IS_ONLINE            bit           not null,
+    NUMBER_OF_APPLICANTS int           not null,
+    NUMBER_OF_MEMBERS    int           not null,
+    NUMBER_OF_RECRUITS   int           not null,
+    REGION               varchar(16)   not null,
+    END_DATE_TIME        datetime(6)   not null,
+    START_DATE_TIME      datetime(6)   not null,
+    TITLE                varchar(100)  not null,
+    TOPIC                varchar(20)   not null
 );
 
 create table PREFERRED_MBTIS
 (
-    STUDY_GROUP_ID  bigint       not null,
-    PREFERRED_MBTIS varchar(255) not null,
-    primary key (STUDY_GROUP_ID, PREFERRED_MBTIS),
+    STUDY_GROUP_ID bigint       not null,
+    PREFERRED_MBTI varchar(255) null,
     constraint FK4qus627i5nq8l1c54g5kfmvik
         foreign key (STUDY_GROUP_ID) references STUDY_GROUP (STUDY_GROUP_ID)
 );
@@ -125,7 +124,7 @@ create table STUDY_GROUP_MEMBER
     UPDATED_AT              datetime(6) not null,
     CREATED_BY              bigint      not null,
     UPDATED_BY              bigint      not null,
-    STUDY_GROUP_MEMBER_ROLE varchar(16) not null,
+    STUDY_GROUP_MEMBER_ROLE varchar(20) not null,
     MEMBER_ID               bigint      null,
     STUDY_GROUP_ID          bigint      null,
     constraint FK89w0nm3i3vqke3at3f10l58m6

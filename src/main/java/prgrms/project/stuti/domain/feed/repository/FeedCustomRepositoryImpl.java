@@ -60,9 +60,8 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
 				.contents(tuple.get(feed).getContent())
 				.postImageUrl(tuple.get(feedImage.imageUrl))
 				.createdAt(tuple.get(feed).getCreatedAt())
-				.totalLikes(getTotalLikes(tuple.get(feed).getId()))
+				.likedMembers(getLikedMembers(tuple.get(feed).getId()))
 				.totalComments(getTotalComments(tuple.get(feed).getId()))
-				.isliked(isLiked(memberId, tuple.get(feed).getId()))
 				.build();
 			postsDtos.add(postsDto);
 		}
@@ -70,12 +69,12 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
 		return postsDtos;
 	}
 
-	private Long getTotalLikes(Long postId) {
+	private List<Long> getLikedMembers(Long postId) {
 		return jpaQueryFactory
-			.select(feedLike.count())
+			.select(feedLike.member.id)
 			.from(feedLike)
-			.where(feedLike.feed.id.eq(postId))
-			.fetchOne();
+			.where(feed.id.eq(postId))
+			.fetch();
 	}
 
 	private Long getTotalComments(Long postId) {
@@ -84,16 +83,6 @@ public class FeedCustomRepositoryImpl implements FeedCustomRepository {
 			.from(comment)
 			.where(comment.feed.id.eq(postId), comment.parent.isNull())
 			.fetchOne();
-	}
-
-	private boolean isLiked(Long memberId, Long postId) {
-		List<Long> likedResult = jpaQueryFactory
-			.select(feedLike.id)
-			.from(feedLike)
-			.where(eqMemberId(memberId), feedLike.feed.id.eq(postId))
-			.fetch();
-
-		return !likedResult.isEmpty();
 	}
 
 	private BooleanExpression eqMemberId(Long memberId) {

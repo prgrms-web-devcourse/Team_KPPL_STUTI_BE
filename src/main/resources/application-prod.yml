@@ -35,9 +35,9 @@ spring:
 
 app:
   cors:
-    allowed-origins: 'https://oauth-test-xi.vercel.app'
+    allowed-origins: 'http://localhost:3000'
   oauth:
-    domain: "https://oauth-test-xi.vercel.app"
+    domain: "http://localhost:3000"
 
 # Sentry
 DSN: https://e6ac8fba443a46ea8425aadf84c6325c@o1332931.ingest.sentry.io/6597826

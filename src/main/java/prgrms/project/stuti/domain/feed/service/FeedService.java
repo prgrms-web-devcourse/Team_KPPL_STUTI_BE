@@ -62,9 +62,8 @@ public class FeedService {
 	public PostIdResponse changePost(PostChangeDto postChangeDto) {
 		Feed feed = feedRepository.findById(postChangeDto.postId()).orElseThrow(FeedException::FEED_NOT_FOUND);
 		feed.changeContents(postChangeDto.contents());
-
-		feedImageRepository.deleteByFeedId(feed.getId());
-		if (postChangeDto.imageFile() != null) {
+		if(postChangeDto.imageFile() != null) {
+			feedImageRepository.deleteByFeedId(feed.getId());
 			String uploadUrl = imageUploader.upload(postChangeDto.imageFile(), ImageDirectory.FEED);
 			FeedImage feedImage = new FeedImage(uploadUrl, feed);
 			feedImageRepository.save(feedImage);

@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
-import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
+import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.cache.model.BlackListToken;
 import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
@@ -28,12 +28,12 @@ public class AuthenticationService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final TemporaryMemberRepository temporaryMemberRepository;
 
-	@Transactional(readOnly = true)
-	public MemberIdResponse signupMember(MemberDto memberDto) {
+	@Transactional
+	public MemberResponse signupMember(MemberDto memberDto) {
 		Optional<TemporaryMember> optionalMember = temporaryMemberRepository.findById(memberDto.email());
 
 		if (optionalMember.isEmpty()) {
-			throw MemberException.tokenExpiration();
+			throw MemberException.invalidSignup();
 		}
 		TemporaryMember temporaryMember = optionalMember.get();
 
@@ -41,15 +41,22 @@ public class AuthenticationService {
 		memberRepository.findMemberByEmail(email).ifPresent(member -> {
 			throw MemberException.registeredMember(email);
 		});
-		Member member = memberRepository.save(MemberConverter.toMember(memberDto,temporaryMember));
+		Member member = memberRepository.save(MemberConverter.toMember(memberDto, temporaryMember));
 
-		return MemberConverter.toMemberIdResponse(member.getId());
+		return MemberConverter.toMemberResponse(member);
+	}
+
+	@Transactional(readOnly = true)
+	public MemberResponse getMemberResponse(Long memberId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(() -> {
+			throw MemberException.notFoundMember(memberId);
+		});
+		return MemberConverter.toMemberResponse(member);
 	}
 
 	public Tokens saveRefreshToken(Long memberId, Tokens tokens, long refreshPeriod) {
 		Date now = new Date();
-		RefreshToken refreshToken = createRefreshToken(memberId, tokens, refreshPeriod,
-			now);
+		RefreshToken refreshToken = createRefreshToken(memberId, tokens, refreshPeriod, now);
 		refreshTokenRepository.save(refreshToken);
 
 		return tokens;

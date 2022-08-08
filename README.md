@@ -1,10 +1,13 @@
 # STU-TI
 
 ##  🏬 프로젝트 소개
+### MBTI를 통해 잘 맞을 것 같은 스터디를 찾거나 스터디원을 구하는 MBTI 기반 스터디 모집 서비스 입니다.
+
+<br/>
 
 ## 👬 팀 소개
 
-<table>
+<table align=center>
   <tr>
       <td>
         <a href="https://github.com/Gosh95">
@@ -41,4 +44,28 @@
   </tr>
 </table>
 
+<br/>
+
 ## 🛠 기술 스택
+
+<div align=center> 
+<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
+<img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"> 
+<img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> 
+<img src="https://img.shields.io/badge/spring security-6DB33F?style=for-the-badge&logo=spring security&logoColor=white"> 
+
+<br/>
+
+<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
+<img src="https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"> 
+<img src="https://img.shields.io/badge/flyway-CC0200?style=for-the-badge&logo=flyway&logoColor=white"> 
+<img src="https://img.shields.io/badge/amazon aws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white"> 
+
+<br/>
+
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> 
+<img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"> 
+
+</div>
+
+<br>

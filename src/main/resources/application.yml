@@ -4,6 +4,3 @@ spring:
     group:
       local: local, common
       prod: prod, common
-  jpa:
-    defer-datasource-initialization: false
-

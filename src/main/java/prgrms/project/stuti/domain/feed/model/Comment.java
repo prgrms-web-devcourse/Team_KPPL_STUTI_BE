@@ -63,6 +63,12 @@ public class Comment extends BaseEntity {
 		this.content = content;
 	}
 
+	public List<Comment> findChildren(List<Comment> children) {
+		this.children.addAll(children);
+
+		return this.children;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

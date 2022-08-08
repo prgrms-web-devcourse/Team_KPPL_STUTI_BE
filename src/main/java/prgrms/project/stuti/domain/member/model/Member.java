@@ -94,7 +94,6 @@ public class Member extends BaseTimeEntity {
 	}
 
 	public void change(MemberPutDto memberPutDto) {
-		this.email = memberPutDto.email();
 		this.nickName = memberPutDto.nickname();
 		this.field = memberPutDto.field();
 		this.career = memberPutDto.career();

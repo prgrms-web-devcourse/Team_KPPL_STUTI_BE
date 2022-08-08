@@ -14,18 +14,18 @@ public class MemberException extends BusinessException {
 		super(errorCode, message, cause);
 	}
 
+	public static final MemberException invalidSignup() {
+		throw new MemberException(ErrorCode.INVALID_SIGNUP,"회원가입 시간이 지났습니다");
+	}
+
 	public static final MemberException invalidEmail(String email) {
 		throw new MemberException(ErrorCode.INVALID_EMAIL,
 			MessageFormat.format("이메일이 유효하지 않습니다. (email: {0})", email));
 	}
 
-	public static MemberException notFoundMember(Long memberId) {
+	public static final MemberException notFoundMember(Long memberId) {
 		throw new MemberException(ErrorCode.NOT_FOUND_MEMBER,
 			MessageFormat.format("회원을 찾을 수 없습니다. (id: {0})", memberId));
-	}
-
-	public static final MemberException tokenExpiration() {
-		throw new MemberException(ErrorCode.TOKEN_EXPIRATION, "토큰 이 만료되었습니다.");
 	}
 
 	public static final MemberException blakclistDetection() {

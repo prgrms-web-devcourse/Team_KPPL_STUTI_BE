@@ -1,15 +1,19 @@
 package prgrms.project.stuti.global.security;
 
+import static org.springframework.http.HttpHeaders.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,8 +24,10 @@ import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
 import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
+import prgrms.project.stuti.global.util.CoderUtil;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,35 +55,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			// ContextHolder 에 저장한 후 다시 accessToken 을 쿠키로 전달
 			setAuthenticationToSecurityContextHolder(Long.parseLong(memberId), roles);
-			tokenService.addAccessTokenToCookie(response, accessToken, TokenType.JWT_TYPE);
+			ResponseCookie responseCookie = tokenService.addAccessTokenToCookie(accessToken, TokenType.JWT_TYPE);
+			response.addHeader(SET_COOKIE, responseCookie.toString());
 
 		} else if (!isLogout && accessToken != null) {
-			// 토큰이 유효하지 않은경우
 			// refresh token 을 redis 에서 찾은 후 존재하는 경우 accessToken 을 재발급하여 제공한다.
 			// refresh token 도 존재하지 않은경우 재로그인이 필요하다.
-			refreshTokenRepository.findById(accessToken).ifPresent(refreshToken -> {
-				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
-				Long memberId = refreshToken.getMemberId();
+			// 토큰이 유효하지 않은경우
+			Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
+			if(optionalRefreshToken.isEmpty()){
+				TokenException.refreshTokenExpiration(null);
+			}
+			RefreshToken refreshToken = optionalRefreshToken.get();
+			String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
+			Long memberId = refreshToken.getMemberId();
+			// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
+			String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
 
-				// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
-				String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
+			refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
+			refreshTokenRepository.delete(refreshToken);
 
-				refreshTokenRepository.save(RefreshToken.builder()
-					.accessTokenValue(newAccessToken)
-					.memberId(memberId)
-					.refreshTokenValue(refreshToken.getRefreshTokenValue())
-					.createdTime(refreshToken.getCreatedTime())
-					.expirationTime(refreshToken.getExpirationTime())
-					.expiration(refreshToken.getExpiration())
-					.build());
-				refreshTokenRepository.delete(refreshToken);
-
-				setAuthenticationToSecurityContextHolder(memberId, role);
-				tokenService.addAccessTokenToCookie(response, newAccessToken, TokenType.JWT_TYPE);
-			});
+			TokenException.accessTokenExpiration(CoderUtil.encode(newAccessToken));
 		}
 		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.
 		filterChain.doFilter(request, response);
+	}
+
+	private RefreshToken makeRefreshToken(RefreshToken refreshToken, Long memberId, String newAccessToken) {
+		return RefreshToken.builder()
+			.accessTokenValue(newAccessToken)
+			.memberId(memberId)
+			.refreshTokenValue(refreshToken.getRefreshTokenValue())
+			.createdTime(refreshToken.getCreatedTime())
+			.expirationTime(refreshToken.getExpirationTime())
+			.expiration(refreshToken.getExpiration())
+			.build();
 	}
 
 	private void checkBlackList(String token) {

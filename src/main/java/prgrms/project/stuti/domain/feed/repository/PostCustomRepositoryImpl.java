@@ -59,7 +59,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 				.profileImageUrl(tuple.get(post).getMember().getProfileImageUrl())
 				.contents(tuple.get(post).getContent())
 				.postImageUrl(tuple.get(postImage.imageUrl))
-				.createdAt(tuple.get(post).getCreatedAt())
+				.updatedAt(tuple.get(post).getUpdatedAt())
 				.likedMembers(getLikedMembers(tuple.get(post).getId()))
 				.totalPostComments(getTotalPostComments(tuple.get(post).getId()))
 				.build();

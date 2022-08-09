@@ -9,13 +9,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupQuestionConverter;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionsResponse;
 import prgrms.project.stuti.global.page.PageResponse;
 
@@ -26,38 +28,62 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 
 	@Override
 	public PageResponse<StudyGroupQuestionsResponse> findAllWithPagination(StudyGroupQuestionDto.PageDto pageDto) {
-
-		List<StudyGroupQuestion> studyGroupQuestions = jpaQueryFactory
-			.selectFrom(studyGroupQuestion)
-			.join(studyGroupQuestion.member, member).fetchJoin()
-			.join(studyGroupQuestion.studyGroup, studyGroup).fetchJoin()
-			.where(parentIdIsNull(), equalStudyGroup(pageDto.studyGroupId()),
-				greaterThanLastStudyGroupQuestionId(pageDto.lastStudyGroupQuestionId()))
-			.orderBy(studyGroupQuestion.id.asc())
+		List<StudyGroupQuestionResponse> parentQuestions = jpaQueryFactory
+			.select(Projections.constructor(
+				StudyGroupQuestionResponse.class, studyGroupQuestion.id, studyGroupQuestion.parent.id,
+				member.profileImageUrl, member.id, member.nickName, studyGroupQuestion.contents,
+				studyGroupQuestion.updatedAt))
+			.from(studyGroupQuestion)
+			.join(studyGroupQuestion.member, member)
+			.join(studyGroupQuestion.studyGroup, studyGroup)
+			.where(
+				parentIdIsNull(true),
+				equalStudyGroup(pageDto.studyGroupId()),
+				lessThanLastStudyGroupQuestionId(pageDto.lastStudyGroupQuestionId()))
+			.orderBy(studyGroupQuestionIdDesc())
 			.limit(pageDto.size() + NumberUtils.LONG_ONE)
 			.fetch();
 
-		boolean hasNext = studyGroupQuestions.size() > pageDto.size();
+		boolean hasNext = false;
 
-		if (hasNext) {
-			studyGroupQuestions.remove(studyGroupQuestions.size() - 1);
+		if (parentQuestions.size() > pageDto.size()) {
+			hasNext = true;
+			parentQuestions.remove(parentQuestions.size() - 1);
 		}
+
+		List<Long> parentIds = parentQuestions.stream().map(StudyGroupQuestionResponse::studyGroupQuestionId).toList();
+
+		List<StudyGroupQuestionResponse> childrenQuestions = jpaQueryFactory
+			.select(Projections.constructor(
+				StudyGroupQuestionResponse.class, studyGroupQuestion.id, studyGroupQuestion.parent.id,
+				member.profileImageUrl, member.id, member.nickName, studyGroupQuestion.contents,
+				studyGroupQuestion.updatedAt))
+			.from(studyGroupQuestion)
+			.join(studyGroupQuestion.member, member)
+			.join(studyGroupQuestion.studyGroup, studyGroup)
+			.where(parentIdIsNull(false), studyGroupQuestion.parent.id.in(parentIds))
+			.orderBy(studyGroupQuestionIdDesc())
+			.fetch();
 
 		Long totalElements = jpaQueryFactory
 			.select(studyGroupQuestion.count())
 			.from(studyGroupQuestion)
-			.where(parentIdIsNull(), equalStudyGroup(pageDto.studyGroupId()))
+			.where(parentIdIsNull(true), equalStudyGroup(pageDto.studyGroupId()))
 			.fetchOne();
 
 		return StudyGroupQuestionConverter
-			.toStudyGroupQuestionsPageResponse(studyGroupQuestions, hasNext, totalElements);
+			.toStudyGroupQuestionsPageResponse(parentQuestions, childrenQuestions, hasNext, totalElements);
 	}
 
-	private BooleanExpression parentIdIsNull() {
-		return studyGroupQuestion.parent.id.isNull();
+	private BooleanExpression parentIdIsNull(boolean flag) {
+		return flag ? studyGroupQuestion.parent.id.isNull() : studyGroupQuestion.parent.id.isNotNull();
 	}
 
-	private BooleanExpression greaterThanLastStudyGroupQuestionId(Long lastStudyGroupQuestionId) {
-		return lastStudyGroupQuestionId == null ? null : studyGroupQuestion.id.gt(lastStudyGroupQuestionId);
+	private BooleanExpression lessThanLastStudyGroupQuestionId(Long lastStudyGroupQuestionId) {
+		return lastStudyGroupQuestionId == null ? null : studyGroupQuestion.id.lt(lastStudyGroupQuestionId);
+	}
+
+	private OrderSpecifier<Long> studyGroupQuestionIdDesc() {
+		return studyGroupQuestion.id.desc();
 	}
 }

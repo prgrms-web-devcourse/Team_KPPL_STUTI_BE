@@ -64,7 +64,7 @@ class PostControllerTest extends TestConfig {
 			.profileImageUrl("testProfileImage.jpg")
 			.contents("테스트게시글")
 			.postImageUrl("testPost.jpg")
-			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.totalPostComments(1L)
 			.likedMembers(List.of(1L, 2L))
 			.build();
@@ -118,7 +118,7 @@ class PostControllerTest extends TestConfig {
 			.profileImageUrl("testProfileImage.jpg")
 			.contents("테스트게시글")
 			.postImageUrl("testPost.jpg")
-			.createdAt(LocalDateTime.now())
+			.updatedAt(LocalDateTime.now())
 			.totalPostComments(1L)
 			.likedMembers(List.of(1L, 2L))
 			.build();

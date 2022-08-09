@@ -42,7 +42,6 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 			StudyGroup
 				.builder()
 				.imageUrl("image")
-				.thumbnailUrl("thumbnail")
 				.title("title")
 				.topic(Topic.AI)
 				.isOnline(false)

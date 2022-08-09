@@ -41,7 +41,6 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 			StudyGroup
 				.builder()
 				.imageUrl("imageUrl")
-				.thumbnailUrl("thumbnailUrl")
 				.title("test title")
 				.topic(Topic.NETWORK)
 				.isOnline(true)
@@ -80,7 +79,6 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 			StudyGroup
 				.builder()
 				.imageUrl("imageUrl")
-				.thumbnailUrl("thumbnailUrl")
 				.title("test title")
 				.topic(Topic.NETWORK)
 				.isOnline(true)

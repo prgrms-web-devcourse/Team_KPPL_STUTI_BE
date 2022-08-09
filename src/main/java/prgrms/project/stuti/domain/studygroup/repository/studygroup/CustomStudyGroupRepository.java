@@ -14,6 +14,9 @@ public interface CustomStudyGroupRepository {
 
 	Optional<StudyGroupMember> findStudyGroupDetailById(Long studyGroupId);
 
-	CursorPageResponse<StudyGroupsResponse> dynamicFindAllWithCursorPagination(
+	CursorPageResponse<StudyGroupsResponse> dynamicFindStudyGroupsWithCursorPagination(
+		StudyGroupDto.FindCondition conditionDto);
+
+	CursorPageResponse<StudyGroupsResponse> findMyStudyGroupsWithCursorPagination(
 		StudyGroupDto.FindCondition conditionDto);
 }

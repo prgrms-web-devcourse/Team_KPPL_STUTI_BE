@@ -37,7 +37,7 @@ public class CommonStudyGroupBooleanExpression {
 		return studyGroup.id.eq(studyGroupId);
 	}
 
-	private static BooleanExpression equalMemberId(Long memberId) {
+	public static BooleanExpression equalMemberId(Long memberId) {
 		return member.id.eq(memberId);
 	}
 }

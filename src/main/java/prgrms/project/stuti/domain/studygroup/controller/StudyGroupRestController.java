@@ -49,7 +49,7 @@ public class StudyGroupRestController {
 		@RequestParam(defaultValue = "20") Long size, StudyGroupRequest.FindCondition condition
 	) {
 		StudyGroupDto.FindCondition conditionDto =
-			StudyGroupMapper.toStudyGroupFindConditionDto(null, size, condition);
+			StudyGroupMapper.toStudyGroupFindConditionDto(size, condition);
 		CursorPageResponse<StudyGroupsResponse> studyGroupsResponse = studyGroupService.getStudyGroups(conditionDto);
 
 		return ResponseEntity.ok(studyGroupsResponse);
@@ -62,7 +62,7 @@ public class StudyGroupRestController {
 	) {
 		StudyGroupDto.FindCondition conditionDto =
 			StudyGroupMapper.toStudyGroupFindConditionDto(memberId, size, condition);
-		CursorPageResponse<StudyGroupsResponse> studyGroupsResponse = studyGroupService.getStudyGroups(conditionDto);
+		CursorPageResponse<StudyGroupsResponse> studyGroupsResponse = studyGroupService.getMyStudyGroups(conditionDto);
 
 		return ResponseEntity.ok(studyGroupsResponse);
 	}

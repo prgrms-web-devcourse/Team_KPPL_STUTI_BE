@@ -122,7 +122,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 	void getMyStudyGroups() throws Exception {
 		//given
 		CursorPageResponse<StudyGroupsResponse> pageResponse = toStudyGroupPageResponse();
-		given(studyGroupService.getStudyGroups(any())).willReturn(pageResponse);
+		given(studyGroupService.getMyStudyGroups(any())).willReturn(pageResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(

@@ -5,6 +5,7 @@ import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroupMember.*;
 import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroupBooleanExpression.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +55,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	}
 
 	@Override
-	public CursorPageResponse<StudyGroupsResponse> dynamicFindAllWithCursorPagination(
+	public CursorPageResponse<StudyGroupsResponse> dynamicFindStudyGroupsWithCursorPagination(
 		StudyGroupDto.FindCondition conditionDto
 	) {
 		jpaQueryFactory.selectFrom(studyGroup).join(studyGroup.preferredMBTIs).fetchJoin().fetch();
@@ -67,11 +68,34 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 				lessThanLastStudyGroupId(conditionDto.lastStudyGroupId()),
 				equalRegion(conditionDto.region()),
 				equalTopic(conditionDto.topic()),
-				equalMemberId(conditionDto.memberId()),
-				hasStudyGroupMemberRole(conditionDto.studyGroupMemberRole()),
+				hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER),
 				notDeletedMember(),
+				recruitmentNotClosed(),
 				notDeletedStudyGroup(),
 				containsMbti(conditionDto.mbti()))
+			.orderBy(studyGroup.id.desc())
+			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
+			.fetch();
+
+		boolean hasNext = contents.size() > conditionDto.size();
+
+		return StudyGroupConverter.toStudyGroupsCursorPageResponse(contents, hasNext);
+	}
+
+	@Override
+	public CursorPageResponse<StudyGroupsResponse> findMyStudyGroupsWithCursorPagination(
+		StudyGroupDto.FindCondition conditionDto
+	) {
+		jpaQueryFactory.selectFrom(studyGroup).join(studyGroup.preferredMBTIs).fetchJoin().fetch();
+
+		List<StudyGroupMember> contents = jpaQueryFactory
+			.selectFrom(studyGroupMember)
+			.leftJoin(studyGroupMember.member, member).fetchJoin()
+			.leftJoin(studyGroupMember.studyGroup, studyGroup).fetchJoin()
+			.where(
+				lessThanLastStudyGroupId(conditionDto.lastStudyGroupId()),
+				hasStudyGroupMemberRole(conditionDto.studyGroupMemberRole()),
+				equalMemberId(conditionDto.memberId()))
 			.orderBy(studyGroup.id.desc())
 			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
 			.fetch();
@@ -93,11 +117,19 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 		return topic == null ? null : studyGroup.topic.eq(topic);
 	}
 
-	private BooleanExpression equalMemberId(Long memberId) {
-		return memberId == null ? null : member.id.eq(memberId);
-	}
-
 	private BooleanExpression containsMbti(Mbti mbti) {
 		return mbti == null ? null : studyGroup.preferredMBTIs.contains(mbti);
+	}
+
+	private BooleanExpression recruitmentNotClosed() {
+		return startDateTimeHasNotPassed().and(lessThanNumberOfRecruits());
+	}
+
+	private BooleanExpression startDateTimeHasNotPassed() {
+		return studyGroup.studyPeriod.startDateTime.after(LocalDateTime.now());
+	}
+
+	private BooleanExpression lessThanNumberOfRecruits() {
+		return studyGroup.numberOfMembers.lt(studyGroup.numberOfRecruits);
 	}
 }

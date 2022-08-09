@@ -24,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.headers.HeaderDescriptor;
@@ -73,7 +74,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 			.params(createParams)
 			.contentType(MediaType.MULTIPART_FORM_DATA)
 			.with(requestPostProcessor -> {
-				requestPostProcessor.setMethod("POST");
+				requestPostProcessor.setMethod(HttpMethod.POST.name());
 				return requestPostProcessor;
 			}));
 
@@ -184,7 +185,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 				.params(updateParams)
 				.contentType(MediaType.MULTIPART_FORM_DATA)
 				.with(requestPostProcessor -> {
-					requestPostProcessor.setMethod("PATCH");
+					requestPostProcessor.setMethod(HttpMethod.POST.name());
 					return requestPostProcessor;
 				}));
 

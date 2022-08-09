@@ -32,7 +32,6 @@ public record StudyGroupRequest() {
 		@NotNull
 		boolean isOnline,
 
-		@NotNull
 		Region region,
 
 		@NotNull

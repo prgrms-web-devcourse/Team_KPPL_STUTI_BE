@@ -13,22 +13,20 @@ public enum ErrorCode {
 
 	//study group
 	INVALID_STUDY_PERIOD("SG001", "Invalid study period", HttpStatus.BAD_REQUEST),
-	NOT_FOUND_STUDY_GROUP("SG002", "Not found study group", HttpStatus.NOT_FOUND),
+	NOT_FOUND_STUDY_GROUP("SG002", "Not found study group", HttpStatus.BAD_REQUEST),
 	NOT_STUDY_LEADER("SG003", "Not study leader", HttpStatus.BAD_REQUEST),
 	EXISTING_STUDY_GROUP_MEMBER("SG004", "Existing study group member", HttpStatus.BAD_REQUEST),
-	NOT_FOUND_STUDY_GROUP_MEMBER("SG005", "Not found study group member", HttpStatus.NOT_FOUND),
-	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.NOT_FOUND),
+	NOT_FOUND_STUDY_GROUP_MEMBER("SG005", "Not found study group member", HttpStatus.BAD_REQUEST),
+	NOT_FOUND_STUDY_GROUP_QUESTION("SG006", "Not found study group question", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_WRITER("SG007", "Not match writer", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_STUDY_GROUP("SG008", "Not match study group", HttpStatus.BAD_REQUEST),
 	RECRUITMENT_IS_CLOSED("SG009", "Recruitment is closed", HttpStatus.BAD_REQUEST),
 
 	//file
-	EMPTY_FILE("F001", "Uploaded empty file", HttpStatus.BAD_REQUEST),
-	UNSUPPORTED_EXTENSION("F002", "Unsupported file extension", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
-	OVER_MAX_SIZE("F003", "Over max size", HttpStatus.PAYLOAD_TOO_LARGE),
-	FAILED_RESIZE("F004", "Failed to resize image file", HttpStatus.SERVICE_UNAVAILABLE),
-	FAILED_UPLOAD("F005", "Failed to upload image file", HttpStatus.SERVICE_UNAVAILABLE),
-	FAILED_DELETE("F006", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
+	UNSUPPORTED_EXTENSION("F001", "Unsupported file extension", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
+	OVER_MAX_SIZE("F002", "Over max size", HttpStatus.PAYLOAD_TOO_LARGE),
+	FAILED_UPLOAD("F003", "Failed to upload image file", HttpStatus.SERVICE_UNAVAILABLE),
+	FAILED_DELETE("F004", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
 
 	// Member
 	INVALID_EMAIL("M001", "Email is invalid", HttpStatus.BAD_REQUEST),

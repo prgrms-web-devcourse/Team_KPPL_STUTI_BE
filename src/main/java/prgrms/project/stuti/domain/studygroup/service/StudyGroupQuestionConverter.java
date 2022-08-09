@@ -1,6 +1,5 @@
 package prgrms.project.stuti.domain.studygroup.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import lombok.AccessLevel;
@@ -30,51 +29,31 @@ public class StudyGroupQuestionConverter {
 	}
 
 	public static PageResponse<StudyGroupQuestionsResponse> toStudyGroupQuestionsPageResponse(
-		List<StudyGroupQuestion> questions, boolean hasNext, Long totalElements
+		List<StudyGroupQuestionResponse> parentQuestions, List<StudyGroupQuestionResponse> childrenQuestions,
+		boolean hasNext, Long totalElements
 	) {
-		return new PageResponse<>(toStudyGroupQuestionListResponse(questions), hasNext, totalElements);
+		return new PageResponse<>
+			(toStudyGroupQuestionsResponse(parentQuestions, childrenQuestions), hasNext, totalElements);
 	}
 
-	private static List<StudyGroupQuestionsResponse> toStudyGroupQuestionListResponse(
-		List<StudyGroupQuestion> studyGroupQuestions
+	private static List<StudyGroupQuestionsResponse> toStudyGroupQuestionsResponse(
+		List<StudyGroupQuestionResponse> parentQuestions, List<StudyGroupQuestionResponse> childrenQuestions
 	) {
-		return studyGroupQuestions
+		return parentQuestions
 			.stream()
-			.map(parentQuestion -> {
-				Member parentMember = parentQuestion.getMember();
-
+			.map(p -> {
 				return StudyGroupQuestionsResponse
 					.builder()
-					.studyGroupQuestionId(parentQuestion.getId())
-					.parentId(null)
-					.profileImageUrl(parentMember.getProfileImageUrl())
-					.memberId(parentMember.getId())
-					.nickname(parentMember.getNickName())
-					.contents(parentQuestion.getContents())
-					.updatedAt(parentQuestion.getUpdatedAt())
-					.children(toStudyGroupQuestionChildren(parentQuestion.getChildren()))
-					.build();
-			}).toList();
-	}
-
-	private static List<StudyGroupQuestionResponse> toStudyGroupQuestionChildren(List<StudyGroupQuestion> children) {
-		return children.isEmpty()
-			? Collections.emptyList()
-			: children
-			.stream()
-			.map(child -> {
-				Member member = child.getMember();
-				StudyGroupQuestion childrenParent = child.getParent();
-
-				return StudyGroupQuestionResponse
-					.builder()
-					.studyGroupQuestionId(child.getId())
-					.parentId(childrenParent.getId())
-					.profileImageUrl(member.getProfileImageUrl())
-					.memberId(member.getId())
-					.nickname(member.getNickName())
-					.contents(child.getContents())
-					.updatedAt(child.getUpdatedAt())
+					.studyGroupQuestionId(p.studyGroupQuestionId())
+					.parentId(p.parentId())
+					.profileImageUrl(p.profileImageUrl())
+					.memberId(p.memberId())
+					.nickname(p.nickname())
+					.contents(p.contents())
+					.updatedAt(p.updatedAt())
+					.children(childrenQuestions
+						.stream()
+						.filter(c -> c.parentId().equals(p.studyGroupQuestionId())).toList())
 					.build();
 			}).toList();
 	}

@@ -88,7 +88,7 @@ public class StudyGroup extends BaseEntity {
 		this.topic = topic;
 		this.isOnline = isOnline;
 		this.region = region;
-		this.numberOfMembers = NumberUtils.INTEGER_ZERO;
+		this.numberOfMembers = NumberUtils.INTEGER_ONE;
 		this.numberOfRecruits = numberOfRecruits;
 		this.numberOfApplicants = NumberUtils.INTEGER_ZERO;
 		this.preferredMBTIs = preferredMBTIs;
@@ -121,6 +121,26 @@ public class StudyGroup extends BaseEntity {
 		this.numberOfMembers++;
 	}
 
+	public void decreaseNumberOfMembers() {
+		if (this.numberOfMembers == NumberUtils.INTEGER_ZERO) {
+			return;
+		}
+
+		this.numberOfMembers--;
+	}
+
+	public void increaseNumberOfApplicants() {
+		this.numberOfApplicants++;
+	}
+
+	public void decreaseNumberOfApplicants() {
+		if (this.numberOfApplicants == NumberUtils.INTEGER_ZERO) {
+			return;
+		}
+
+		this.numberOfMembers--;
+	}
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,
@@ -133,6 +153,7 @@ public class StudyGroup extends BaseEntity {
 			.append("region", region)
 			.append("numberOfMembers", numberOfMembers)
 			.append("numberOfRecruits", numberOfRecruits)
+			.append("numberOfApplicants", numberOfApplicants)
 			.append("preferredMBTIs", preferredMBTIs)
 			.append("studyPeriod", studyPeriod)
 			.append("description", description)

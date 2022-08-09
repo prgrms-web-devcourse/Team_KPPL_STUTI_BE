@@ -22,8 +22,7 @@ public class StudyGroupMemberConverter {
 		return new StudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
-	public static StudyGroupMembersResponse toStudyGroupMembersResponse(
-		List<StudyGroupMember> studyGroupMembers) {
+	public static StudyGroupMembersResponse toStudyGroupMembersResponse(List<StudyGroupMember> studyGroupMembers) {
 		Map<StudyGroupMemberRole, List<StudyGroupMember>> studyGroupMemberMap = studyGroupMembers
 			.stream()
 			.collect(Collectors.groupingBy(StudyGroupMember::getStudyGroupMemberRole));
@@ -43,7 +42,7 @@ public class StudyGroupMemberConverter {
 			.numberOfMembers(studyGroup.getNumberOfMembers())
 			.numberOfRecruits(studyGroup.getNumberOfRecruits())
 			.studyMembers(toStudyGroupMemberResponse(studyMembers))
-			.numberOfApplicants(studyApplicants.size())
+			.numberOfApplicants(studyGroup.getNumberOfApplicants())
 			.studyApplicants(toStudyGroupMemberResponse(studyApplicants))
 			.build();
 	}

@@ -14,7 +14,7 @@ public record PostDto(
 	String profileImageUrl,
 	String contents,
 	String postImageUrl,
-	LocalDateTime createdAt,
+	LocalDateTime updatedAt,
 	Long totalPostComments,
 	List<Long> likedMembers
 ) {

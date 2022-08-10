@@ -65,7 +65,7 @@ public class PostService {
 	public PostIdResponse changePost(PostChangeDto postChangeDto) {
 		Post post = postRepository.findById(postChangeDto.postId()).orElseThrow(PostException::POST_NOT_FOUND);
 		post.changeContents(postChangeDto.contents());
-		if(postChangeDto.imageFile() != null && !postChangeDto.imageFile().isEmpty()) {
+		if(postChangeDto.imageFile() != null) {
 			postImageRepository.deleteByPostId(post.getId());
 			String uploadUrl = imageUploader.upload(postChangeDto.imageFile(), ImageDirectory.POST);
 			PostImage postImage = new PostImage(uploadUrl, post);

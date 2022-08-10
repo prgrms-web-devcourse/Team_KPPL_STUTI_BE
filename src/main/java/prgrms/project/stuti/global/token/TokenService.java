@@ -17,6 +17,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.util.CoderUtil;
 
 @Service
@@ -159,5 +160,11 @@ public class TokenService {
 			.sameSite("none")
 			.maxAge(60)
 			.build();
+	}
+
+	public void verifyTokenWithException(String accessToken){
+		if (!this.verifyToken(accessToken)) {
+			TokenException.accessTokenExpiration(accessToken);
+		}
 	}
 }

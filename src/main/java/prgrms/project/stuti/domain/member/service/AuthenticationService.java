@@ -18,6 +18,7 @@ import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
 import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
 import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.Tokens;
 
 @Service
@@ -68,6 +69,12 @@ public class AuthenticationService {
 
 			BlackListToken blackListToken = new BlackListToken(accessTokenWithType, expiration);
 			blackListTokenRepository.save(blackListToken);
+		}
+	}
+
+	public void checkRefreshToken(String accessToken) {
+		if(refreshTokenRepository.findById(accessToken).isEmpty()){
+			TokenException.refreshTokenExpiration(null);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package prgrms.project.stuti.domain.member.controller;
 
 import java.net.URI;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -21,6 +22,9 @@ import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
+import prgrms.project.stuti.global.cache.model.RefreshToken;
+import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.token.Tokens;
@@ -88,8 +92,9 @@ public class AuthenticationController {
 	@GetMapping("/auth")
 	public ResponseEntity<MemberResponse> memberInfo(HttpServletRequest request) {
 		String accessToken = tokenService.resolveToken(request);
+		tokenService.verifyTokenWithException(accessToken);
+		authenticationService.checkRefreshToken(accessToken);
 		String memberId = tokenService.getUid(accessToken);
-
 		MemberResponse memberResponse = authenticationService.getMemberResponse(Long.parseLong(memberId));
 
 		return ResponseEntity.ok(memberResponse);

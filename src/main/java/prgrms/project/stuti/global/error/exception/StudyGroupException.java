@@ -36,7 +36,7 @@ public class StudyGroupException extends BusinessException {
 	}
 
 	public static StudyGroupException notFoundStudyGroupMember(Long studyGroupMemberId) {
-		return new StudyGroupException(ErrorCode.EXISTING_STUDY_GROUP_MEMBER,
+		return new StudyGroupException(ErrorCode.NOT_FOUND_STUDY_GROUP_MEMBER,
 			MessageFormat.format(
 				"스터디 그룹 멤버를 찾을 수 없습니다. (studyGroupMemberId: {0})", studyGroupMemberId));
 	}

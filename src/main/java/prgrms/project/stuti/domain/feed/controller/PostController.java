@@ -62,8 +62,8 @@ public class PostController {
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
 	}
 
-	@GetMapping("/api/v1/posts/myposts")
-	public ResponseEntity<PostListResponse> getMyPosts(@AuthenticationPrincipal Long memberId,
+	@GetMapping("/api/v1/posts/members/{memberId}")
+	public ResponseEntity<PostListResponse> getMyPosts(@PathVariable Long memberId,
 		@RequestParam(value = "lastPostId", required = false) Long lastPostId,
 		@RequestParam(defaultValue = "10") int size) {
 		PostListResponse postListResponse = postService.getMyPosts(memberId, lastPostId, size);

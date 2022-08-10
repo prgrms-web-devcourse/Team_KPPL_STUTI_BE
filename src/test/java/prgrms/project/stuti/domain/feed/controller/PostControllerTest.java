@@ -139,7 +139,7 @@ class PostControllerTest extends TestConfig {
 
 		when(postService.getMyPosts(any(), any(), anyInt())).thenReturn(postsResponse);
 
-		mockMvc.perform(get("/api/v1/posts/myposts"))
+		mockMvc.perform(get("/api/v1/posts/members/{memberId}", 1L))
 			.andExpect(status().isOk())
 			.andDo(print());
 	}

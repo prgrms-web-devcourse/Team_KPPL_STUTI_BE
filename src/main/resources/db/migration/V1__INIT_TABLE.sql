@@ -108,11 +108,13 @@ create table STUDY_GROUP
     TOPIC                varchar(20)   not null
 );
 
-create table PREFERRED_MBTIS
+create table PREFERRED_MBTI
 (
-    STUDY_GROUP_ID bigint       not null,
-    PREFERRED_MBTI varchar(255) null,
-    constraint FK4qus627i5nq8l1c54g5kfmvik
+    PREFERRED_MBTI_ID bigint auto_increment
+        primary key,
+    MBTI              varchar(4) not null,
+    STUDY_GROUP_ID    bigint     null,
+    constraint FKg0gf4ipci6odedxa9v7df2wvp
         foreign key (STUDY_GROUP_ID) references STUDY_GROUP (STUDY_GROUP_ID)
 );
 
@@ -152,3 +154,4 @@ create table STUDY_GROUP_QUESTION
     constraint FKs5ekehbrprf859sn01qx7shbu
         foreign key (PARENT_ID) references STUDY_GROUP_QUESTION (STUDY_GROUP_QUESTION_ID)
 );
+

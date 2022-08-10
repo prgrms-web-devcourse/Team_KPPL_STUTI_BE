@@ -18,6 +18,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.domain.feed.model.PostComment;
@@ -245,6 +246,20 @@ class PostServiceTest {
 
 		postService.deletePost(post.getId());
 		Optional<PostComment> foundComment = postCommentRepository.findById(postComment.getId());
+
+		assertThat(foundComment).isEmpty();
+	}
+
+	@Test
+	@DisplayName("게시글 삭제시 게시글에 붙은 댓글도 전부 삭제처리한다.")
+	void testDeletePostWithLikes() {
+		Post post = new Post("울랄라 테스트 게시글", savedMember);
+		postRepository.save(post);
+		PostLike postLike = new PostLike(savedMember, post);
+		postLikeRepository.save(postLike);
+
+		postService.deletePost(post.getId());
+		Optional<PostComment> foundComment = postCommentRepository.findById(postLike.getId());
 
 		assertThat(foundComment).isEmpty();
 	}

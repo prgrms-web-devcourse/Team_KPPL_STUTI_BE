@@ -10,7 +10,9 @@ import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
+import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.repository.PostRepository;
+import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
@@ -32,6 +34,7 @@ public class PostService {
 	private final ImageUploader imageUploader;
 	private final PostImageRepository postImageRepository;
 	private final PostCommentRepository postCommentRepository;
+	private final PostLikeRepository postLikeRepository;
 
 	@Transactional
 	public PostIdResponse registerPost(PostCreateDto postDto) {
@@ -77,6 +80,7 @@ public class PostService {
 		postRepository.findById(postId).orElseThrow(PostException::POST_NOT_FOUND);
 		postImageRepository.deleteByPostId(postId);
 		postCommentRepository.deleteAllByPostId(postId);
+		postLikeRepository.deleteByPostId(postId);
 		postRepository.deleteById(postId);
 	}
 

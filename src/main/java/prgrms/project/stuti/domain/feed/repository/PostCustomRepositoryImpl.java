@@ -18,7 +18,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.feed.service.dto.PostDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<PostDto> findAllWithNoOffset(Long lastPostId, int size, Long memberId) {
+	public List<PostResponse> findAllWithNoOffset(Long lastPostId, int size, Long memberId) {
 
 		BooleanBuilder dynamicLtId = new BooleanBuilder();
 
@@ -49,9 +49,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 			.limit(size)
 			.fetch();
 
-		List<PostDto> postsDtos = new ArrayList<>();
+		List<PostResponse> postsDtos = new ArrayList<>();
 		for (Tuple tuple : fetch) {
-			PostDto postsDto = PostDto.builder()
+			PostResponse postsDto = PostResponse.builder()
 				.postId(tuple.get(post).getId())
 				.memberId(tuple.get(post).getMember().getId())
 				.nickname(tuple.get(post).getMember().getNickName())
@@ -60,7 +60,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 				.contents(tuple.get(post).getContent())
 				.postImageUrl(tuple.get(postImage.imageUrl))
 				.updatedAt(tuple.get(post).getUpdatedAt())
-				.likedMembers(getLikedMembers(tuple.get(post).getId()))
+				.likedMembers(findAllLikedMembers(tuple.get(post).getId()))
 				.totalPostComments(getTotalPostComments(tuple.get(post).getId()))
 				.build();
 			postsDtos.add(postsDto);
@@ -69,7 +69,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 		return postsDtos;
 	}
 
-	private List<Long> getLikedMembers(Long postId) {
+	@Override
+	public List<Long> findAllLikedMembers(Long postId) {
 		return jpaQueryFactory
 			.select(postLike.member.id)
 			.from(postLike)

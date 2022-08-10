@@ -88,7 +88,7 @@ class PostControllerTest extends TestConfig {
 		when(postService.changePost(any())).thenReturn(new PostIdResponse(1L));
 
 		mockMvc.perform(
-				multipart(HttpMethod.PATCH, "/api/v1/posts/{postId}", 1L)
+				multipart(HttpMethod.POST, "/api/v1/posts/{postId}", 1L)
 					.file(file)
 					.param("contents", "수정게시글입니다."))
 			.andExpect(status().isOk())

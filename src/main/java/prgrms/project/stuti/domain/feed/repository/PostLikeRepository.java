@@ -9,4 +9,6 @@ import prgrms.project.stuti.domain.feed.model.PostLike;
 public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
 	Optional<PostLike> findByPostIdAndMemberId(Long postId, Long memberId);
+
+	void deleteByPostId(Long postId);
 }

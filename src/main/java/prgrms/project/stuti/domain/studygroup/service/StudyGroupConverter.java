@@ -1,5 +1,6 @@
 package prgrms.project.stuti.domain.studygroup.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -7,10 +8,8 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Mbti;
-import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
-import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
@@ -69,9 +68,9 @@ public class StudyGroupConverter {
 	}
 
 	public static CursorPageResponse<StudyGroupsResponse> toStudyGroupsCursorPageResponse(
-		List<StudyGroupMember> studyGroupMembers, boolean hasNext
+		List<StudyGroupQueryDto.StudyGroupsDto> contents, boolean hasNext
 	) {
-		return new CursorPageResponse<>(toStudyGroupsResponse(studyGroupMembers), hasNext);
+		return new CursorPageResponse<>(toStudyGroupsResponse(contents), hasNext);
 	}
 
 	private static Set<PreferredMbti> toPreferredMBTIs(Set<Mbti> preferredMBTIs) {
@@ -96,18 +95,19 @@ public class StudyGroupConverter {
 			.build();
 	}
 
-	private static List<StudyGroupsResponse> toStudyGroupsResponse(List<StudyGroupMember> studyGroupMembers) {
-		return studyGroupMembers
+	private static List<StudyGroupsResponse> toStudyGroupsResponse(List<StudyGroupQueryDto.StudyGroupsDto> contents) {
+		return contents.isEmpty()
+			? Collections.emptyList()
+			: contents
 			.stream()
-			.map(studyGroupMember -> {
-				Member member = studyGroupMember.getMember();
-				StudyGroup studyGroup = studyGroupMember.getStudyGroup();
+			.map(content -> {
+				StudyGroup studyGroup = content.studyGroup();
 				StudyPeriod studyPeriod = studyGroup.getStudyPeriod();
 
 				return StudyGroupsResponse
 					.builder()
 					.studyGroupId(studyGroup.getId())
-					.memberId(member.getId())
+					.memberId(content.memberId())
 					.imageUrl(studyGroup.getImageUrl())
 					.topic(studyGroup.getTopic().getValue())
 					.title(studyGroup.getTitle())

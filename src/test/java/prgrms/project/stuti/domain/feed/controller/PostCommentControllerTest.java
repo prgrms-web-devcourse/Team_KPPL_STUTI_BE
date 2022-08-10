@@ -20,8 +20,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
 import prgrms.project.stuti.global.page.offset.PageResponse;
 

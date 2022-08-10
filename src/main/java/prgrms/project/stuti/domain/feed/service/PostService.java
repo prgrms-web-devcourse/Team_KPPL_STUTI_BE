@@ -12,15 +12,14 @@ import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.repository.PostRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 

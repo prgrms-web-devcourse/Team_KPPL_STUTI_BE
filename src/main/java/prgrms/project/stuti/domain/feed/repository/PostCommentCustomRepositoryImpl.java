@@ -1,6 +1,5 @@
 package prgrms.project.stuti.domain.feed.repository;
 
-
 import static prgrms.project.stuti.domain.feed.model.QPostComment.*;
 
 import java.util.List;
@@ -41,12 +40,12 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 		Long totalParentComments = totalParentComments(postId);
 
 		boolean hasNext = false;
-		if(postComments.size() == size) {
+		if (postComments.size() == size) {
 			Long lastCalledComment = postComments.get(postComments.size() - 1).getId();
 			hasNext = hasNext(postId, lastCalledComment);
 		}
 
-		for(PostComment postComment : postComments) {
+		for (PostComment postComment : postComments) {
 			List<PostComment> childPostComments = findByParentId(postComment.getId());
 			postComment.findChildren(childPostComments);
 		}

@@ -1,7 +1,7 @@
 package prgrms.project.stuti.domain.feed.repository;
 
-import static prgrms.project.stuti.domain.feed.model.QPostComment.*;
 import static prgrms.project.stuti.domain.feed.model.QPost.*;
+import static prgrms.project.stuti.domain.feed.model.QPostComment.*;
 import static prgrms.project.stuti.domain.feed.model.QPostImage.*;
 import static prgrms.project.stuti.domain.feed.model.QPostLike.*;
 import static prgrms.project.stuti.domain.member.model.QMember.*;
@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.util.ObjectUtils;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +33,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 			dynamicLtId.and(post.id.lt(lastPostId));
 		}
 
-		if(memberId != null) {
+		if (memberId != null) {
 			dynamicLtId.and(post.member.id.eq(memberId));
 		}
 
@@ -84,13 +82,5 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 			.from(postComment)
 			.where(postComment.post.id.eq(postId), postComment.parent.isNull())
 			.fetchOne();
-	}
-
-	private BooleanExpression eqMemberId(Long memberId) {
-		if(ObjectUtils.isEmpty(memberId)) {
-			return null;
-		}
-
-		return postLike.member.id.eq(memberId);
 	}
 }

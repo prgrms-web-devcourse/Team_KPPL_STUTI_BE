@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
@@ -26,9 +25,8 @@ import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.service.PostConverter;
 import prgrms.project.stuti.domain.feed.service.PostService;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;

@@ -138,7 +138,7 @@ public class StudyGroup extends BaseEntity {
 			return;
 		}
 
-		this.numberOfMembers--;
+		this.numberOfApplicants--;
 	}
 
 	@Override

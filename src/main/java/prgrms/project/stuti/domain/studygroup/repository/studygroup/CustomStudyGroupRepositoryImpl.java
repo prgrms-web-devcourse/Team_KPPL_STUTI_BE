@@ -12,14 +12,16 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
-import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQueryDto;
@@ -64,25 +66,34 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	public CursorPageResponse<StudyGroupsResponse> dynamicFindStudyGroupsWithCursorPagination(
 		StudyGroupDto.FindCondition conditionDto
 	) {
-		jpaQueryFactory.selectFrom(studyGroup).join(studyGroup.preferredMBTIs).fetchJoin().fetch();
+		jpaQueryFactory
+			.selectFrom(studyGroup)
+			.join(studyGroup.preferredMBTIs, preferredMbti).fetchJoin()
+			.fetch();
 
-		List<StudyGroupMember> contents = jpaQueryFactory
-			.selectFrom(studyGroupMember)
-			.leftJoin(studyGroupMember.member, member).fetchJoin()
-			.leftJoin(studyGroupMember.studyGroup, studyGroup).fetchJoin()
+		List<StudyGroupQueryDto.StudyGroupsDto> contents = jpaQueryFactory
+			.select(Projections.constructor(StudyGroupQueryDto.StudyGroupsDto.class, studyGroup, member.id))
+			.from(studyGroup)
+			.join(studyGroupMember).on(studyGroupMember.studyGroup.id.eq(studyGroup.id))
+			.join(studyGroupMember.member, member)
 			.where(
 				lessThanLastStudyGroupId(conditionDto.lastStudyGroupId()),
+				notDeletedStudyGroup(),
 				equalRegion(conditionDto.region()),
 				equalTopic(conditionDto.topic()),
-				hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER),
-				notDeletedMember(),
+				containsMbti(conditionDto.mbti()),
 				recruitmentNotClosed(),
-				notDeletedStudyGroup())
-			.orderBy(studyGroup.id.desc())
+				hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER),
+				notDeletedMember())
+			.orderBy(studyGroupIdDesc())
 			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
 			.fetch();
 
 		boolean hasNext = contents.size() > conditionDto.size();
+
+		if (hasNext) {
+			contents.remove(contents.size() - 1);
+		}
 
 		return StudyGroupConverter.toStudyGroupsCursorPageResponse(contents, hasNext);
 	}
@@ -91,21 +102,29 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	public CursorPageResponse<StudyGroupsResponse> findMemberStudyGroupsWithCursorPagination(
 		StudyGroupDto.FindCondition conditionDto
 	) {
-		jpaQueryFactory.selectFrom(studyGroup).join(studyGroup.preferredMBTIs).fetchJoin().fetch();
+		jpaQueryFactory.selectFrom(studyGroup)
+			.join(studyGroup.preferredMBTIs).fetchJoin()
+			.fetch();
 
-		List<StudyGroupMember> contents = jpaQueryFactory
-			.selectFrom(studyGroupMember)
-			.leftJoin(studyGroupMember.member, member).fetchJoin()
-			.leftJoin(studyGroupMember.studyGroup, studyGroup).fetchJoin()
+		List<StudyGroupQueryDto.StudyGroupsDto> contents = jpaQueryFactory
+			.select(Projections.constructor(StudyGroupQueryDto.StudyGroupsDto.class, studyGroup, member.id))
+			.from(studyGroup)
+			.join(studyGroupMember).on(studyGroupMember.studyGroup.id.eq(studyGroup.id))
+			.join(studyGroupMember.member, member)
 			.where(
 				lessThanLastStudyGroupId(conditionDto.lastStudyGroupId()),
 				hasStudyGroupMemberRole(conditionDto.studyGroupMemberRole()),
-				equalMemberId(conditionDto.memberId()))
-			.orderBy(studyGroup.id.desc())
+				equalMemberId(conditionDto.memberId()),
+				notDeletedStudyGroup())
+			.orderBy(studyGroupIdDesc())
 			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
 			.fetch();
 
 		boolean hasNext = contents.size() > conditionDto.size();
+
+		if (hasNext) {
+			contents.remove(contents.size() - 1);
+		}
 
 		return StudyGroupConverter.toStudyGroupsCursorPageResponse(contents, hasNext);
 	}
@@ -122,9 +141,17 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 		return topic == null ? null : studyGroup.topic.eq(topic);
 	}
 
-	// private BooleanExpression containsMbti(Mbti mbti) {
-	// 	return mbti == null ? null : studyGroup.preferredMBTIs.contains(mbti);
-	// }
+	private BooleanExpression containsMbti(Mbti mbti) {
+		return studyGroup.id
+			.in(JPAExpressions
+				.select(preferredMbti.studyGroup.id)
+				.from(preferredMbti)
+				.where(equalMbti(mbti)));
+	}
+
+	private BooleanExpression equalMbti(Mbti mbti) {
+		return mbti == null ? null : preferredMbti.mbti.eq(mbti);
+	}
 
 	private BooleanExpression recruitmentNotClosed() {
 		return startDateTimeHasNotPassed().and(lessThanNumberOfRecruits());
@@ -136,5 +163,9 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 
 	private BooleanExpression lessThanNumberOfRecruits() {
 		return studyGroup.numberOfMembers.lt(studyGroup.numberOfRecruits);
+	}
+
+	private OrderSpecifier<Long> studyGroupIdDesc() {
+		return studyGroup.id.desc();
 	}
 }

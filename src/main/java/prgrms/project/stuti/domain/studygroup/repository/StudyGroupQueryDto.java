@@ -1,11 +1,14 @@
 package prgrms.project.stuti.domain.studygroup.repository;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 
 public record StudyGroupQueryDto() {
@@ -29,6 +32,13 @@ public record StudyGroupQueryDto() {
 		int numberOfMembers,
 		int numberOfRecruits,
 		String description
+	) {
+
+	}
+
+	public static record StudyGroupsDto(
+		StudyGroup studyGroup,
+		Long memberId
 	) {
 
 	}

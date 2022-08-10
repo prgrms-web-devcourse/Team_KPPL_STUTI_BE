@@ -46,5 +46,10 @@ public class MemberException extends BusinessException {
 		throw new MemberException(ErrorCode.NOT_MATCH_MY_PAGE_MEMBER,
 			MessageFormat.format("마이 페이지의 회원정보와 일치하지 않는 회원입니다. (authMemberId: {0})", authMemberId));
 	}
+
+	public static final MemberException notValidAuthType(String provider) {
+		throw new MemberException(ErrorCode.INVALID_AUTH_TYPE,
+			MessageFormat.format("유효하지 않은 Auth 타입입니다. (provider: {0})", provider));
+	}
 }
 

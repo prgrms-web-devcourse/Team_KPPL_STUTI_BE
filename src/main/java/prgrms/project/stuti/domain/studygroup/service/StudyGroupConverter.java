@@ -12,9 +12,10 @@ import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
+import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
@@ -40,35 +41,37 @@ public class StudyGroupConverter {
 		return new StudyGroupIdResponse(studyGroupId);
 	}
 
-	public static StudyGroupResponse toStudyGroupResponse(StudyGroupMember studyGroupDetail) {
-		StudyGroup studyGroup = studyGroupDetail.getStudyGroup();
-		StudyPeriod studyPeriod = studyGroup.getStudyPeriod();
-		Member member = studyGroupDetail.getMember();
+	public static StudyGroupDetailResponse toStudyGroupDetailResponse(
+		List<StudyGroupQueryDto.StudyGroupDetailDto> detailDtos
+	) {
+		StudyGroupQueryDto.StudyGroupDetailDto detailDto = detailDtos.get(0);
 
-		return StudyGroupResponse
+		return StudyGroupDetailResponse
 			.builder()
-			.studyGroupId(studyGroup.getId())
-			.topic(studyGroup.getTopic().getValue())
-			.title(studyGroup.getTitle())
-			.imageUrl(studyGroup.getImageUrl())
-			.leader(toStudyGroupLeaderResponse(member))
-			.preferredMBTIs(toPreferredMBTISet(studyGroup.getPreferredMBTIs()))
-			.isOnline(studyGroup.isOnline())
-			.region(studyGroup.getRegion().getValue())
-			.startDateTime(studyPeriod.getStartDateTime())
-			.endDateTime(studyPeriod.getEndDateTime())
-			.numberOfMembers(studyGroup.getNumberOfMembers())
-			.numberOfRecruits(studyGroup.getNumberOfRecruits())
-			.description(studyGroup.getDescription())
+			.studyGroupId(detailDto.studyGroupId())
+			.topic(detailDto.topic().getValue())
+			.title(detailDto.title())
+			.imageUrl(detailDto.imageUrl())
+			.leader(toStudyLeaderResponse(detailDto))
+			.preferredMBTIs(
+				detailDtos
+					.stream()
+					.map(StudyGroupQueryDto.StudyGroupDetailDto::preferredMBTI)
+					.collect(Collectors.toSet()))
+			.isOnline(detailDto.isOnline())
+			.region(detailDto.region().getValue())
+			.startDateTime(detailDto.startDateTime())
+			.endDateTime(detailDto.endDateTime())
+			.numberOfMembers(detailDto.numberOfMembers())
+			.numberOfRecruits(detailDto.numberOfRecruits())
+			.description(detailDto.description())
 			.build();
 	}
-
-
 
 	public static CursorPageResponse<StudyGroupsResponse> toStudyGroupsCursorPageResponse(
 		List<StudyGroupMember> studyGroupMembers, boolean hasNext
 	) {
-		return new CursorPageResponse<>(toStudyGroupResponse(studyGroupMembers), hasNext);
+		return new CursorPageResponse<>(toStudyGroupsResponse(studyGroupMembers), hasNext);
 	}
 
 	private static Set<PreferredMbti> toPreferredMBTIs(Set<Mbti> preferredMBTIs) {
@@ -79,19 +82,21 @@ public class StudyGroupConverter {
 		return preferredMbtis.stream().map(PreferredMbti::getMbti).collect(Collectors.toSet());
 	}
 
-	private static StudyGroupResponse.StudyGroupLeader toStudyGroupLeaderResponse(Member member) {
-		return StudyGroupResponse.StudyGroupLeader
+	private static StudyGroupDetailResponse.StudyLeaderResponse toStudyLeaderResponse(
+		StudyGroupQueryDto.StudyGroupDetailDto detailDto
+	) {
+		return StudyGroupDetailResponse.StudyLeaderResponse
 			.builder()
-			.memberId(member.getId())
-			.profileImageUrl(member.getProfileImageUrl())
-			.nickname(member.getNickName())
-			.field(member.getField().getFieldValue())
-			.career(member.getCareer().getCareerValue())
-			.mbti(member.getMbti())
+			.memberId(detailDto.memberId())
+			.profileImageUrl(detailDto.profileImageUrl())
+			.nickname(detailDto.nickname())
+			.field(detailDto.field().getFieldValue())
+			.career(detailDto.career().getCareerValue())
+			.mbti(detailDto.mbti())
 			.build();
 	}
 
-	private static List<StudyGroupsResponse> toStudyGroupResponse(List<StudyGroupMember> studyGroupMembers) {
+	private static List<StudyGroupsResponse> toStudyGroupsResponse(List<StudyGroupMember> studyGroupMembers) {
 		return studyGroupMembers
 			.stream()
 			.map(studyGroupMember -> {

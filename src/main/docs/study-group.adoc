@@ -17,7 +17,7 @@ operation::get-my-study-groups[snippets='http-request,request-headers,request-pa
 
 === 상세조회
 
-operation::get-study-group[snippets='http-request,request-headers,path-parameters,http-response,response-headers,response-body,response-fields']
+operation::get-study-group-detail[snippets='http-request,request-headers,path-parameters,http-response,response-headers,response-body,response-fields']
 '''
 
 === 수정

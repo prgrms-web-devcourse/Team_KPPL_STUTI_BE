@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import prgrms.project.stuti.config.RepositoryTestConfig;
+import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
@@ -41,6 +44,7 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 				.title("test title")
 				.topic(Topic.NETWORK)
 				.isOnline(true)
+				.preferredMBTIs(Set.of(new PreferredMbti(Mbti.ENFJ)))
 				.region(Region.ONLINE)
 				.numberOfRecruits(5)
 				.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(10)))

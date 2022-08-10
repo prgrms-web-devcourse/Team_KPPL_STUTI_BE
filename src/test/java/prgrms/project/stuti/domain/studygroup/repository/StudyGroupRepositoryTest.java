@@ -3,7 +3,7 @@ package prgrms.project.stuti.domain.studygroup.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -61,15 +61,16 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 		//given
 		Long studyGroupId = studyGroup.getId();
 
-		//when
-		Optional<StudyGroupMember> studyGroupDetail = studyGroupRepository.findStudyGroupDetailById(studyGroupId);
+		// when
+		List<StudyGroupQueryDto.StudyGroupDetailDto> detailDtos =
+			studyGroupRepository.findStudyGroupDetailById(studyGroupId);
 
 		// then
-		assertTrue(studyGroupDetail.isPresent());
+		assertFalse(detailDtos.isEmpty());
 
-		StudyGroupMember detail = studyGroupDetail.get();
-		assertEquals(studyGroup.getId(), detail.getStudyGroup().getId());
-		assertEquals(member.getId(), detail.getMember().getId());
+		StudyGroupQueryDto.StudyGroupDetailDto detailDto = detailDtos.get(0);
+		assertEquals(studyGroup.getId(), detailDto.studyGroupId());
+		assertEquals(member.getId(), detailDto.memberId());
 	}
 
 	@Test

@@ -1,5 +1,7 @@
 package prgrms.project.stuti.domain.studygroup.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,11 +12,12 @@ import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
+import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
@@ -51,12 +54,15 @@ public class StudyGroupService {
 	}
 
 	@Transactional(readOnly = true)
-	public StudyGroupResponse getStudyGroup(StudyGroupDto.ReadDto readDto) {
-		Long studyGroupId = readDto.studyGroupId();
-		StudyGroupMember studyGroupDetail = studyGroupRepository.findStudyGroupDetailById(studyGroupId)
-			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
+	public StudyGroupDetailResponse getStudyGroupDetail(StudyGroupDto.ReadDto readDto) {
+		List<StudyGroupQueryDto.StudyGroupDetailDto> detailDtos =
+			studyGroupRepository.findStudyGroupDetailById(readDto.studyGroupId());
 
-		return StudyGroupConverter.toStudyGroupResponse(studyGroupDetail);
+		if (detailDtos.isEmpty()) {
+			throw StudyGroupException.notFoundStudyGroup(readDto.studyGroupId());
+		}
+
+		return StudyGroupConverter.toStudyGroupDetailResponse(detailDtos);
 	}
 
 	@Transactional
@@ -73,11 +79,8 @@ public class StudyGroupService {
 
 	@Transactional
 	public void deleteStudyGroup(StudyGroupDto.DeleteDto deleteDto) {
-		Long memberId = deleteDto.memberId();
-		Long studyGroupId = deleteDto.studyGroupId();
-
-		validateLeader(memberId, studyGroupId);
-		updateToDeleted(studyGroupId);
+		validateLeader(deleteDto.memberId(), deleteDto.studyGroupId());
+		updateToDeleted(deleteDto.studyGroupId());
 	}
 
 	private StudyGroup saveStudyGroup(StudyGroupDto.CreateDto createDto, String imageUrl) {
@@ -103,10 +106,12 @@ public class StudyGroupService {
 	}
 
 	private void updateTitleAndDescription(String title, String description, StudyGroup studyGroup) {
-		if (!title.equals(studyGroup.getTitle()) && !description.equals(studyGroup.getDescription())) {
-			studyGroup.updateTitle(title);
-			studyGroup.updateDescription(description);
+		if (title.equals(studyGroup.getTitle()) && description.equals(studyGroup.getDescription())) {
+			return;
 		}
+
+		studyGroup.updateTitle(title);
+		studyGroup.updateDescription(description);
 	}
 
 	private void updateToDeleted(Long studyGroupId) {

@@ -21,7 +21,7 @@ import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupRequest;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
@@ -67,11 +67,11 @@ public class StudyGroupRestController {
 	}
 
 	@GetMapping("/{studyGroupId}")
-	public ResponseEntity<StudyGroupResponse> getStudyGroup(@PathVariable Long studyGroupId) {
+	public ResponseEntity<StudyGroupDetailResponse> getStudyGroupDetail(@PathVariable Long studyGroupId) {
 		StudyGroupDto.ReadDto readDto = StudyGroupMapper.toStudyGroupReadDto(studyGroupId);
-		StudyGroupResponse studyGroupResponse = studyGroupService.getStudyGroup(readDto);
+		StudyGroupDetailResponse studyGroupDetailResponse = studyGroupService.getStudyGroupDetail(readDto);
 
-		return ResponseEntity.ok(studyGroupResponse);
+		return ResponseEntity.ok(studyGroupDetailResponse);
 	}
 
 	@PostMapping("/{studyGroupId}")

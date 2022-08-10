@@ -31,46 +31,51 @@ public class StudyGroupMemberService {
 
 	@Transactional
 	public StudyGroupMemberIdResponse applyForJoinStudyGroup(StudyGroupMemberDto.CreateDto createDto) {
-		Long memberId = createDto.memberId();
-		Long studyGroupId = createDto.studyGroupId();
-		validateExistingStudyGroupMember(memberId, studyGroupId);
-		Long studyGroupMemberId = saveStudyApplicant(memberId, studyGroupId);
+		validateExistingStudyGroupMember(createDto.memberId(), createDto.studyGroupId());
+		StudyGroupMember studyApplicant = saveStudyApplicant(createDto.memberId(), createDto.studyGroupId());
 
-		return StudyGroupMemberConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
+		return StudyGroupMemberConverter.toStudyGroupMemberIdResponse(studyApplicant.getId());
 	}
 
 	@Transactional(readOnly = true)
 	public StudyGroupMembersResponse getStudyGroupMembers(StudyGroupMemberDto.ReadDto readDto) {
-		Long memberId = readDto.memberId();
-		Long studyGroupId = readDto.studyGroupId();
-		validateStudyLeader(memberId, studyGroupId);
-		List<StudyGroupMember> studyGroupMembers = studyGroupMemberRepository.findStudyGroupMembers(studyGroupId);
+		validateStudyLeader(readDto.memberId(), readDto.studyGroupId());
+		List<StudyGroupMember> studyGroupMembers =
+			studyGroupMemberRepository.findStudyGroupMembers(readDto.studyGroupId());
 
 		return StudyGroupMemberConverter.toStudyGroupMembersResponse(studyGroupMembers);
 	}
 
 	@Transactional
 	public StudyGroupMemberIdResponse acceptRequestForJoin(StudyGroupMemberDto.UpdateDto updateDto) {
-		Long memberId = updateDto.memberId();
-		Long studyGroupId = updateDto.studyGroupId();
-		Long studyGroupMemberId = updateDto.studyGroupMemberId();
-
-		validateStudyLeader(memberId, studyGroupId);
-		StudyGroupMember studyGroupMember = findStudyGroupMember(studyGroupMemberId);
+		validateStudyLeader(updateDto.memberId(), updateDto.studyGroupId());
+		StudyGroupMember studyGroupMember = findStudyGroupMember(updateDto.studyGroupMemberId());
 		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
 
-		if (studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)) {
+		if (isApplicant(studyGroupMember)) {
 			studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
+			studyGroup.decreaseNumberOfApplicants();
 			studyGroup.increaseNumberOfMembers();
 		}
 
-		return StudyGroupMemberConverter.toStudyGroupMemberIdResponse(studyGroupMemberId);
+		return StudyGroupMemberConverter.toStudyGroupMemberIdResponse(updateDto.studyGroupMemberId());
 	}
 
 	@Transactional
 	public void deleteStudyGroupMember(StudyGroupMemberDto.DeleteDto deleteDto) {
 		validateStudyLeader(deleteDto.memberId(), deleteDto.studyGroupId());
+		StudyGroupMember studyGroupMember = findStudyGroupMember(deleteDto.studyGroupMemberId());
+		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
+
 		studyGroupMemberRepository.deleteById(deleteDto.studyGroupMemberId());
+
+		if (isApplicant(studyGroupMember)) {
+			studyGroup.decreaseNumberOfApplicants();
+
+			return;
+		}
+
+		studyGroup.decreaseNumberOfMembers();
 	}
 
 	private StudyGroupMember findStudyGroupMember(Long studyGroupMemberId) {
@@ -94,11 +99,16 @@ public class StudyGroupMemberService {
 		}
 	}
 
-	private Long saveStudyApplicant(Long memberId, Long studyGroupId) {
+	private StudyGroupMember saveStudyApplicant(Long memberId, Long studyGroupId) {
 		Member member = findMember(memberId);
 		StudyGroup studyGroup = findStudyGroup(studyGroupId);
+		studyGroup.increaseNumberOfApplicants();
 
-		return studyGroupMemberRepository.save(new StudyGroupMember(STUDY_APPLICANT, member, studyGroup)).getId();
+		return studyGroupMemberRepository.save(new StudyGroupMember(STUDY_APPLICANT, member, studyGroup));
+	}
+
+	private boolean isApplicant(StudyGroupMember studyGroupMember) {
+		return studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT);
 	}
 
 	private Member findMember(Long memberId) {

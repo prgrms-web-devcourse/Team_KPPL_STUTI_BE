@@ -22,11 +22,6 @@ public class AwsS3ImageUploader implements ImageUploader {
 	}
 
 	@Override
-	public String createThumbnail(String imageUrl) {
-		return Strings.EMPTY;
-	}
-
-	@Override
 	public void delete(String imageUrl) {
 	}
 }

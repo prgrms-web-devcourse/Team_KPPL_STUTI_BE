@@ -97,7 +97,7 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 
 		//when
 		CursorPageResponse<StudyGroupsResponse> pageResponse =
-			studyGroupRepository.dynamicFindAllWithCursorPagination(conditionDto);
+			studyGroupRepository.dynamicFindStudyGroupsWithCursorPagination(conditionDto);
 
 		//then
 		assertFalse(pageResponse.contents().isEmpty());

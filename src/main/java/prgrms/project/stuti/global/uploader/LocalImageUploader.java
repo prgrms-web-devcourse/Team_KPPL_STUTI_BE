@@ -24,15 +24,13 @@ import prgrms.project.stuti.global.uploader.common.ImageFileUtils;
 public record LocalImageUploader(ResourceLoader resourceLoader) implements ImageUploader {
 
 	private static final String DEFAULT_CLASS_PATH = "classpath:static";
-	private static final String BASIC_IMAGE_URL = "/images/basic/basic.PNG";
-	private static final String BASIC_THUMBNAIL_URL = "/images/basic/basic.PNG";
 
 	@Override
 	public String upload(MultipartFile multipartFile, ImageDirectory imageDirectory) {
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
 
 		if (multipartFile == null || multipartFile.isEmpty()) {
-			return BASIC_IMAGE_URL;
+			return Strings.EMPTY;
 		}
 
 		return storeImageFile(multipartFile, imageDirectory, resource);
@@ -43,8 +41,8 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
 		List<String> imageFileUrls = Collections.synchronizedList(new ArrayList<>());
 
-		if (multipartFiles.isEmpty()) {
-			return List.of(BASIC_IMAGE_URL);
+		if (multipartFiles == null || multipartFiles.isEmpty()) {
+			return List.of(Strings.EMPTY);
 		}
 
 		for (MultipartFile multipartFile : multipartFiles) {
@@ -56,32 +54,12 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 	}
 
 	@Override
-	public String createThumbnail(String imageUrl) {
-		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
-
-		if (imageUrl.equals(BASIC_IMAGE_URL)) {
-			return BASIC_THUMBNAIL_URL;
-		}
-
-		try {
-			URL rootUrl = resource.getURL();
-			String rootPath = rootUrl.getPath();
-			String imageFileUrl = Paths.get(rootPath, imageUrl).toString();
-
-			String thumbnailFileUrl = ImageFileUtils.createThumbnail(new File(imageFileUrl));
-
-			return getThumbnailFileUrl(rootPath, thumbnailFileUrl);
-		} catch (IOException ex) {
-			throw FileException.failedToCreateThumbnail(ex);
-		}
-	}
-
-	@Override
 	public void delete(String imageUrl) {
 		Resource resource = resourceLoader.getResource(DEFAULT_CLASS_PATH);
 
 		try {
 			URL rootUrl = resource.getURL();
+
 			Files.deleteIfExists(Paths.get(rootUrl.getPath(), imageUrl));
 		} catch (IOException ex) {
 			throw FileException.failedToDelete(ex);
@@ -103,15 +81,10 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		return new File(getImageFileUrl(directory.getAbsolutePath(), newName));
 	}
 
-	private String getThumbnailFileUrl(String rootPath, String thumbnailFullPath) {
-		return thumbnailFullPath.replace(rootPath, Strings.EMPTY);
-	}
-
 	private String storeImageFile(MultipartFile multipartFile, ImageDirectory imageDirectory, Resource resource) {
 		try {
 			URL rootUrl = resource.getURL();
-			File directory =
-				ImageFileUtils.makeDirectory(getDirectoryPath(rootUrl.getPath(), imageDirectory.getDirectory()));
+			File directory = makeDirectory(getDirectoryPath(rootUrl.getPath(), imageDirectory.getDirectory()));
 			File imageFile = createImageFile(multipartFile, directory);
 
 			multipartFile.transferTo(imageFile);
@@ -120,5 +93,15 @@ public record LocalImageUploader(ResourceLoader resourceLoader) implements Image
 		} catch (IOException ex) {
 			throw FileException.failedToUpload(ex);
 		}
+	}
+
+	private File makeDirectory(String fullPath) {
+		File directory = new File(fullPath);
+
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+
+		return directory;
 	}
 }

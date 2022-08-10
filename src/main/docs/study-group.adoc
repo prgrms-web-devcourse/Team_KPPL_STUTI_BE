@@ -12,7 +12,7 @@ operation::get-study-groups[snippets='http-request,request-headers,request-param
 
 === 마이 페이지 조회
 
-operation::get-my-study-groups[snippets='http-request,request-headers,request-parameters,http-response,response-headers,response-body,response-fields']
+operation::get-member-study-groups[snippets='http-request,request-headers,request-parameters,http-response,response-headers,response-body,response-fields']
 '''
 
 === 상세조회

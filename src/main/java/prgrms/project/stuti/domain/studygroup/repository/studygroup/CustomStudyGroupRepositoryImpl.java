@@ -88,7 +88,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	}
 
 	@Override
-	public CursorPageResponse<StudyGroupsResponse> findMyStudyGroupsWithCursorPagination(
+	public CursorPageResponse<StudyGroupsResponse> findMemberStudyGroupsWithCursorPagination(
 		StudyGroupDto.FindCondition conditionDto
 	) {
 		jpaQueryFactory.selectFrom(studyGroup).join(studyGroup.preferredMBTIs).fetchJoin().fetch();

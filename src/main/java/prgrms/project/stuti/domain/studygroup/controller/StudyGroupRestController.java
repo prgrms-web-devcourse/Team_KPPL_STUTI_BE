@@ -54,14 +54,15 @@ public class StudyGroupRestController {
 		return ResponseEntity.ok(studyGroupsResponse);
 	}
 
-	@GetMapping("/my-page")
-	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getMyStudyGroups(
-		@AuthenticationPrincipal Long memberId, @RequestParam(defaultValue = "20") Long size,
+	@GetMapping("/members/{memberId}")
+	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getMemberStudyGroups(
+		@PathVariable Long memberId, @RequestParam(defaultValue = "20") Long size,
 		StudyGroupRequest.FindCondition condition
 	) {
 		StudyGroupDto.FindCondition conditionDto =
 			StudyGroupMapper.toStudyGroupFindConditionDto(memberId, size, condition);
-		CursorPageResponse<StudyGroupsResponse> studyGroupsResponse = studyGroupService.getMyStudyGroups(conditionDto);
+		CursorPageResponse<StudyGroupsResponse> studyGroupsResponse =
+			studyGroupService.getMemberStudyGroups(conditionDto);
 
 		return ResponseEntity.ok(studyGroupsResponse);
 	}

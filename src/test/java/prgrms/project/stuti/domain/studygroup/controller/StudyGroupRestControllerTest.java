@@ -119,15 +119,15 @@ class StudyGroupRestControllerTest extends TestConfig {
 	}
 
 	@Test
-	@DisplayName("나의 스터디 그룹을 페이징 조회한다.")
-	void getMyStudyGroups() throws Exception {
+	@DisplayName("회원의 스터디 그룹 리스트를 페이징 조회한다.")
+	void getMemberStudyGroups() throws Exception {
 		//given
 		CursorPageResponse<StudyGroupsResponse> pageResponse = toStudyGroupPageResponse();
-		given(studyGroupService.getMyStudyGroups(any())).willReturn(pageResponse);
+		given(studyGroupService.getMemberStudyGroups(any())).willReturn(pageResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			get(studyGroupApiPrefix + "/my-page")
+			get(studyGroupApiPrefix + "/members/{memberId}", 1L)
 				.queryParams(toStudyGroupFindConditionParams())
 				.contentType(APPLICATION_JSON));
 

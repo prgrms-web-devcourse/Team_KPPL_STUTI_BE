@@ -49,8 +49,8 @@ public class StudyGroupService {
 	}
 
 	@Transactional(readOnly = true)
-	public CursorPageResponse<StudyGroupsResponse> getMyStudyGroups(StudyGroupDto.FindCondition conditionDto) {
-		return studyGroupRepository.findMyStudyGroupsWithCursorPagination(conditionDto);
+	public CursorPageResponse<StudyGroupsResponse> getMemberStudyGroups(StudyGroupDto.FindCondition conditionDto) {
+		return studyGroupRepository.findMemberStudyGroupsWithCursorPagination(conditionDto);
 	}
 
 	@Transactional(readOnly = true)

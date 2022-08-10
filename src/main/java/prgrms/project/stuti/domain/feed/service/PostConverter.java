@@ -5,9 +5,8 @@ import java.util.List;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 
 public class PostConverter {
@@ -16,9 +15,6 @@ public class PostConverter {
 		return new Post(postDto.contents(), member);
 	}
 
-	public static PostIdResponse toPostIdResponse(Long postId) {
-		return new PostIdResponse(postId);
-	}
 
 	public static PostListResponse toPostListResponse(List<PostResponse> postResponses, boolean hasNext) {
 		return new PostListResponse(postResponses, hasNext);

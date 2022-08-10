@@ -6,13 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostLike;
-import prgrms.project.stuti.domain.feed.repository.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
+import prgrms.project.stuti.domain.feed.repository.PostRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.PostException;
 
 @Service
 @RequiredArgsConstructor

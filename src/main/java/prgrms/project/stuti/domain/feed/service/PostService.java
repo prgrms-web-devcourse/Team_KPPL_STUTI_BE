@@ -12,15 +12,14 @@ import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.repository.PostRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.uploader.ImageUploader;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 
@@ -61,7 +60,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public PostIdResponse changePost(PostChangeDto postChangeDto) {
+	public PostResponse changePost(PostChangeDto postChangeDto) {
 		Post post = postRepository.findById(postChangeDto.postId()).orElseThrow(PostException::POST_NOT_FOUND);
 		post.changeContents(postChangeDto.contents());
 		if (postChangeDto.imageFile() != null) {
@@ -74,8 +73,8 @@ public class PostService {
 		PostImage postImage = postImageRepository.findByPostId(post.getId()).get(0);
 		Long totalParentComments = postCommentRepository.totalParentComments(post.getId());
 		List<Long> allLikedMembers = postRepository.findAllLikedMembers(post.getId());
-		PostConverter.toPostResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
-		return PostConverter.toPostIdResponse(post.getId());
+
+		return PostConverter.toPostResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
 	}
 
 	@Transactional

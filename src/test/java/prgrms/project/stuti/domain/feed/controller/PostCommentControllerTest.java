@@ -76,7 +76,7 @@ class PostCommentControllerTest extends TestConfig {
 
 		when(postCommentService.changeComment(any())).thenReturn(postCommentResponse);
 
-		mockMvc.perform(patch("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L)
+		mockMvc.perform(post("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody))
 			.andExpect(status().isOk())

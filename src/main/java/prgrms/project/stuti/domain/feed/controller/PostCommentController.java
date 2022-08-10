@@ -41,7 +41,7 @@ public class PostCommentController {
 		return ResponseEntity.ok(postCommentResponse);
 	}
 
-	@PatchMapping("/api/v1/posts/{postId}/comments/{commentId}")
+	@PostMapping("/api/v1/posts/{postId}/comments/{commentId}")
 	public ResponseEntity<PostCommentResponse> changeComment(@PathVariable Long postId, @PathVariable Long commentId,
 		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
 		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toCommentUpdateDto(postCommentRequest, postId, commentId,

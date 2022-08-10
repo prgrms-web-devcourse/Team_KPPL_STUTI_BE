@@ -6,12 +6,12 @@ import java.util.Set;
 import lombok.Builder;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record StudyGroupResponse(
+public record StudyGroupDetailResponse(
 	Long studyGroupId,
 	String topic,
 	String title,
 	String imageUrl,
-	StudyGroupLeader leader,
+	StudyLeaderResponse leader,
 	Set<Mbti> preferredMBTIs,
 	boolean isOnline,
 	String region,
@@ -23,10 +23,10 @@ public record StudyGroupResponse(
 ) {
 
 	@Builder
-	public StudyGroupResponse {
+	public StudyGroupDetailResponse {
 	}
 
-	public static record StudyGroupLeader(
+	public static record StudyLeaderResponse(
 		Long memberId,
 		String profileImageUrl,
 		String nickname,
@@ -36,7 +36,7 @@ public record StudyGroupResponse(
 	) {
 
 		@Builder
-		public StudyGroupLeader {
+		public StudyLeaderResponse {
 		}
 	}
 }

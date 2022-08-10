@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.config.ServiceTestConfig;
 import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
@@ -26,7 +27,7 @@ import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
 class StudyGroupServiceTest extends ServiceTestConfig {
@@ -71,13 +72,13 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 		StudyGroupDto.ReadDto readDto = new StudyGroupDto.ReadDto(studyGroupId);
 
 		//when
-		StudyGroupResponse studyGroupResponse = studyGroupService.getStudyGroup(readDto);
+		StudyGroupDetailResponse studyGroupDetailResponse = studyGroupService.getStudyGroupDetail(readDto);
 
 		//then
 		assertAll(
-			() -> assertEquals(studyGroup.getId(), studyGroupResponse.studyGroupId()),
-			() -> assertEquals(studyGroup.getTitle(), studyGroupResponse.title()),
-			() -> assertEquals(studyGroup.getDescription(), studyGroupResponse.description())
+			() -> assertEquals(studyGroup.getId(), studyGroupDetailResponse.studyGroupId()),
+			() -> assertEquals(studyGroup.getTitle(), studyGroupDetailResponse.title()),
+			() -> assertEquals(studyGroup.getDescription(), studyGroupDetailResponse.description())
 		);
 	}
 
@@ -200,7 +201,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 					.topic(Topic.NETWORK)
 					.isOnline(true)
 					.numberOfRecruits(5)
-					.preferredMBTIs(Set.of(Mbti.ESFJ))
+					.preferredMBTIs(Set.of(new PreferredMbti(Mbti.ESFJ)))
 					.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(10)))
 					.description("description")
 					.build());
@@ -213,7 +214,7 @@ class StudyGroupServiceTest extends ServiceTestConfig {
 					.isOnline(true)
 					.region(Region.ONLINE)
 					.numberOfRecruits(5)
-					.preferredMBTIs(Set.of(Mbti.ESFJ))
+					.preferredMBTIs(Set.of(new PreferredMbti(Mbti.ESFJ)))
 					.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(10)))
 					.description("description")
 					.build());

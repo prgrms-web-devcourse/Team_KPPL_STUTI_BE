@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import prgrms.project.stuti.config.ServiceTestConfig;
+import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupQuestion;
@@ -46,6 +49,7 @@ class StudyGroupQuestionServiceTest extends ServiceTestConfig {
 				.topic(Topic.AI)
 				.isOnline(false)
 				.region(Region.SEOUL)
+				.preferredMBTIs(Set.of(new PreferredMbti(Mbti.ENFJ)))
 				.numberOfRecruits(5)
 				.studyPeriod(new StudyPeriod(LocalDateTime.now().plusDays(10), LocalDateTime.now().plusMonths(3)))
 				.description("this is new study group")

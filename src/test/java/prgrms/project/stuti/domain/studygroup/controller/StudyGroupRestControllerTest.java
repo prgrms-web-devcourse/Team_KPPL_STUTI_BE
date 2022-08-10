@@ -43,8 +43,8 @@ import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupResponse.StudyGroupLeader;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse.StudyLeaderResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
@@ -119,15 +119,15 @@ class StudyGroupRestControllerTest extends TestConfig {
 	}
 
 	@Test
-	@DisplayName("나의 스터디 그룹을 페이징 조회한다.")
-	void getMyStudyGroups() throws Exception {
+	@DisplayName("회원의 스터디 그룹 리스트를 페이징 조회한다.")
+	void getMemberStudyGroups() throws Exception {
 		//given
 		CursorPageResponse<StudyGroupsResponse> pageResponse = toStudyGroupPageResponse();
-		given(studyGroupService.getMyStudyGroups(any())).willReturn(pageResponse);
+		given(studyGroupService.getMemberStudyGroups(any())).willReturn(pageResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
-			get(studyGroupApiPrefix + "/my-page")
+			get(studyGroupApiPrefix + "/members/{memberId}", 1L)
 				.queryParams(toStudyGroupFindConditionParams())
 				.contentType(APPLICATION_JSON));
 
@@ -146,10 +146,10 @@ class StudyGroupRestControllerTest extends TestConfig {
 
 	@Test
 	@DisplayName("스터디 그룹을 상세조회한다.")
-	void getStudyGroup() throws Exception {
+	void getStudyGroupDetail() throws Exception {
 		//given
-		StudyGroupResponse studyGroupResponse = toStudyGroupResponse();
-		given(studyGroupService.getStudyGroup(any())).willReturn(studyGroupResponse);
+		StudyGroupDetailResponse studyGroupDetailResponse = toStudyGroupResponse();
+		given(studyGroupService.getStudyGroupDetail(any())).willReturn(studyGroupDetailResponse);
 
 		//when
 		ResultActions resultActions = mockMvc.perform(
@@ -160,7 +160,7 @@ class StudyGroupRestControllerTest extends TestConfig {
 		resultActions
 			.andExpectAll(
 				status().isOk(),
-				content().json(objectMapper.writeValueAsString(studyGroupResponse)))
+				content().json(objectMapper.writeValueAsString(studyGroupDetailResponse)))
 			.andDo(
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
@@ -266,16 +266,16 @@ class StudyGroupRestControllerTest extends TestConfig {
 		return new CursorPageResponse<>(studyGroupResponses, true);
 	}
 
-	private StudyGroupResponse toStudyGroupResponse() {
+	private StudyGroupDetailResponse toStudyGroupResponse() {
 
-		return StudyGroupResponse
+		return StudyGroupDetailResponse
 			.builder()
 			.studyGroupId(studyGroupId)
 			.topic(Topic.DEV_OPS.getValue())
 			.title("test title")
 			.imageUrl("test image url")
 			.leader(
-				StudyGroupLeader.builder()
+				StudyLeaderResponse.builder()
 					.memberId(1L)
 					.profileImageUrl("test profile image url")
 					.nickname("nickname")

@@ -96,8 +96,13 @@ class PostControllerTest extends TestConfig {
 	void testChangePost() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
+		Member member = new Member("test@gmail.com", "testNickname", Field.BACKEND, Career.JUNIOR,
+			"imageUrl.com", "testGithub.com", Mbti.ENFJ, "testBlog.com", MemberRole.ROLE_MEMBER);
+		Post post = new Post("게시글 내용", member);
+		PostImage postImage = new PostImage("testPostUrl.img", post);
 
-		when(postService.changePost(any())).thenReturn(new PostIdResponse(1L));
+		when(postService.changePost(any())).thenReturn(
+			PostConverter.toPostResponse(post, member, postImage, 3L, List.of(1L, 2L, 3L)));
 
 		mockMvc.perform(
 				multipart(HttpMethod.POST, "/api/v1/posts/{postId}", 1L)

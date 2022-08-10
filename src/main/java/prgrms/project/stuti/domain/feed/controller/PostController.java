@@ -47,12 +47,12 @@ public class PostController {
 	}
 
 	@PostMapping("/api/v1/posts/{postId}")
-	public ResponseEntity<PostIdResponse> changePost(@Valid @ModelAttribute PostRequest registerPostRequest,
+	public ResponseEntity<PostResponse> changePost(@Valid @ModelAttribute PostRequest registerPostRequest,
 		@PathVariable Long postId) {
 		PostChangeDto postChangeDto = PostMapper.toPostChangeDto(registerPostRequest, postId);
-		PostIdResponse postIdResponse = postService.changePost(postChangeDto);
+		PostResponse postResponse = postService.changePost(postChangeDto);
 
-		return ResponseEntity.ok().body(postIdResponse);
+		return ResponseEntity.ok().body(postResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}")

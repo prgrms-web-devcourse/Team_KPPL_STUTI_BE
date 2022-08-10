@@ -181,10 +181,10 @@ class PostServiceTest {
 		MultipartFile testChangeMultipartFile = getMockMultipartFile(changeImageFile);
 		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.",
 			testChangeMultipartFile);
-		PostIdResponse changePostIdResponse = postService.changePost(postChangeDto);
+		PostResponse changedPostResponse = postService.changePost(postChangeDto);
 
-		List<PostImage> changedImages = postImageRepository.findByPostId(changePostIdResponse.postId());
-		Post changedPost = postRepository.findById(changePostIdResponse.postId()).get();
+		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostResponse.postId());
+		Post changedPost = postRepository.findById(changedPostResponse.postId()).get();
 
 		assertThat(changedPost.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages).hasSize(1);
@@ -197,10 +197,10 @@ class PostServiceTest {
 		PostResponse postResponse = savePost();
 		List<PostImage> originImages = postImageRepository.findByPostId(postResponse.postId());
 		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.", null);
-		PostIdResponse changePostIdResponse = postService.changePost(postChangeDto);
+		PostResponse changedPostResponse = postService.changePost(postChangeDto);
 
-		List<PostImage> changedImages = postImageRepository.findByPostId(changePostIdResponse.postId());
-		Post changedPost = postRepository.findById(changePostIdResponse.postId()).get();
+		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostResponse.postId());
+		Post changedPost = postRepository.findById(changedPostResponse.postId()).get();
 
 		assertThat(changedPost.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages.get(0).getImageUrl()).isEqualTo(originImages.get(0).getImageUrl());
@@ -233,6 +233,7 @@ class PostServiceTest {
 			.contents("새로운 게시글의 내용입니다.")
 			.imageFile(testOriginalMultipartFile)
 			.build();
+
 		return postService.registerPost(postDto);
 	}
 

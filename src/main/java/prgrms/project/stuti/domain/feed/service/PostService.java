@@ -61,7 +61,7 @@ public class PostService {
 	}
 
 	@Transactional
-	public PostIdResponse changePost(PostChangeDto postChangeDto) {
+	public PostResponse changePost(PostChangeDto postChangeDto) {
 		Post post = postRepository.findById(postChangeDto.postId()).orElseThrow(PostException::POST_NOT_FOUND);
 		post.changeContents(postChangeDto.contents());
 		if (postChangeDto.imageFile() != null) {
@@ -74,8 +74,8 @@ public class PostService {
 		PostImage postImage = postImageRepository.findByPostId(post.getId()).get(0);
 		Long totalParentComments = postCommentRepository.totalParentComments(post.getId());
 		List<Long> allLikedMembers = postRepository.findAllLikedMembers(post.getId());
-		PostConverter.toPostResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
-		return PostConverter.toPostIdResponse(post.getId());
+
+		return PostConverter.toPostResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
 	}
 
 	@Transactional

@@ -36,6 +36,7 @@ public enum ErrorCode {
 	INVALID_SIGNUP("M005", "Signup time is over", HttpStatus.BAD_REQUEST),
 	BLACKLIST_DETECTION("M006", "AccessToken is deprived", HttpStatus.BAD_REQUEST),
 	NOT_MATCH_MY_PAGE_MEMBER("M007", "Not match with my page member", HttpStatus.BAD_REQUEST),
+	INVALID_AUTH_TYPE("M008", "AUTH type is invalid", HttpStatus.BAD_REQUEST),
 
 	//post
 	POST_NOT_FOUND("P001", "not exist post", HttpStatus.BAD_REQUEST),

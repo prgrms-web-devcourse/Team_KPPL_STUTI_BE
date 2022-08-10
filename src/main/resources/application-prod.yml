@@ -15,16 +15,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
-  security:
-    oauth2:
-      client:
-        registration:
-          naver:
-            redirect-uri: https://stuti.o-r.kr/login/oauth2/code/naver
-          google:
-            redirect-uri: https://stuti.o-r.kr/login/oauth2/code/google
-          github:
-            redirect-uri: https://stuti.o-r.kr/login/oauth2/code/github
 
   flyway:
     enabled: true

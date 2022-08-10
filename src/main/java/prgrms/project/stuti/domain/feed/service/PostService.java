@@ -12,11 +12,10 @@ import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.repository.PostRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
@@ -37,7 +36,7 @@ public class PostService {
 	private final PostLikeRepository postLikeRepository;
 
 	@Transactional
-	public PostIdResponse registerPost(PostCreateDto postDto) {
+	public PostResponse registerPost(PostCreateDto postDto) {
 		Member findMember = memberRepository.findById(postDto.memberId())
 			.orElseThrow(() -> MemberException.notFoundMember(postDto.memberId()));
 		Post post = PostConverter.toPost(postDto, findMember);
@@ -45,33 +44,37 @@ public class PostService {
 
 		String uploadUrl = imageUploader.upload(postDto.imageFile(), ImageDirectory.POST);
 		PostImage postImage = new PostImage(uploadUrl, savedPost);
-		postImageRepository.save(postImage);
+		PostImage savedPostImage = postImageRepository.save(postImage);
 
-		return PostConverter.toPostIdResponse(savedPost.getId());
+		return PostConverter.toPostResponse(savedPost, findMember, savedPostImage, 0L, List.of());
 	}
 
 	@Transactional(readOnly = true)
-	public PostResponse getAllPosts(Long lastPostId, int size) {
-		List<PostDto> postsDtos = postRepository.findAllWithNoOffset(lastPostId, size, null);
+	public PostListResponse getAllPosts(Long lastPostId, int size) {
+		List<PostResponse> postsDtos = postRepository.findAllWithNoOffset(lastPostId, size, null);
 		if (!postsDtos.isEmpty()) {
 			lastPostId = getLastPostId(postsDtos);
 		}
 		boolean hasNext = hasNext(lastPostId);
 
-		return PostConverter.toPostResponse(postsDtos, hasNext);
+		return PostConverter.toPostListResponse(postsDtos, hasNext);
 	}
 
 	@Transactional
 	public PostIdResponse changePost(PostChangeDto postChangeDto) {
 		Post post = postRepository.findById(postChangeDto.postId()).orElseThrow(PostException::POST_NOT_FOUND);
 		post.changeContents(postChangeDto.contents());
-		if(postChangeDto.imageFile() != null) {
+		if (postChangeDto.imageFile() != null) {
 			postImageRepository.deleteByPostId(post.getId());
 			String uploadUrl = imageUploader.upload(postChangeDto.imageFile(), ImageDirectory.POST);
 			PostImage postImage = new PostImage(uploadUrl, post);
 			postImageRepository.save(postImage);
 		}
 
+		PostImage postImage = postImageRepository.findByPostId(post.getId()).get(0);
+		Long totalParentComments = postCommentRepository.totalParentComments(post.getId());
+		List<Long> allLikedMembers = postRepository.findAllLikedMembers(post.getId());
+		PostConverter.toPostResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
 		return PostConverter.toPostIdResponse(post.getId());
 	}
 
@@ -85,14 +88,14 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public PostResponse getMyPosts(Long memberId, Long lastPostId, int size) {
-		List<PostDto> myPosts = postRepository.findAllWithNoOffset(lastPostId, size, memberId);
+	public PostListResponse getMyPosts(Long memberId, Long lastPostId, int size) {
+		List<PostResponse> myPosts = postRepository.findAllWithNoOffset(lastPostId, size, memberId);
 		if (!myPosts.isEmpty()) {
 			lastPostId = getLastPostId(myPosts);
 		}
 		boolean hasNext = hasNextMyPost(lastPostId, memberId);
 
-		return PostConverter.toPostResponse(myPosts, hasNext);
+		return PostConverter.toPostListResponse(myPosts, hasNext);
 	}
 
 	private boolean hasNextMyPost(Long lastPostId, Long memberId) {
@@ -111,8 +114,8 @@ public class PostService {
 		return postRepository.existsByIdLessThan(lastPostId);
 	}
 
-	private Long getLastPostId(List<PostDto> postDtos) {
-		int lastIndex = postDtos.size() - 1;
-		return postDtos.get(lastIndex).postId();
+	private Long getLastPostId(List<PostResponse> postResponses) {
+		int lastIndex = postResponses.size() - 1;
+		return postResponses.get(lastIndex).postId();
 	}
 }

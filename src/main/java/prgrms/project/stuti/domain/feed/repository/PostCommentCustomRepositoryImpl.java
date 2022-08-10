@@ -38,10 +38,7 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 			.limit(size)
 			.fetch();
 
-		Long totalParentComments = jpaQueryFactory.select(postComment.count())
-			.from(postComment)
-			.where(postComment.post.id.eq(postId), postComment.parent.isNull())
-			.fetchOne();
+		Long totalParentComments = totalParentComments(postId);
 
 		boolean hasNext = false;
 		if(postComments.size() == size) {
@@ -55,6 +52,14 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 		}
 
 		return PostCommentConverter.toCommentResponse(postComments, hasNext, totalParentComments);
+	}
+
+	@Override
+	public Long totalParentComments(Long postId) {
+		return jpaQueryFactory.select(postComment.count())
+			.from(postComment)
+			.where(postComment.post.id.eq(postId), postComment.parent.isNull())
+			.fetchOne();
 	}
 
 	private boolean hasNext(Long postId, Long lastCommentId) {

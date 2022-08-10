@@ -18,7 +18,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.domain.feed.model.PostComment;
@@ -29,10 +28,11 @@ import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
 import prgrms.project.stuti.domain.feed.repository.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -104,8 +104,8 @@ class PostServiceTest {
 			.imageFile(testMultipartFile)
 			.build();
 
-		PostIdResponse postIdResponse = postService.registerPost(postDto);
-		Optional<Post> foundFeed = postRepository.findById(postIdResponse.postId());
+		PostResponse postResponse = postService.registerPost(postDto);
+		Optional<Post> foundFeed = postRepository.findById(postResponse.postId());
 
 		assertThat(foundFeed).isNotEmpty();
 		assertThat(foundFeed.get().getContent()).isEqualTo(postDto.contents());
@@ -138,12 +138,12 @@ class PostServiceTest {
 				likedAndCommentPost = post;
 			}
 		}
-		PostLike postLike = new PostLike(savedMember,likedAndCommentPost);
+		PostLike postLike = new PostLike(savedMember, likedAndCommentPost);
 		PostComment postComment = new PostComment("게시글 8에 대한 댓글입니다.", null, savedMember, likedAndCommentPost);
 		postCommentRepository.save(postComment);
 		postLikeRepository.save(postLike);
 
-		PostResponse allPosts = postService.getAllPosts(lastPostId, 2);
+		PostListResponse allPosts = postService.getAllPosts(lastPostId, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글8");
@@ -163,7 +163,7 @@ class PostServiceTest {
 			postImageRepository.save(postImage);
 		}
 
-		PostResponse allPosts = postService.getAllPosts(null, 2);
+		PostListResponse allPosts = postService.getAllPosts(null, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글9");
@@ -173,13 +173,13 @@ class PostServiceTest {
 	@Test
 	@DisplayName("게시글 내용과 업로드 이미지가 둘다 정상 변경된다.")
 	void testChangePost() throws IOException {
-		PostIdResponse postIdResponse = savePost();
-		List<PostImage> originImages = postImageRepository.findByPostId(postIdResponse.postId());
+		PostResponse postResponse = savePost();
+		List<PostImage> originImages = postImageRepository.findByPostId(postResponse.postId());
 
 		File changeImageFile = new File(Paths.get("src", "test", "resources")
 			+ File.separator + "change.jpg");
 		MultipartFile testChangeMultipartFile = getMockMultipartFile(changeImageFile);
-		PostChangeDto postChangeDto = new PostChangeDto(postIdResponse.postId(), "게시글 내용이 변경되었습니다.",
+		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.",
 			testChangeMultipartFile);
 		PostIdResponse changePostIdResponse = postService.changePost(postChangeDto);
 
@@ -194,9 +194,9 @@ class PostServiceTest {
 	@Test
 	@DisplayName("업로드 이미지를 보내주지않으면 삭제하지 않는다. - 원래 이미지를 가지고있는다")
 	void testChangePostWithOutImages() throws IOException {
-		PostIdResponse postIdResponse = savePost();
-		List<PostImage> originImages = postImageRepository.findByPostId(postIdResponse.postId());
-		PostChangeDto postChangeDto = new PostChangeDto(postIdResponse.postId(), "게시글 내용이 변경되었습니다.", null);
+		PostResponse postResponse = savePost();
+		List<PostImage> originImages = postImageRepository.findByPostId(postResponse.postId());
+		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.", null);
 		PostIdResponse changePostIdResponse = postService.changePost(postChangeDto);
 
 		List<PostImage> changedImages = postImageRepository.findByPostId(changePostIdResponse.postId());
@@ -209,9 +209,9 @@ class PostServiceTest {
 	@Test
 	@DisplayName("게시글과 게시글 이미지를 삭제한다")
 	void TestDeletePost() throws IOException {
-		PostIdResponse postIdResponse = savePost();
+		PostResponse postResponse = savePost();
 
-		postService.deletePost(postIdResponse.postId());
+		postService.deletePost(postResponse.postId());
 		List<Post> allPosts = postRepository.findAll();
 
 		assertThat(allPosts).isEmpty();
@@ -223,7 +223,7 @@ class PostServiceTest {
 		assertThrows(PostException.class, () -> postService.deletePost(1L));
 	}
 
-	private PostIdResponse savePost() throws IOException {
+	private PostResponse savePost() throws IOException {
 		String testFilePath = Paths.get("src", "test", "resources").toString();
 		File originalImageFile = new File(testFilePath + File.separator + "test.png");
 		MultipartFile testOriginalMultipartFile = getMockMultipartFile(originalImageFile);
@@ -292,7 +292,7 @@ class PostServiceTest {
 			postImageRepository.save(postImage);
 		}
 
-		PostResponse myPosts = postService.getMyPosts(savedMember.getId(), savedPost.getId(), 3);
+		PostListResponse myPosts = postService.getMyPosts(savedMember.getId(), savedPost.getId(), 3);
 
 		assertThat(myPosts.hasNext()).isTrue();
 		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");

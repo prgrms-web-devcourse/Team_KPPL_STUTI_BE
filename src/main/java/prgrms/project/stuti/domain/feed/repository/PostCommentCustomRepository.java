@@ -7,4 +7,6 @@ public interface PostCommentCustomRepository {
 
 	PageResponse<CommentParentContents> findAllByPostIdAndParentIdIsNUllWithNoOffset(Long postId, Long lastCommentId,
 		int size);
+
+	Long totalParentComments(Long postId);
 }

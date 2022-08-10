@@ -17,16 +17,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import prgrms.project.stuti.config.TestConfig;
+import prgrms.project.stuti.domain.feed.model.Post;
+import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.service.PostConverter;
 import prgrms.project.stuti.domain.feed.service.PostService;
-import prgrms.project.stuti.domain.feed.service.dto.PostDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
+import prgrms.project.stuti.domain.member.model.Career;
+import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.member.model.Member;
+import prgrms.project.stuti.domain.member.model.MemberRole;
 
 @WebMvcTest(PostController.class)
 class PostControllerTest extends TestConfig {
@@ -40,8 +47,13 @@ class PostControllerTest extends TestConfig {
 	void TestRegisterPost() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
+		Member member = new Member("test@gmail.com", "testNickname", Field.BACKEND, Career.JUNIOR,
+			"imageUrl.com", "testGithub.com", Mbti.ENFJ, "testBlog.com", MemberRole.ROLE_MEMBER);
+		Post post = new Post("게시글 내용", member);
+		PostImage postImage = new PostImage("testPostUrl.img", post);
 
-		when(postService.registerPost(any())).thenReturn(PostConverter.toPostIdResponse(1L));
+		when(postService.registerPost(any())).thenReturn(
+			PostConverter.toPostResponse(post, member, postImage, 0L, List.of()));
 
 		mockMvc.perform(
 				multipart("/api/v1/posts")
@@ -55,8 +67,8 @@ class PostControllerTest extends TestConfig {
 	@Test
 	@DisplayName("전체 페이지를 조회한다")
 	void testGetAllPosts() throws Exception {
-		List<PostDto> posts = new ArrayList<>();
-		PostDto postDto = PostDto.builder()
+		List<PostResponse> posts = new ArrayList<>();
+		PostResponse postResponse = PostResponse.builder()
 			.postId(1L)
 			.memberId(1L)
 			.nickname("testUser")
@@ -68,8 +80,8 @@ class PostControllerTest extends TestConfig {
 			.totalPostComments(1L)
 			.likedMembers(List.of(1L, 2L))
 			.build();
-		posts.add(postDto);
-		PostResponse postsResponse = new PostResponse(posts, true);
+		posts.add(postResponse);
+		PostListResponse postsResponse = new PostListResponse(posts, true);
 
 		when(postService.getAllPosts(any(), anyInt())).thenReturn(postsResponse);
 
@@ -109,8 +121,8 @@ class PostControllerTest extends TestConfig {
 	@DisplayName("내 게시글을 조회한다")
 	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
 	void testGetMyPosts() throws Exception {
-		List<PostDto> posts = new ArrayList<>();
-		PostDto postDto = PostDto.builder()
+		List<PostResponse> posts = new ArrayList<>();
+		PostResponse postResponse = PostResponse.builder()
 			.postId(1L)
 			.memberId(1L)
 			.nickname("testUser")
@@ -122,12 +134,12 @@ class PostControllerTest extends TestConfig {
 			.totalPostComments(1L)
 			.likedMembers(List.of(1L, 2L))
 			.build();
-		posts.add(postDto);
-		PostResponse postsResponse = new PostResponse(posts, true);
+		posts.add(postResponse);
+		PostListResponse postsResponse = new PostListResponse(posts, true);
 
 		when(postService.getMyPosts(any(), any(), anyInt())).thenReturn(postsResponse);
 
-		mockMvc.perform(get("/api/v1/posts/myposts"))
+		mockMvc.perform(get("/api/v1/posts/members/{memberId}", 1L))
 			.andExpect(status().isOk())
 			.andDo(print());
 	}

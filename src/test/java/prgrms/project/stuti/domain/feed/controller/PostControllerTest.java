@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
@@ -26,9 +25,8 @@ import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.service.PostConverter;
 import prgrms.project.stuti.domain.feed.service.PostService;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -96,8 +94,13 @@ class PostControllerTest extends TestConfig {
 	void testChangePost() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
+		Member member = new Member("test@gmail.com", "testNickname", Field.BACKEND, Career.JUNIOR,
+			"imageUrl.com", "testGithub.com", Mbti.ENFJ, "testBlog.com", MemberRole.ROLE_MEMBER);
+		Post post = new Post("게시글 내용", member);
+		PostImage postImage = new PostImage("testPostUrl.img", post);
 
-		when(postService.changePost(any())).thenReturn(new PostIdResponse(1L));
+		when(postService.changePost(any())).thenReturn(
+			PostConverter.toPostResponse(post, member, postImage, 3L, List.of(1L, 2L, 3L)));
 
 		mockMvc.perform(
 				multipart(HttpMethod.POST, "/api/v1/posts/{postId}", 1L)

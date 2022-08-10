@@ -20,18 +20,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.model.Post;
+import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.model.PostLike;
 import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
-import prgrms.project.stuti.domain.feed.repository.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
+import prgrms.project.stuti.domain.feed.repository.PostRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostIdResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
@@ -39,8 +38,8 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.error.exception.PostException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -181,10 +180,10 @@ class PostServiceTest {
 		MultipartFile testChangeMultipartFile = getMockMultipartFile(changeImageFile);
 		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.",
 			testChangeMultipartFile);
-		PostIdResponse changePostIdResponse = postService.changePost(postChangeDto);
+		PostResponse changedPostResponse = postService.changePost(postChangeDto);
 
-		List<PostImage> changedImages = postImageRepository.findByPostId(changePostIdResponse.postId());
-		Post changedPost = postRepository.findById(changePostIdResponse.postId()).get();
+		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostResponse.postId());
+		Post changedPost = postRepository.findById(changedPostResponse.postId()).get();
 
 		assertThat(changedPost.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages).hasSize(1);
@@ -197,10 +196,10 @@ class PostServiceTest {
 		PostResponse postResponse = savePost();
 		List<PostImage> originImages = postImageRepository.findByPostId(postResponse.postId());
 		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.", null);
-		PostIdResponse changePostIdResponse = postService.changePost(postChangeDto);
+		PostResponse changedPostResponse = postService.changePost(postChangeDto);
 
-		List<PostImage> changedImages = postImageRepository.findByPostId(changePostIdResponse.postId());
-		Post changedPost = postRepository.findById(changePostIdResponse.postId()).get();
+		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostResponse.postId());
+		Post changedPost = postRepository.findById(changedPostResponse.postId()).get();
 
 		assertThat(changedPost.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages.get(0).getImageUrl()).isEqualTo(originImages.get(0).getImageUrl());
@@ -233,6 +232,7 @@ class PostServiceTest {
 			.contents("새로운 게시글의 내용입니다.")
 			.imageFile(testOriginalMultipartFile)
 			.build();
+
 		return postService.registerPost(postDto);
 	}
 

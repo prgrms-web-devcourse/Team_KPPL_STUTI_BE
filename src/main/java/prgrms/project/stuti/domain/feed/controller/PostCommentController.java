@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,7 +34,8 @@ public class PostCommentController {
 	@PostMapping("/api/v1/posts/{postId}/comments")
 	public ResponseEntity<PostCommentResponse> createComment(@PathVariable Long postId,
 		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
-		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toCommentCreateDto(postCommentRequest, postId, memberId);
+		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toCommentCreateDto(postCommentRequest, postId,
+			memberId);
 		PostCommentResponse postCommentResponse = postCommentService.createComment(postCommentCreateDto);
 
 		return ResponseEntity.ok(postCommentResponse);
@@ -44,8 +44,8 @@ public class PostCommentController {
 	@PostMapping("/api/v1/posts/{postId}/comments/{commentId}")
 	public ResponseEntity<PostCommentResponse> changeComment(@PathVariable Long postId, @PathVariable Long commentId,
 		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
-		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toCommentUpdateDto(postCommentRequest, postId, commentId,
-			memberId);
+		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toCommentUpdateDto(postCommentRequest, postId,
+			commentId, memberId);
 		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentUpdateDto);
 
 		return ResponseEntity.ok().body(postCommentResponse);

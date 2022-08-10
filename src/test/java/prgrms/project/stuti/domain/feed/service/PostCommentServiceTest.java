@@ -12,14 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import prgrms.project.stuti.config.ServiceTestConfig;
-import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.model.Post;
+import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostRepository;
+import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.domain.member.model.Member;
@@ -226,7 +226,8 @@ class PostCommentServiceTest extends ServiceTestConfig {
 		PostComment postComment = new PostComment("댓글입니다.", null, member, post);
 		postCommentRepository.save(postComment);
 
-		PostCommentContentsResponse commentContents = postCommentService.getCommentContents(post.getId(), postComment.getId());
+		PostCommentContentsResponse commentContents = postCommentService.getCommentContents(post.getId(),
+			postComment.getId());
 
 		assertThat(commentContents.contents()).isEqualTo(postComment.getContent());
 	}

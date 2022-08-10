@@ -32,7 +32,8 @@ public class PostCommentService {
 		if (postCommentCreateDto.parentId() != null) {
 			parentPostComment = getParentComment(postCommentCreateDto.parentId());
 		}
-		PostComment newPostComment = PostCommentConverter.toComment(postCommentCreateDto.contents(), post, parentPostComment);
+		PostComment newPostComment = PostCommentConverter.toComment(postCommentCreateDto.contents(), post,
+			parentPostComment);
 		PostComment savedPostComment = postCommentRepository.save(newPostComment);
 
 		return PostCommentConverter.toCommentResponse(savedPostComment);

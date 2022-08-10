@@ -37,10 +37,9 @@ public class AuthenticationService {
 		}
 		TemporaryMember temporaryMember = optionalMember.get();
 
-		String email = memberDto.email();
-		memberRepository.findMemberByEmail(email).ifPresent(member -> {
-			throw MemberException.registeredMember(email);
-		});
+		checkDuplicatedEmail(memberDto.email());
+		checkDuplicatedNickname(memberDto.nickname());
+
 		Member member = memberRepository.save(MemberConverter.toMember(memberDto, temporaryMember));
 
 		return MemberConverter.toMemberResponse(member);
@@ -81,5 +80,17 @@ public class AuthenticationService {
 			.expirationTime(new Date(now.getTime() + refreshPeriod))
 			.expiration(refreshPeriod)
 			.build();
+	}
+
+	private void checkDuplicatedNickname(String nickname) {
+		memberRepository.findMemberByNickName(nickname).ifPresent(member -> {
+			throw MemberException.nicknameDuplication(nickname);
+		});
+	}
+
+	private void checkDuplicatedEmail(String email) {
+		memberRepository.findMemberByEmail(email).ifPresent(member -> {
+			throw MemberException.registeredMember(email);
+		});
 	}
 }

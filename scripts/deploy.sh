@@ -32,7 +32,9 @@ fi
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포" >> $DEPLOY_LOG_PATH
 
+echo "> $DEPLOY_LOG_PATH 에 실행 권한 추가"
 
+chmod +x $DEPLOY_LOG_PATH
 
 nohup java -jar $DEPLOY_JAR --server.port=8080 &
 

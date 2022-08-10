@@ -53,11 +53,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String memberId = tokenService.getUid(accessToken);
 			String[] roles = tokenService.getRole(accessToken);
 
-			// ContextHolder 에 저장한 후 다시 accessToken 을 쿠키로 전달
+			// ContextHolder 에 저장
 			setAuthenticationToSecurityContextHolder(Long.parseLong(memberId), roles);
-			ResponseCookie responseCookie = tokenService.addAccessTokenToCookie(accessToken, TokenType.JWT_TYPE);
-			response.addHeader(SET_COOKIE, responseCookie.toString());
-
 		} else if (!isLogout && accessToken != null) {
 			// refresh token 을 redis 에서 찾은 후 존재하는 경우 accessToken 을 재발급하여 제공한다.
 			// refresh token 도 존재하지 않은경우 재로그인이 필요하다.

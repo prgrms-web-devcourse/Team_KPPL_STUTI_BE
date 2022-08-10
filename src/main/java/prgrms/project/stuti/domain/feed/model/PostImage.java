@@ -27,7 +27,7 @@ public class PostImage extends BaseEntity {
 	@Column(name = "post_image_id", unique = true, nullable = false, updatable = false)
 	private Long id;
 
-	@Column(name = "image_url", length = 150, unique = true)
+	@Column(name = "image_url", length = 150)
 	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)

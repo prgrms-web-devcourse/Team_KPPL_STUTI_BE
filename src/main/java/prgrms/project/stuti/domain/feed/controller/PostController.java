@@ -46,7 +46,7 @@ public class PostController {
 		return ResponseEntity.ok().body(postResponse);
 	}
 
-	@PatchMapping("/api/v1/posts/{postId}")
+	@PostMapping("/api/v1/posts/{postId}")
 	public ResponseEntity<PostIdResponse> changePost(@Valid @ModelAttribute PostRequest registerPostRequest,
 		@PathVariable Long postId) {
 		PostChangeDto postChangeDto = PostMapper.toPostChangeDto(registerPostRequest, postId);

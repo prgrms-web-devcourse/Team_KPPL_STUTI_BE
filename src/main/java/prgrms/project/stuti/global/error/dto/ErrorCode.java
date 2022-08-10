@@ -47,8 +47,8 @@ public enum ErrorCode {
 	POST_COMMENT_NOT_FOUND("PC002", "not exist comment", HttpStatus.BAD_REQUEST),
 
 	// Token Expiration
-	ACCESS_TOKEN_EXPIRATION("T001", "Access token is expired", HttpStatus.BAD_REQUEST),
-	REFRESH_TOKEN_EXPIRATION("T002", "Refresh token is expired", HttpStatus.BAD_REQUEST);
+	ACCESS_TOKEN_EXPIRATION("T001", "Access token is expired", HttpStatus.UNAUTHORIZED),
+	REFRESH_TOKEN_EXPIRATION("T002", "Refresh token is expired", HttpStatus.UNAUTHORIZED);
 
 
 	private final String code;

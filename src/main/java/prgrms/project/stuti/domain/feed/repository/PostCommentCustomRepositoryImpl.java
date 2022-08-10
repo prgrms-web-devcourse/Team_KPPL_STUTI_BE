@@ -43,8 +43,12 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 			.where(postComment.post.id.eq(postId), postComment.parent.isNull())
 			.fetchOne();
 
-		Long lastCalledComment = postComments.get(postComments.size() - 1).getId();
-		boolean hasNext = hasNext(postId, lastCalledComment);
+		boolean hasNext = false;
+		if(postComments.size() == size) {
+			Long lastCalledComment = postComments.get(postComments.size() - 1).getId();
+			hasNext = hasNext(postId, lastCalledComment);
+		}
+
 		for(PostComment postComment : postComments) {
 			List<PostComment> childPostComments = findByParentId(postComment.getId());
 			postComment.findChildren(childPostComments);

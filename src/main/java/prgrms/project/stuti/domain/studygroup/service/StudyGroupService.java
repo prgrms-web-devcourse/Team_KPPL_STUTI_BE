@@ -9,6 +9,7 @@ import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
@@ -33,7 +34,6 @@ public class StudyGroupService {
 	@Transactional
 	public StudyGroupIdResponse createStudyGroup(StudyGroupDto.CreateDto createDto) {
 		String imageUrl = imageUploader.upload(createDto.imageFile(), ImageDirectory.STUDY_GROUP);
-
 		StudyGroup studyGroup = saveStudyGroup(createDto, imageUrl);
 		saveStudyGroupLeader(createDto.memberId(), studyGroup);
 
@@ -89,8 +89,7 @@ public class StudyGroupService {
 	private void saveStudyGroupLeader(Long memberId, StudyGroup studyGroup) {
 		Member member = findMember(memberId);
 
-		studyGroupMemberRepository.save(new StudyGroupMember(
-			prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
+		studyGroupMemberRepository.save(new StudyGroupMember(StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
 	}
 
 	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {

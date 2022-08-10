@@ -3,9 +3,8 @@ package prgrms.project.stuti.domain.studygroup.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,7 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -23,7 +22,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.global.base.BaseEntity;
 import prgrms.project.stuti.global.error.exception.StudyGroupException;
 
@@ -66,22 +64,19 @@ public class StudyGroup extends BaseEntity {
 	@Embedded
 	private StudyPeriod studyPeriod;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "preferred_mbti")
-	@ElementCollection
-	@CollectionTable(name = "preferred_mbtis", joinColumns = @JoinColumn(name = "study_group_id"))
-	private Set<Mbti> preferredMBTIs = new HashSet<>();
-
 	@Column(name = "description", length = 1000, nullable = false)
 	private String description;
 
 	@Column(name = "is_deleted", nullable = false)
 	private boolean isDeleted;
 
+	@OneToMany(mappedBy = "studyGroup", cascade = CascadeType.PERSIST)
+	private final Set<PreferredMbti> preferredMBTIs = new HashSet<>();
+
 	@Builder
 	public StudyGroup(
 		String imageUrl, String title, Topic topic, boolean isOnline, Region region,
-		int numberOfRecruits, StudyPeriod studyPeriod, Set<Mbti> preferredMBTIs, String description
+		int numberOfRecruits, StudyPeriod studyPeriod, String description, Set<PreferredMbti> preferredMBTIs
 	) {
 		this.imageUrl = imageUrl;
 		this.title = title;
@@ -91,10 +86,10 @@ public class StudyGroup extends BaseEntity {
 		this.numberOfMembers = NumberUtils.INTEGER_ONE;
 		this.numberOfRecruits = numberOfRecruits;
 		this.numberOfApplicants = NumberUtils.INTEGER_ZERO;
-		this.preferredMBTIs = preferredMBTIs;
 		this.studyPeriod = studyPeriod;
 		this.description = description;
 		this.isDeleted = false;
+		preferredMBTIs.forEach(preferredMBTI -> preferredMBTI.setStudyGroup(this));
 	}
 
 	public void updateImage(String imageUrl) {
@@ -154,10 +149,10 @@ public class StudyGroup extends BaseEntity {
 			.append("numberOfMembers", numberOfMembers)
 			.append("numberOfRecruits", numberOfRecruits)
 			.append("numberOfApplicants", numberOfApplicants)
-			.append("preferredMBTIs", preferredMBTIs)
 			.append("studyPeriod", studyPeriod)
 			.append("description", description)
 			.append("isDeleted", isDeleted)
+			.append("preferredMBTIs", preferredMBTIs)
 			.toString();
 	}
 }

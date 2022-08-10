@@ -32,10 +32,16 @@ jobs:
         with:
           files: ${{ env.RESOURCE_PATH }}
         env:
-          spring.datasource.url: ${{secrets.RDS_URL}}
-          spring.datasource.username: ${{secrets.RDS_USERNAME}}
-          spring.datasource.password: ${{secrets.RDS_PASSWORD}}
-          spring.redis.host: ${{secrets.REDIS_ENDPOINT}}
+          spring.datasource.url: ${{ secrets.RDS_URL }}
+          spring.datasource.username: ${{ secrets.RDS_USERNAME }}
+          spring.datasource.password: ${{ secrets.RDS_PASSWORD }}
+          spring.redis.host: ${{ secrets.REDIS_ENDPOINT }}
+
+#          cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          cloud.aws.credentials.region.static: ${{ env.AWS_REGION }}
+#          cloud.aws.s3.bucket: ${{ env.S3_BUCKET_NAME }}
+
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
@@ -53,7 +59,7 @@ jobs:
         uses: aws-action/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Upload to S3

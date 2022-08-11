@@ -69,7 +69,7 @@ public class StudyGroupQuestionService {
 	}
 
 	private StudyGroupQuestion findStudyGroupQuestionById(Long studyGroupQuestionId) {
-		return studyGroupQuestionRepository.findStudyGroupQuestionById(studyGroupQuestionId)
+		return studyGroupQuestionRepository.findFetchStudyGroupQuestionsById(studyGroupQuestionId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroupQuestion(studyGroupQuestionId));
 	}
 

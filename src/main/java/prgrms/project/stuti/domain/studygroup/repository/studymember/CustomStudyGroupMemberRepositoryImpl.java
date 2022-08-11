@@ -32,7 +32,9 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			.from(studyGroupMember)
 			.join(studyGroupMember.member, member)
 			.join(studyGroupMember.studyGroup, studyGroup)
-			.where(eqStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER), eqAndNotDeletedMember(memberId),
+			.where(
+				eqStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER),
+				eqAndNotDeletedMember(memberId),
 				eqAndNotDeletedStudyGroup(studyGroupId))
 			.fetchFirst();
 
@@ -51,7 +53,9 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 	}
 
 	@Override
-	public Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> findStudyGroupMembers(Long studyGroupId) {
+	public Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> findStudyGroupMembersByStudyGroupId(
+		Long studyGroupId
+	) {
 		return jpaQueryFactory
 			.from(studyGroupMember)
 			.join(studyGroupMember.member, member)

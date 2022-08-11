@@ -11,5 +11,5 @@ public interface StudyGroupQuestionRepository
 	extends JpaRepository<StudyGroupQuestion, Long>, CustomStudyGroupQuestionRepository {
 
 	@EntityGraph(attributePaths = {"member", "studyGroup"})
-	Optional<StudyGroupQuestion> findStudyGroupQuestionById(Long studyGroupQuestionId);
+	Optional<StudyGroupQuestion> findFetchStudyGroupQuestionsById(Long studyGroupQuestionId);
 }

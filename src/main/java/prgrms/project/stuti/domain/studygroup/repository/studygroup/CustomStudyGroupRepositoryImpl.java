@@ -41,7 +41,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 			jpaQueryFactory
 				.selectFrom(studyGroup)
 				.where(eqAndNotDeletedStudyGroup(studyGroupId))
-				.fetchOne());
+				.fetchFirst());
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	}
 
 	@Override
-	public CursorPageResponse<StudyGroupsResponse> dynamicFindStudyGroupsWithCursorPagination(
+	public CursorPageResponse<StudyGroupsResponse> findAllWithCursorPaginationByConditions(
 		StudyGroupDto.FindCondition conditionDto
 	) {
 		jpaQueryFactory
@@ -99,7 +99,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	}
 
 	@Override
-	public CursorPageResponse<StudyGroupsResponse> findMemberStudyGroupsWithCursorPagination(
+	public CursorPageResponse<StudyGroupsResponse> findMembersAllWithCursorPaginationByConditions(
 		StudyGroupDto.FindCondition conditionDto
 	) {
 		jpaQueryFactory.selectFrom(studyGroup)

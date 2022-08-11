@@ -42,7 +42,7 @@ public class StudyGroupMemberService {
 	@Transactional(readOnly = true)
 	public StudyGroupMembersResponse getStudyGroupMembers(StudyGroupMemberDto.ReadDto readDto) {
 		Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> studyGroupMemberDtoMap =
-			studyGroupMemberRepository.findStudyGroupMembers(readDto.studyGroupId());
+			studyGroupMemberRepository.findStudyGroupMembersByStudyGroupId(readDto.studyGroupId());
 		StudyGroup studyGroup = studyGroupMemberDtoMap
 			.keySet()
 			.stream()

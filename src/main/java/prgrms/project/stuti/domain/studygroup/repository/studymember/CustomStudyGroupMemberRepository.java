@@ -14,5 +14,5 @@ public interface CustomStudyGroupMemberRepository {
 
 	Optional<StudyGroupMember> findStudyGroupMemberById(Long studyGroupMemberId);
 
-	Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> findStudyGroupMembers(Long studyGroupId);
+	Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> findStudyGroupMembersByStudyGroupId(Long studyGroupId);
 }

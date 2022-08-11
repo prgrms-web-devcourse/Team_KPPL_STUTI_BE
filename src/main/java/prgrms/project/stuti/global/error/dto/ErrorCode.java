@@ -42,11 +42,12 @@ public enum ErrorCode {
 	POST_NOT_FOUND("P001", "not exist post", HttpStatus.BAD_REQUEST),
 	POST_LIKE_DUPLICATED("P002", "already liked this post", HttpStatus.BAD_REQUEST),
 	NOT_FOUND_POST_LIKE("P003","not found feed like", HttpStatus.BAD_REQUEST),
+	INVALID_EDITOR("P004", "editor is not same to creator", HttpStatus.BAD_REQUEST),
 
 	//post comment
 	PARENT_POST_COMMENT_NOT_FOUND("PC001", "parent comment not exist", HttpStatus.BAD_REQUEST),
 	POST_COMMENT_NOT_FOUND("PC002", "not exist comment", HttpStatus.BAD_REQUEST),
-
+	
 	// Token Expiration
 	ACCESS_TOKEN_EXPIRATION("T001", "Access token is expired", HttpStatus.UNAUTHORIZED),
 	REFRESH_TOKEN_EXPIRATION("T002", "Refresh token is expired", HttpStatus.UNAUTHORIZED);

@@ -153,7 +153,7 @@ class PostServiceTest {
 	}
 
 	@Test
-	@DisplayName("전체 포스트리스트 첫 조회시(lastPostId가 null일 때) 페이징 조회한다")
+	@DisplayName("전체 포스트리스트 첫 조회시(lastPostId가 null일 때) 페이징 조회한다- 이미지 조회 추가")
 	void testGetAllPostsWhenLastPostIdIsNull() {
 		for (int i = 0; i < 10; i++) {
 			Post post = new Post("게시글" + i, savedMember);
@@ -167,6 +167,7 @@ class PostServiceTest {
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글9");
 		assertThat(allPosts.hasNext()).isTrue();
+		assertThat(allPosts.posts().get(0).postImageUrl()).isEqualTo("9test.jpg");
 	}
 
 	@Test

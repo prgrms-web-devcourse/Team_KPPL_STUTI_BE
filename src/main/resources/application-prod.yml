@@ -21,15 +21,16 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db/migration, classpath:db/seed
 
-#cloud:
-#  aws:
-#    credentials:
-#      access-key: ${AWS_ACCESS_KEY}
-#      secret-key: ${AWS_SECERT_KEY}
-#      region:
-#        static: ${AWS_REGION}
-#    s3:
-#      bucket: ${AWS_BUCKET}
+cloud:
+  aws:
+    s3:
+      bucket: ${AWS_BUCKET}
+    region:
+        static: ${AWS_REGION}
+    stack:
+      auto: false
+    credentials:
+      instance-profile: true
 
 app:
   cors:

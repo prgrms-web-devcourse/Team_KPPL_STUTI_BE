@@ -32,8 +32,8 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			.from(studyGroupMember)
 			.join(studyGroupMember.member, member)
 			.join(studyGroupMember.studyGroup, studyGroup)
-			.where(hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER), equalMember(memberId),
-				equalStudyGroup(studyGroupId))
+			.where(eqStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER), eqAndNotDeletedMember(memberId),
+				eqAndNotDeletedStudyGroup(studyGroupId))
 			.fetchFirst();
 
 		return result != null;
@@ -45,7 +45,7 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 				.selectFrom(studyGroupMember)
 				.join(studyGroupMember.member, member)
 				.join(studyGroupMember.studyGroup, studyGroup).fetchJoin()
-				.where(equalStudyGroupMemberId(studyGroupMemberId), notDeletedMember(), notDeletedStudyGroup())
+				.where(eqStudyGroupMemberId(studyGroupMemberId), notDeletedMember(), notDeletedStudyGroup())
 				.fetchFirst()
 		);
 	}
@@ -56,7 +56,7 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			.from(studyGroupMember)
 			.join(studyGroupMember.member, member)
 			.join(studyGroupMember.studyGroup, studyGroup)
-			.where(notDeletedMember(), equalStudyGroup(studyGroupId))
+			.where(notDeletedMember(), eqAndNotDeletedStudyGroup(studyGroupId))
 			.orderBy(studyGroupMember.createdAt.asc())
 			.transform(groupBy(studyGroup).as(
 				list(Projections.constructor(
@@ -65,7 +65,7 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 					studyGroupMember.studyGroupMemberRole))));
 	}
 
-	private BooleanExpression equalStudyGroupMemberId(Long studyGroupMemberId) {
+	private BooleanExpression eqStudyGroupMemberId(Long studyGroupMemberId) {
 		return studyGroupMemberId == null ? null : studyGroupMember.id.eq(studyGroupMemberId);
 	}
 }

@@ -13,31 +13,31 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonStudyGroupBooleanExpression {
 
-	public static BooleanExpression hasStudyGroupMemberRole(StudyGroupMemberRole studyGroupMemberRole) {
+	public static BooleanExpression eqStudyGroupMemberRole(StudyGroupMemberRole studyGroupMemberRole) {
 		return studyGroupMemberRole == null ? null : studyGroupMember.studyGroupMemberRole.eq(studyGroupMemberRole);
 	}
 
-	public static BooleanExpression notDeletedMember() {
-		return member.id.isNotNull().and(member.isDeleted.isFalse());
+	public static BooleanExpression eqAndNotDeletedMember(Long memberId) {
+		return eqMemberId(memberId).and(notDeletedMember());
 	}
 
-	public static BooleanExpression equalMember(Long memberId) {
-		return equalMemberId(memberId).and(notDeletedMember());
-	}
-
-	public static BooleanExpression equalStudyGroup(Long studyGroupId) {
-		return equalStudyGroupId(studyGroupId).and(notDeletedStudyGroup());
+	public static BooleanExpression eqAndNotDeletedStudyGroup(Long studyGroupId) {
+		return eqStudyGroupId(studyGroupId).and(notDeletedStudyGroup());
 	}
 
 	public static BooleanExpression notDeletedStudyGroup() {
 		return studyGroup.id.isNotNull().and(studyGroup.isDeleted.isFalse());
 	}
 
-	private static BooleanExpression equalStudyGroupId(Long studyGroupId) {
+	public static BooleanExpression notDeletedMember() {
+		return member.id.isNotNull().and(member.isDeleted.isFalse());
+	}
+
+	private static BooleanExpression eqStudyGroupId(Long studyGroupId) {
 		return studyGroup.id.eq(studyGroupId);
 	}
 
-	public static BooleanExpression equalMemberId(Long memberId) {
+	public static BooleanExpression eqMemberId(Long memberId) {
 		return member.id.eq(memberId);
 	}
 }

@@ -40,7 +40,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 		return Optional.ofNullable(
 			jpaQueryFactory
 				.selectFrom(studyGroup)
-				.where(equalStudyGroup(studyGroupId))
+				.where(eqAndNotDeletedStudyGroup(studyGroupId))
 				.fetchOne());
 	}
 
@@ -58,7 +58,7 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 			.join(studyGroupMember).on(studyGroupMember.studyGroup.id.eq(studyGroup.id))
 			.join(member).on(member.id.eq(studyGroupMember.member.id))
 			.join(preferredMbti).on(preferredMbti.studyGroup.id.eq(studyGroup.id))
-			.where(notDeletedMember(), equalStudyGroup(studyGroupId))
+			.where(notDeletedMember(), eqAndNotDeletedStudyGroup(studyGroupId))
 			.fetch();
 	}
 
@@ -77,13 +77,13 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 			.join(studyGroupMember).on(studyGroupMember.studyGroup.id.eq(studyGroup.id))
 			.join(studyGroupMember.member, member)
 			.where(
-				lessThanLastStudyGroupId(conditionDto.lastStudyGroupId()),
+				ltLastStudyGroupId(conditionDto.lastStudyGroupId()),
 				notDeletedStudyGroup(),
-				equalRegion(conditionDto.region()),
-				equalTopic(conditionDto.topic()),
-				containsMbti(conditionDto.mbti()),
+				eqRegion(conditionDto.region()),
+				eqTopic(conditionDto.topic()),
+				containsStudyGroupId(eqMbti(conditionDto.mbti())),
 				recruitmentNotClosed(),
-				hasStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER),
+				eqStudyGroupMemberRole(StudyGroupMemberRole.STUDY_LEADER),
 				notDeletedMember())
 			.orderBy(studyGroupIdDesc())
 			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
@@ -112,9 +112,9 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 			.join(studyGroupMember).on(studyGroupMember.studyGroup.id.eq(studyGroup.id))
 			.join(studyGroupMember.member, member)
 			.where(
-				lessThanLastStudyGroupId(conditionDto.lastStudyGroupId()),
-				hasStudyGroupMemberRole(conditionDto.studyGroupMemberRole()),
-				equalMemberId(conditionDto.memberId()),
+				ltLastStudyGroupId(conditionDto.lastStudyGroupId()),
+				eqStudyGroupMemberRole(conditionDto.studyGroupMemberRole()),
+				eqMemberId(conditionDto.memberId()),
 				notDeletedStudyGroup())
 			.orderBy(studyGroupIdDesc())
 			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
@@ -129,39 +129,39 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 		return StudyGroupConverter.toStudyGroupsCursorPageResponse(contents, hasNext);
 	}
 
-	private BooleanExpression lessThanLastStudyGroupId(Long studyGroupId) {
+	private BooleanExpression ltLastStudyGroupId(Long studyGroupId) {
 		return studyGroupId == null ? null : studyGroup.id.lt(studyGroupId);
 	}
 
-	private BooleanExpression equalRegion(Region region) {
+	private BooleanExpression eqRegion(Region region) {
 		return region == null ? null : studyGroup.region.eq(region);
 	}
 
-	private BooleanExpression equalTopic(Topic topic) {
+	private BooleanExpression eqTopic(Topic topic) {
 		return topic == null ? null : studyGroup.topic.eq(topic);
 	}
 
-	private BooleanExpression containsMbti(Mbti mbti) {
+	private BooleanExpression containsStudyGroupId(BooleanExpression where) {
 		return studyGroup.id
 			.in(JPAExpressions
 				.select(preferredMbti.studyGroup.id)
 				.from(preferredMbti)
-				.where(equalMbti(mbti)));
+				.where(where));
 	}
 
-	private BooleanExpression equalMbti(Mbti mbti) {
+	private BooleanExpression eqMbti(Mbti mbti) {
 		return mbti == null ? null : preferredMbti.mbti.eq(mbti);
 	}
 
 	private BooleanExpression recruitmentNotClosed() {
-		return startDateTimeHasNotPassed().and(lessThanNumberOfRecruits());
+		return startDateTimeHasNotPassed().and(numberOfRecruitsIsFull());
 	}
 
 	private BooleanExpression startDateTimeHasNotPassed() {
 		return studyGroup.studyPeriod.startDateTime.after(LocalDateTime.now());
 	}
 
-	private BooleanExpression lessThanNumberOfRecruits() {
+	private BooleanExpression numberOfRecruitsIsFull() {
 		return studyGroup.numberOfMembers.lt(studyGroup.numberOfRecruits);
 	}
 

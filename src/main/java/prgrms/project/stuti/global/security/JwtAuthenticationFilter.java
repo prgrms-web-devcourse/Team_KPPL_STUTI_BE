@@ -1,7 +1,5 @@
 package prgrms.project.stuti.global.security;
 
-import static org.springframework.http.HttpHeaders.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -55,8 +52,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			// ContextHolder 에 저장한 후 다시 accessToken 을 쿠키로 전달
 			setAuthenticationToSecurityContextHolder(Long.parseLong(memberId), roles);
-			ResponseCookie responseCookie = tokenService.addAccessTokenToCookie(accessToken, TokenType.JWT_TYPE);
-			response.addHeader(SET_COOKIE, responseCookie.toString());
 
 		} else if (!isLogout && accessToken != null) {
 			// refresh token 을 redis 에서 찾은 후 존재하는 경우 accessToken 을 재발급하여 제공한다.
@@ -65,17 +60,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
 			if(optionalRefreshToken.isEmpty()){
 				TokenException.refreshTokenExpiration(null);
+			}else{
+				RefreshToken refreshToken = optionalRefreshToken.get();
+				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
+				Long memberId = refreshToken.getMemberId();
+				// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
+				String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
+
+				refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
+				refreshTokenRepository.delete(refreshToken);
+
+				TokenException.accessTokenExpiration(CoderUtil.encode(newAccessToken));
 			}
-			RefreshToken refreshToken = optionalRefreshToken.get();
-			String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
-			Long memberId = refreshToken.getMemberId();
-			// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
-			String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
-
-			refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
-			refreshTokenRepository.delete(refreshToken);
-
-			TokenException.accessTokenExpiration(CoderUtil.encode(newAccessToken));
 		}
 		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.
 		filterChain.doFilter(request, response);

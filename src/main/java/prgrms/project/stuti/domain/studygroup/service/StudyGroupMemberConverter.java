@@ -23,16 +23,17 @@ public class StudyGroupMemberConverter {
 	}
 
 	public static StudyGroupMembersResponse toStudyGroupMembersResponse(List<StudyGroupMember> studyGroupMembers) {
-		Map<StudyGroupMemberRole, List<StudyGroupMember>> studyGroupMemberMap = studyGroupMembers
+		Map<Boolean, List<StudyGroupMember>> studyGroupMembersMap = studyGroupMembers
 			.stream()
-			.collect(Collectors.groupingBy(StudyGroupMember::getStudyGroupMemberRole));
+			.collect(Collectors.partitioningBy(
+				studyGroupMember ->
+					studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)));
 
-		StudyGroupMember studyLeader = studyGroupMemberMap.get(StudyGroupMemberRole.STUDY_LEADER).get(0);
-		List<StudyGroupMember> studyMembers =
-			studyGroupMemberMap.getOrDefault(StudyGroupMemberRole.STUDY_MEMBER, Collections.emptyList());
-		List<StudyGroupMember> studyApplicants =
-			studyGroupMemberMap.getOrDefault(StudyGroupMemberRole.STUDY_APPLICANT, Collections.emptyList());
-		StudyGroup studyGroup = studyLeader.getStudyGroup();
+		List<StudyGroupMember> studyMembers = studyGroupMembersMap.get(false);
+		StudyGroupMember studyGroupMember = studyMembers.get(0);
+		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
+
+		List<StudyGroupMember> studyApplicants = studyGroupMembersMap.get(true);
 
 		return StudyGroupMembersResponse
 			.builder()

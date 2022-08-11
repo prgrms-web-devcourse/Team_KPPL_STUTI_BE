@@ -57,12 +57,14 @@ public class PostCommentService {
 	}
 
 	@Transactional
-	public void deleteComment(Long postId, Long commentId, Long memberId) {
+	public PostCommentResponse deleteComment(Long postId, Long commentId, Long memberId) {
 		validatePostById(postId);
 		PostComment foundPostComment = getCommentById(commentId);
 		validateEditMember(foundPostComment, memberId);
 
 		deleteComments(foundPostComment);
+
+		return PostCommentConverter.toCommentResponse(foundPostComment);
 	}
 
 	@Transactional(readOnly = true)

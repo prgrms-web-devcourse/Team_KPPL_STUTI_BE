@@ -1,7 +1,7 @@
 package prgrms.project.stuti.domain.feed.controller;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -87,9 +87,21 @@ class PostCommentControllerTest extends TestConfig {
 	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
 	@DisplayName("댓글을 삭제한다")
 	void testDeleteComment() throws Exception {
-		doNothing().when(postCommentService).deleteComment(anyLong(), anyLong(), anyLong());
+		PostCommentResponse postCommentResponse = PostCommentResponse.builder()
+			.postCommentId(1L)
+			.parentId(null)
+			.profileImageUrl("www.test.prgrm/image.jpg")
+			.memberId(1L)
+			.nickname("testNickname")
+			.contents("새로운 댓글입니다.")
+			.updatedAt(LocalDateTime.now())
+			.build();
 
-		mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L))
+		when(postCommentService.deleteComment(anyLong(), anyLong(), anyLong()))
+			.thenReturn(postCommentResponse);
+
+		mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", 1L, 1L)
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andDo(print());
 	}

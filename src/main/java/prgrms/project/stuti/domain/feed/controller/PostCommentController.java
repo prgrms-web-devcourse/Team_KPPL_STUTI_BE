@@ -52,11 +52,11 @@ public class PostCommentController {
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/comments/{commentId}")
-	public ResponseEntity<Void> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
+	public ResponseEntity<PostCommentResponse> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
 		@AuthenticationPrincipal Long memberId) {
-		postCommentService.deleteComment(postId, commentId, memberId);
+		PostCommentResponse postCommentResponse = postCommentService.deleteComment(postId, commentId, memberId);
 
-		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();
+		return ResponseEntity.ok(postCommentResponse);
 	}
 
 	@GetMapping("/api/v1/posts/{postId}/comments")

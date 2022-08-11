@@ -20,7 +20,7 @@ public class JsonDateTimeFormatConfig {
 	@Bean
 	public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
 		return jacksonObjectMapperBuilder -> jacksonObjectMapperBuilder
-			.timeZone(TimeZone.getTimeZone("UTC"))
+			.timeZone(TimeZone.getTimeZone("Asia/Seoul"))
 			.simpleDateFormat(DATE_FORMAT)
 			.serializers(new LocalDateSerializer(LOCAL_DATE_FORMATTER))
 			.serializers(new LocalDateTimeSerializer(LOCAL_DATE_TIME_FORMATTER))

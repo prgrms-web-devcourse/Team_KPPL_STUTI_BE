@@ -63,12 +63,6 @@ public class PostComment extends BaseEntity {
 		this.content = content;
 	}
 
-	public List<PostComment> findChildren(List<PostComment> children) {
-		this.children.addAll(children);
-
-		return this.children;
-	}
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this,

@@ -35,8 +35,6 @@ public class AwsS3ImageUploader implements ImageUploader {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	private static final String BEGIN_DIRECTORY = "images";
-
 	@Override
 	public String upload(MultipartFile multipartFile, ImageDirectory imageDirectory) {
 		if (multipartFile == null || multipartFile.isEmpty()) {
@@ -98,7 +96,7 @@ public class AwsS3ImageUploader implements ImageUploader {
 	}
 
 	private String extractImageFileName(String imageUrl) {
-		int beginIndex = imageUrl.lastIndexOf(BEGIN_DIRECTORY);
+		int beginIndex = imageUrl.lastIndexOf("images");
 
 		return imageUrl.substring(beginIndex);
 	}

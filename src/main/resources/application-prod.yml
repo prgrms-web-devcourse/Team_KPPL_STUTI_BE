@@ -30,7 +30,9 @@ cloud:
     stack:
       auto: false
     credentials:
-      instance-profile: true
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
+#      instance-profile: true
 
 app:
   cors:

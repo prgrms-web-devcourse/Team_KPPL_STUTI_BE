@@ -9,15 +9,6 @@ import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
 public record MemberPutRequest(
-	@NotNull
-	Long id,
-
-	@NotBlank
-	String email,
-
-	@NotBlank
-	String profileImageUrl,
-
 	@NotBlank
 	String nickname,
 

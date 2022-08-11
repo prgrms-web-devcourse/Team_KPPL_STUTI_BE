@@ -55,9 +55,6 @@ class MemberServiceTest extends ServiceTestConfig {
 		Long memberId = member.getId();
 
 		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
-			.id(memberId)
-			.email("notchanged")
-			.profileImageUrl("s3.edit3.com")
 			.nickname("test6")
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -74,7 +71,6 @@ class MemberServiceTest extends ServiceTestConfig {
 		assertAll(
 			() -> assertThat(memberResponse.id()).isEqualTo(memberId),
 			() -> assertThat(memberResponse.email()).isEqualTo("test@gmail.com"),
-			() -> assertThat(memberResponse.profileImageUrl()).isEqualTo("s3.edit3.com"),
 			() -> assertThat(memberResponse.nickname()).isEqualTo("test6"),
 			() -> assertThat(memberResponse.field()).isEqualTo(Field.ANDROID),
 			() -> assertThat(memberResponse.career()).isEqualTo(Career.JUNIOR),
@@ -92,9 +88,6 @@ class MemberServiceTest extends ServiceTestConfig {
 		String duplicatedNickname = otherMember.getNickName();
 
 		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
-			.id(memberId)
-			.email("not changed")
-			.profileImageUrl("s3.edit3.com")
 			.nickname(duplicatedNickname)
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)

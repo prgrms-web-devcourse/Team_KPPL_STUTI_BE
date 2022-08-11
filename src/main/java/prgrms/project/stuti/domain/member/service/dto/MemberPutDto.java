@@ -6,9 +6,6 @@ import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
 public record MemberPutDto(
-	Long id,
-	String email,
-	String profileImageUrl,
 	String nickname,
 	Field field,
 	Career career,

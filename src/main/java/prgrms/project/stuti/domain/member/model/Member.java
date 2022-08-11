@@ -97,7 +97,6 @@ public class Member extends BaseTimeEntity {
 		this.nickName = memberPutDto.nickname();
 		this.field = memberPutDto.field();
 		this.career = memberPutDto.career();
-		this.profileImageUrl = memberPutDto.profileImageUrl();
 		this.mbti = memberPutDto.MBTI();
 		this.githubUrl = memberPutDto.githubUrl();
 		this.blogUrl = memberPutDto.blogUrl();

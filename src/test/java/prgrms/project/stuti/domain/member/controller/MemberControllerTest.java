@@ -72,14 +72,11 @@ class MemberControllerTest extends TestConfig {
 	@Test
 	@WithMockUser(roles = "MEMBER")
 	@DisplayName("/api/v1/members/{memberId} 에서 멤버수정한다")
-	void putMember() throws Exception {
+	void patchMember() throws Exception {
 		// given
 		Long memberId = 1L;
 
 		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
-			.id(1L)
-			.email("edit@test.com")
-			.profileImageUrl("s3.edit.com")
 			.nickname("edit")
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -95,14 +92,14 @@ class MemberControllerTest extends TestConfig {
 			memberResponse);
 
 		// when
-		ResultActions resultActions = mockMvc.perform(put("/api/v1/members/{memberId}", 1)
+		ResultActions resultActions = mockMvc.perform(patch("/api/v1/members/{memberId}", 1)
 			.with(SecurityMockMvcRequestPostProcessors.csrf())
 			.content(objectMapper.writeValueAsString(memberPutRequest))
 			.contentType(MediaType.APPLICATION_JSON));
 
 		// then
 		resultActions
-			.andExpectAll(status().isCreated(),
+			.andExpectAll(status().isOk(),
 				content().json(objectMapper.writeValueAsString(memberResponse)))
 			.andDo(print())
 			.andDo(document(COMMON_DOCS_NAME,
@@ -110,9 +107,6 @@ class MemberControllerTest extends TestConfig {
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("json 으로 전달")
 				),
 				requestFields(
-					fieldWithPath("id").type(NUMBER).description("멤버 id"),
-					fieldWithPath("email").type(STRING).description("이메일"),
-					fieldWithPath("profileImageUrl").type(STRING).description("프로필 url"),
 					fieldWithPath("nickname").type(STRING).description("닉네임"),
 					fieldWithPath("field").type(STRING).description("분야"),
 					fieldWithPath("career").type(STRING).description("경력"),

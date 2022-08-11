@@ -35,7 +35,7 @@ public class MemberService {
 
 	@Transactional
 	public MemberResponse editMember(Long memberId, MemberPutDto memberPutDto) {
-		checkDuplicatedNickname(memberPutDto.nickname(), memberPutDto.email());
+		checkDuplicatedNickname(memberPutDto.nickname(), memberId);
 		Member member = memberRepository.findMemberById(memberId)
 			.orElseThrow(() -> MemberException.notFoundMember(memberId));
 		member.change(memberPutDto);
@@ -43,9 +43,9 @@ public class MemberService {
 		return MemberConverter.toMemberResponse(member);
 	}
 
-	private void checkDuplicatedNickname(String nickname, String memberPutDto) {
+	private void checkDuplicatedNickname(String nickname, Long memberId) {
 		memberRepository.findMemberByNickName(nickname).ifPresent(member -> {
-			if (!member.getEmail().equals(memberPutDto)) {
+			if (member.getId() != memberId) {
 				throw MemberException.nicknameDuplication(nickname);
 			}
 		});

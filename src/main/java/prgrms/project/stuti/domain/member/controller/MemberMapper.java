@@ -23,8 +23,6 @@ public class MemberMapper {
 
 	public static MemberPutDto toMemberPutDto(MemberPutRequest memberPutRequest) {
 		return MemberPutDto.builder()
-			.email(memberPutRequest.email())
-			.profileImageUrl(memberPutRequest.profileImageUrl())
 			.nickname(memberPutRequest.nickname())
 			.career(memberPutRequest.career())
 			.field(memberPutRequest.field())

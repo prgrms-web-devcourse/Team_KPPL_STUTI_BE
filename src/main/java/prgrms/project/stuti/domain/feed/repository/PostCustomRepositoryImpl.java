@@ -4,7 +4,6 @@ import static prgrms.project.stuti.domain.feed.model.QPost.*;
 import static prgrms.project.stuti.domain.feed.model.QPostComment.*;
 import static prgrms.project.stuti.domain.feed.model.QPostImage.*;
 import static prgrms.project.stuti.domain.feed.model.QPostLike.*;
-import static prgrms.project.stuti.domain.member.model.QMember.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 		}
 
 		List<Tuple> fetch = jpaQueryFactory
-			.select(post, postImage)
+			.select(post.id, post.member.id, post.member.nickName, post.member.mbti, post.member.profileImageUrl,
+				post.content, post.updatedAt, postImage.imageUrl)
 			.from(post)
 			.leftJoin(postImage).on(post.id.eq(postImage.post.id))
 			.where(dynamicLtId)
@@ -49,16 +49,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 		List<PostResponse> postsDtos = new ArrayList<>();
 		for (Tuple tuple : fetch) {
 			PostResponse postsDto = PostResponse.builder()
-				.postId(tuple.get(post).getId())
-				.memberId(tuple.get(post).getMember().getId())
-				.nickname(tuple.get(post).getMember().getNickName())
-				.mbti(tuple.get(post).getMember().getMbti())
-				.profileImageUrl(tuple.get(post).getMember().getProfileImageUrl())
-				.contents(tuple.get(post).getContent())
-				.postImageUrl(tuple.get(postImage).getImageUrl())
-				.updatedAt(tuple.get(post).getUpdatedAt())
-				.likedMembers(findAllLikedMembers(tuple.get(post).getId()))
-				.totalPostComments(getTotalPostComments(tuple.get(post).getId()))
+				.postId(tuple.get(post.id))
+				.memberId(tuple.get(post.member.id))
+				.nickname(tuple.get(post.member.nickName))
+				.mbti(tuple.get(post.member.mbti))
+				.profileImageUrl(insertEmptyStringIfImageIsNull(tuple.get(post.member.profileImageUrl)))
+				.contents(tuple.get(post.content))
+				.postImageUrl(insertEmptyStringIfImageIsNull(tuple.get(postImage.imageUrl)))
+				.updatedAt(tuple.get(post.updatedAt))
+				.likedMembers(findAllLikedMembers(tuple.get(post.id)))
+				.totalPostComments(getTotalPostComments(tuple.get(post.id)))
 				.build();
 			postsDtos.add(postsDto);
 		}
@@ -81,5 +81,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 			.from(postComment)
 			.where(postComment.post.id.eq(postId), postComment.parent.isNull())
 			.fetchOne();
+	}
+
+	private String insertEmptyStringIfImageIsNull(String imageUrl) {
+		return imageUrl == null ? "" : imageUrl;
 	}
 }

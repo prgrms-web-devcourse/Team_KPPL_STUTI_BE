@@ -27,12 +27,16 @@ public class PostConverter {
 			.memberId(member.getId())
 			.nickname(member.getNickName())
 			.mbti(member.getMbti())
-			.profileImageUrl(member.getProfileImageUrl())
+			.profileImageUrl(insertEmptyStringIfImageIsNull(member.getProfileImageUrl()))
 			.contents(post.getContent())
 			.postImageUrl(postImage.getImageUrl())
 			.updatedAt(post.getUpdatedAt())
 			.totalPostComments(totalPostComments)
 			.likedMembers(likedMembers)
 			.build();
+	}
+
+	private static String insertEmptyStringIfImageIsNull(String imageUrl) {
+		return imageUrl == null ? "" : imageUrl;
 	}
 }

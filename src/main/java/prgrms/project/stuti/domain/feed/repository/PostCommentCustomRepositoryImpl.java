@@ -45,11 +45,6 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 			hasNext = hasNext(postId, lastCalledComment);
 		}
 
-		for (PostComment postComment : postComments) {
-			List<PostComment> childPostComments = findByParentId(postComment.getId());
-			postComment.findChildren(childPostComments);
-		}
-
 		return PostCommentConverter.toCommentResponse(postComments, hasNext, totalParentComments);
 	}
 
@@ -68,11 +63,5 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 			.fetch();
 
 		return !postComments.isEmpty();
-	}
-
-	private List<PostComment> findByParentId(Long parentId) {
-		return jpaQueryFactory.selectFrom(postComment)
-			.where(postComment.parent.id.eq(parentId))
-			.fetch();
 	}
 }

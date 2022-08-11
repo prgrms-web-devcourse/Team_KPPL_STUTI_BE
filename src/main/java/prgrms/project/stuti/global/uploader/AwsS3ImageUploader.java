@@ -32,7 +32,7 @@ public class AwsS3ImageUploader implements ImageUploader {
 
 	private final AmazonS3Client amazonS3Client;
 
-	@Value("${could.aws.s3.bucket}")
+	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
 	private final String beginDirectory = "images";

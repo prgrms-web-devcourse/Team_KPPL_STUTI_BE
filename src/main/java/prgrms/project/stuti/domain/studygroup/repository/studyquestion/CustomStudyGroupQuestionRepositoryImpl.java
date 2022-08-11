@@ -40,7 +40,7 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 				parentIdIsNull(true),
 				equalStudyGroup(pageDto.studyGroupId()),
 				lessThanLastStudyGroupQuestionId(pageDto.lastStudyGroupQuestionId()))
-			.orderBy(studyGroupQuestionIdDesc())
+			.orderBy(studyGroupQuestion.id.desc())
 			.limit(pageDto.size() + NumberUtils.LONG_ONE)
 			.fetch();
 
@@ -62,7 +62,7 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 			.join(studyGroupQuestion.member, member)
 			.join(studyGroupQuestion.studyGroup, studyGroup)
 			.where(parentIdIsNull(false), studyGroupQuestion.parent.id.in(parentIds))
-			.orderBy(studyGroupQuestionIdDesc())
+			.orderBy(studyGroupQuestion.id.asc())
 			.fetch();
 
 		Long totalElements = jpaQueryFactory
@@ -81,9 +81,5 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 
 	private BooleanExpression lessThanLastStudyGroupQuestionId(Long lastStudyGroupQuestionId) {
 		return lastStudyGroupQuestionId == null ? null : studyGroupQuestion.id.lt(lastStudyGroupQuestionId);
-	}
-
-	private OrderSpecifier<Long> studyGroupQuestionIdDesc() {
-		return studyGroupQuestion.id.desc();
 	}
 }

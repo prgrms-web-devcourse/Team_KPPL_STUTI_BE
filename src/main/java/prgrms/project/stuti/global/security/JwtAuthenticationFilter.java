@@ -54,23 +54,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			setAuthenticationToSecurityContextHolder(Long.parseLong(memberId), roles);
 
 		} else if (!isLogout && accessToken != null) {
-			// refresh token 을 redis 에서 찾은 후 존재하는 경우 accessToken 을 재발급하여 제공한다.
+			// refresh token 을 redis 에서 찾은 후 존재하는 경우(+유효) accessToken 을 재발급하여 제공한다.
 			// refresh token 도 존재하지 않은경우 재로그인이 필요하다.
 			// 토큰이 유효하지 않은경우
 			Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
 			if(optionalRefreshToken.isEmpty()){
 				TokenException.refreshTokenExpiration(null);
-			}else{
+			}
+			else{
 				RefreshToken refreshToken = optionalRefreshToken.get();
-				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
-				Long memberId = refreshToken.getMemberId();
-				// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
-				String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
+				String refreshTokenValue = refreshToken.getRefreshTokenValue();
+				if(tokenService.verifyToken(refreshTokenValue)) {
+					String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
+					Long memberId = refreshToken.getMemberId();
+					// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
+					String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
 
-				refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
-				refreshTokenRepository.delete(refreshToken);
+					refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
+					refreshTokenRepository.delete(refreshToken);
 
-				TokenException.accessTokenExpiration(CoderUtil.encode(newAccessToken));
+					TokenException.accessTokenExpiration(CoderUtil.encode(newAccessToken));
+				}else {
+					TokenException.refreshTokenExpiration(null);
+				}
 			}
 		}
 		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.

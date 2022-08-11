@@ -38,8 +38,8 @@ jobs:
           spring.datasource.password: ${{ secrets.RDS_PASSWORD }}
           spring.redis.host: ${{ secrets.REDIS_ENDPOINT }}
 
-          cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 #          cloud.aws.credentials.region.static: ap-northeast-2
 #          cloud.aws.s3.bucket: devcourse-stuti-images
 

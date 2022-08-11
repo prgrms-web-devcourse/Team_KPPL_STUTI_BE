@@ -40,8 +40,8 @@ jobs:
 
           cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          cloud.aws.credentials.region.static: ${{ env.AWS_REGION }}
-          cloud.aws.s3.bucket: ${{ env.AWS_S3_IMAGES_BUCKET_NAME }}
+          cloud.aws.credentials.region.static: ap-northeast-2
+          cloud.aws.s3.bucket: devcourse-stuti-images
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew

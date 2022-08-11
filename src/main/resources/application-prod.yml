@@ -24,9 +24,9 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: devcourse-stuti-images
+      bucket: 'devcourse-stuti-images'
     region:
-        static: ap-northeast-2
+        static: 'ap-northeast-2'
     stack:
       auto: false
     credentials:

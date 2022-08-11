@@ -67,6 +67,7 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 		Long totalElements = jpaQueryFactory
 			.select(studyGroupQuestion.count())
 			.from(studyGroupQuestion)
+			.join(studyGroupQuestion.studyGroup, studyGroup)
 			.where(parentIdIsNull(true), equalStudyGroup(pageDto.studyGroupId()))
 			.fetchOne();
 

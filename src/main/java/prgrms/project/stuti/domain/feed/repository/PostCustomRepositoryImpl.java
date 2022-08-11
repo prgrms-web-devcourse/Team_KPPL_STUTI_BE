@@ -41,9 +41,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 			.select(post, postImage)
 			.from(post)
 			.leftJoin(postImage).on(post.id.eq(postImage.post.id))
-			.leftJoin(member).on(post.member.id.eq(member.id))
 			.where(dynamicLtId)
-			.orderBy(postImage.id.desc())
+			.orderBy(post.id.desc())
 			.limit(size)
 			.fetch();
 
@@ -56,7 +55,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 				.mbti(tuple.get(post).getMember().getMbti())
 				.profileImageUrl(tuple.get(post).getMember().getProfileImageUrl())
 				.contents(tuple.get(post).getContent())
-				.postImageUrl(tuple.get(postImage.imageUrl))
+				.postImageUrl(tuple.get(postImage).getImageUrl())
 				.updatedAt(tuple.get(post).getUpdatedAt())
 				.likedMembers(findAllLikedMembers(tuple.get(post).getId()))
 				.totalPostComments(getTotalPostComments(tuple.get(post).getId()))

@@ -5,7 +5,7 @@ import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record MemberPutDto(
+public record MemberPatchDto(
 	String nickname,
 	Field field,
 	Career career,
@@ -14,6 +14,6 @@ public record MemberPutDto(
 	String blogUrl
 ) {
 	@Builder
-	public MemberPutDto {
+	public MemberPatchDto {
 	}
 }

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import prgrms.project.stuti.config.ServiceTestConfig;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberPatchRequest;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.controller.MemberMapper;
 import prgrms.project.stuti.domain.member.model.Career;
@@ -54,7 +54,7 @@ class MemberServiceTest extends ServiceTestConfig {
 		// given
 		Long memberId = member.getId();
 
-		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
+		MemberPatchRequest memberPatchRequest = MemberPatchRequest.builder()
 			.nickname("test6")
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -65,7 +65,7 @@ class MemberServiceTest extends ServiceTestConfig {
 
 		// when
 		MemberResponse memberResponse = memberService.editMember(memberId,
-			MemberMapper.toMemberPutDto(memberPutRequest));
+			MemberMapper.toMemberPutDto(memberPatchRequest));
 
 		// then
 		assertAll(
@@ -87,7 +87,7 @@ class MemberServiceTest extends ServiceTestConfig {
 		Long memberId = member.getId();
 		String duplicatedNickname = otherMember.getNickName();
 
-		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
+		MemberPatchRequest memberPatchRequest = MemberPatchRequest.builder()
 			.nickname(duplicatedNickname)
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -98,7 +98,7 @@ class MemberServiceTest extends ServiceTestConfig {
 
 		// when // then
 		assertThrows(MemberException.class, () -> {
-			memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest));
+			memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPatchRequest));
 		});
 	}
 }

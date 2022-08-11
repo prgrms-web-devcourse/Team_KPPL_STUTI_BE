@@ -20,7 +20,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.ResultActions;
 
 import prgrms.project.stuti.config.TestConfig;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberPatchRequest;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -76,7 +76,7 @@ class MemberControllerTest extends TestConfig {
 		// given
 		Long memberId = 1L;
 
-		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
+		MemberPatchRequest memberPatchRequest = MemberPatchRequest.builder()
 			.nickname("edit")
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -88,13 +88,13 @@ class MemberControllerTest extends TestConfig {
 		MemberResponse memberResponse = getMemberResponse("edit@test.com", "s3.edit.com", "edit", "edit.github",
 			"edit.blog");
 
-		given(memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest))).willReturn(
+		given(memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPatchRequest))).willReturn(
 			memberResponse);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(patch("/api/v1/members/{memberId}", 1)
 			.with(SecurityMockMvcRequestPostProcessors.csrf())
-			.content(objectMapper.writeValueAsString(memberPutRequest))
+			.content(objectMapper.writeValueAsString(memberPatchRequest))
 			.contentType(MediaType.APPLICATION_JSON));
 
 		// then

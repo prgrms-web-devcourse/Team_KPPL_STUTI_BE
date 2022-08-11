@@ -15,7 +15,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import prgrms.project.stuti.domain.member.service.dto.MemberPutDto;
+import prgrms.project.stuti.domain.member.service.dto.MemberPatchDto;
 import prgrms.project.stuti.global.base.BaseTimeEntity;
 
 @Entity
@@ -93,13 +93,13 @@ public class Member extends BaseTimeEntity {
 			.toString();
 	}
 
-	public void change(MemberPutDto memberPutDto) {
-		this.nickName = memberPutDto.nickname();
-		this.field = memberPutDto.field();
-		this.career = memberPutDto.career();
-		this.mbti = memberPutDto.MBTI();
-		this.githubUrl = memberPutDto.githubUrl();
-		this.blogUrl = memberPutDto.blogUrl();
+	public void change(MemberPatchDto memberPatchDto) {
+		this.nickName = memberPatchDto.nickname();
+		this.field = memberPatchDto.field();
+		this.career = memberPatchDto.career();
+		this.mbti = memberPatchDto.MBTI();
+		this.githubUrl = memberPatchDto.githubUrl();
+		this.blogUrl = memberPatchDto.blogUrl();
 		this.isDeleted = false;
 	}
 }

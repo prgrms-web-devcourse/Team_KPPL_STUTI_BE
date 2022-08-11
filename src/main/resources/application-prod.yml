@@ -24,15 +24,15 @@ spring:
 cloud:
   aws:
     s3:
-      bucket: 'devcourse-stuti-images'
+      bucket: devcourse-stuti-images
     region:
-        static: 'ap-northeast-2'
+        static: ap-northeast-2
     stack:
       auto: false
     credentials:
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_KEY}
-#      instance-profile: true
+      instance-profile: true
+#      access-key: ${ACCESS_KEY}
+#      secret-key: ${SECRET_KEY}
 
 app:
   cors:

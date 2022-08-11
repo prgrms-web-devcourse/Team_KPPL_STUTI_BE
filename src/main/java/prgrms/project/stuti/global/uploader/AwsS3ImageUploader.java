@@ -11,10 +11,10 @@ import java.util.Objects;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -26,16 +26,16 @@ import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 import prgrms.project.stuti.global.uploader.common.ImageFileUtils;
 
 @Primary
-@Service
+@Component
 @RequiredArgsConstructor
 public class AwsS3ImageUploader implements ImageUploader {
 
-	private final AmazonS3Client amazonS3Client;
+	private final AmazonS3 amazonS3;
 
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
-	private final String beginDirectory = "images";
+	private static final String BEGIN_DIRECTORY = "images";
 
 	@Override
 	public String upload(MultipartFile multipartFile, ImageDirectory imageDirectory) {
@@ -70,7 +70,7 @@ public class AwsS3ImageUploader implements ImageUploader {
 	@Override
 	public void delete(String imageUrl) {
 		String imageFileName = extractImageFileName(imageUrl);
-		amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, imageFileName));
+		amazonS3.deleteObject(new DeleteObjectRequest(bucket, imageFileName));
 	}
 
 	private String createImageFileName(MultipartFile multipartFile, ImageDirectory imageDirectory) {
@@ -85,7 +85,7 @@ public class AwsS3ImageUploader implements ImageUploader {
 		objectMetadata.setContentType(multipartFile.getContentType());
 
 		try (InputStream inputStream = multipartFile.getInputStream()) {
-			amazonS3Client.putObject(
+			amazonS3.putObject(
 				new PutObjectRequest(bucket, imageFileName, inputStream, objectMetadata)
 					.withCannedAcl(CannedAccessControlList.PublicRead));
 		} catch (IOException ex) {
@@ -94,11 +94,11 @@ public class AwsS3ImageUploader implements ImageUploader {
 	}
 
 	private String getImageUrl(String imageFileName) {
-		return String.valueOf(amazonS3Client.getUrl(bucket, imageFileName));
+		return String.valueOf(amazonS3.getUrl(bucket, imageFileName));
 	}
 
 	private String extractImageFileName(String imageUrl) {
-		int beginIndex = imageUrl.lastIndexOf(beginDirectory);
+		int beginIndex = imageUrl.lastIndexOf(BEGIN_DIRECTORY);
 
 		return imageUrl.substring(beginIndex);
 	}

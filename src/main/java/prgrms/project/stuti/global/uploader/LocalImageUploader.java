@@ -13,14 +13,14 @@ import java.util.Objects;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.global.error.exception.FileException;
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 import prgrms.project.stuti.global.uploader.common.ImageFileUtils;
 
-@Service
+@Component
 public record LocalImageUploader(ResourceLoader resourceLoader) implements ImageUploader {
 
 	private static final String DEFAULT_CLASS_PATH = "classpath:static";

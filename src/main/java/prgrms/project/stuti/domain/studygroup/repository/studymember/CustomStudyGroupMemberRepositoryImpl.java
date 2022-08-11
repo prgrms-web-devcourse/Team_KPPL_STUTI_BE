@@ -1,19 +1,24 @@
 package prgrms.project.stuti.domain.studygroup.repository.studymember;
 
+import static com.querydsl.core.group.GroupBy.*;
 import static prgrms.project.stuti.domain.member.model.QMember.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroupMember.*;
 import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroupBooleanExpression.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 
 @RequiredArgsConstructor
 public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMemberRepository {
@@ -46,14 +51,18 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 	}
 
 	@Override
-	public List<StudyGroupMember> findStudyGroupMembers(Long studyGroupId) {
+	public Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> findStudyGroupMembers(Long studyGroupId) {
 		return jpaQueryFactory
-			.selectFrom(studyGroupMember)
-			.join(studyGroupMember.member, member).fetchJoin()
-			.join(studyGroupMember.studyGroup, studyGroup).fetchJoin()
+			.from(studyGroupMember)
+			.join(studyGroupMember.member, member)
+			.join(studyGroupMember.studyGroup, studyGroup)
 			.where(notDeletedMember(), equalStudyGroup(studyGroupId))
 			.orderBy(studyGroupMember.createdAt.asc())
-			.fetch();
+			.transform(groupBy(studyGroup).as(
+				list(Projections.constructor(
+					StudyGroupQueryDto.StudyGroupMemberDto.class, studyGroupMember.id, member.profileImageUrl,
+					member.nickName, member.field, member.career, member.mbti,
+					studyGroupMember.studyGroupMemberRole))));
 	}
 
 	private BooleanExpression equalStudyGroupMemberId(Long studyGroupMemberId) {

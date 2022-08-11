@@ -45,6 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		System.out.println(tokenService.getRefreshPeriod());
 		System.out.println(tokenService.getAccessTokenPeriod());
 		System.out.println(accessToken);
+
 		boolean isLogout = request.getServletPath().equals("/api/v1/logout");
 
 		// 토큰이 있는지, 유효한지 검증

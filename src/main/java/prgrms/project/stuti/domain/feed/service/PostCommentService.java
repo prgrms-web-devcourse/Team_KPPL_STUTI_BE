@@ -14,7 +14,10 @@ import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
+import prgrms.project.stuti.domain.member.model.Member;
+import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.CommentException;
+import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.page.offset.PageResponse;
 
@@ -24,16 +27,19 @@ public class PostCommentService {
 
 	private final PostCommentRepository postCommentRepository;
 	private final PostRepository postRepository;
+	private final MemberRepository memberRepository;
 
 	@Transactional
 	public PostCommentResponse createComment(PostCommentCreateDto postCommentCreateDto) {
 		Post post = postRepository.findById(postCommentCreateDto.postId()).orElseThrow(PostException::POST_NOT_FOUND);
+		Member foundMember = memberRepository.findById(postCommentCreateDto.memberId())
+			.orElseThrow(() -> MemberException.notFoundMember(postCommentCreateDto.memberId()));
 		PostComment parentPostComment = null;
 		if (postCommentCreateDto.parentId() != null) {
 			parentPostComment = getParentComment(postCommentCreateDto.parentId());
 		}
 		PostComment newPostComment = PostCommentConverter.toComment(postCommentCreateDto.contents(), post,
-			parentPostComment);
+			parentPostComment, foundMember);
 		PostComment savedPostComment = postCommentRepository.save(newPostComment);
 
 		return PostCommentConverter.toCommentResponse(savedPostComment);

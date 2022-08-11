@@ -9,12 +9,14 @@ import prgrms.project.stuti.domain.feed.service.dto.PostCommentChildContents;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
+import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.page.offset.PageResponse;
 
 public class PostCommentConverter {
 
-	public static PostComment toComment(String contents, Post post, PostComment parentPostComment) {
-		return new PostComment(contents, parentPostComment, post.getMember(), post);
+	public static PostComment toComment(String contents, Post post, PostComment parentPostComment,
+		Member commentWriteMember) {
+		return new PostComment(contents, parentPostComment, commentWriteMember, post);
 	}
 
 	public static PostCommentResponse toCommentResponse(PostComment savedPostComment) {

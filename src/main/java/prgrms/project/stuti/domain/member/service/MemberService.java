@@ -1,5 +1,6 @@
 package prgrms.project.stuti.domain.member.service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.domain.member.service.dto.MemberPutDto;
+import prgrms.project.stuti.domain.member.service.dto.MemberPatchDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
 
@@ -34,18 +35,18 @@ public class MemberService {
 	}
 
 	@Transactional
-	public MemberResponse editMember(Long memberId, MemberPutDto memberPutDto) {
-		checkDuplicatedNickname(memberPutDto.nickname(), memberPutDto.email());
+	public MemberResponse editMember(Long memberId, MemberPatchDto memberPatchDto) {
+		checkDuplicatedNickname(memberPatchDto.nickname(), memberId);
 		Member member = memberRepository.findMemberById(memberId)
 			.orElseThrow(() -> MemberException.notFoundMember(memberId));
-		member.change(memberPutDto);
+		member.change(memberPatchDto);
 
 		return MemberConverter.toMemberResponse(member);
 	}
 
-	private void checkDuplicatedNickname(String nickname, String memberPutDto) {
+	private void checkDuplicatedNickname(String nickname, Long memberId) {
 		memberRepository.findMemberByNickName(nickname).ifPresent(member -> {
-			if (!member.getEmail().equals(memberPutDto)) {
+			if (!Objects.equals(member.getId(), memberId)) {
 				throw MemberException.nicknameDuplication(nickname);
 			}
 		});

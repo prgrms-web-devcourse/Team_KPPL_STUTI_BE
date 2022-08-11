@@ -20,7 +20,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.ResultActions;
 
 import prgrms.project.stuti.config.TestConfig;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPutRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberPatchRequest;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -72,14 +72,11 @@ class MemberControllerTest extends TestConfig {
 	@Test
 	@WithMockUser(roles = "MEMBER")
 	@DisplayName("/api/v1/members/{memberId} 에서 멤버수정한다")
-	void putMember() throws Exception {
+	void patchMember() throws Exception {
 		// given
 		Long memberId = 1L;
 
-		MemberPutRequest memberPutRequest = MemberPutRequest.builder()
-			.id(1L)
-			.email("edit@test.com")
-			.profileImageUrl("s3.edit.com")
+		MemberPatchRequest memberPatchRequest = MemberPatchRequest.builder()
 			.nickname("edit")
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -91,18 +88,18 @@ class MemberControllerTest extends TestConfig {
 		MemberResponse memberResponse = getMemberResponse("edit@test.com", "s3.edit.com", "edit", "edit.github",
 			"edit.blog");
 
-		given(memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPutRequest))).willReturn(
+		given(memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPatchRequest))).willReturn(
 			memberResponse);
 
 		// when
-		ResultActions resultActions = mockMvc.perform(put("/api/v1/members/{memberId}", 1)
+		ResultActions resultActions = mockMvc.perform(patch("/api/v1/members/{memberId}", 1)
 			.with(SecurityMockMvcRequestPostProcessors.csrf())
-			.content(objectMapper.writeValueAsString(memberPutRequest))
+			.content(objectMapper.writeValueAsString(memberPatchRequest))
 			.contentType(MediaType.APPLICATION_JSON));
 
 		// then
 		resultActions
-			.andExpectAll(status().isCreated(),
+			.andExpectAll(status().isOk(),
 				content().json(objectMapper.writeValueAsString(memberResponse)))
 			.andDo(print())
 			.andDo(document(COMMON_DOCS_NAME,
@@ -110,9 +107,6 @@ class MemberControllerTest extends TestConfig {
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("json 으로 전달")
 				),
 				requestFields(
-					fieldWithPath("id").type(NUMBER).description("멤버 id"),
-					fieldWithPath("email").type(STRING).description("이메일"),
-					fieldWithPath("profileImageUrl").type(STRING).description("프로필 url"),
 					fieldWithPath("nickname").type(STRING).description("닉네임"),
 					fieldWithPath("field").type(STRING).description("분야"),
 					fieldWithPath("career").type(STRING).description("경력"),

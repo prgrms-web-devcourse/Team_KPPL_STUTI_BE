@@ -24,7 +24,7 @@ import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQueryDto;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupConverter;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;

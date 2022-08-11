@@ -19,4 +19,8 @@ public class PostException extends BusinessException{
 	public static final PostException NOT_FOUND_POST_LIKE() {
 		throw new PostException(ErrorCode.NOT_FOUND_POST_LIKE, "존재하지 않는 좋아요 입니다.");
 	}
+
+	public static final PostException INVALID_EDITOR() {
+		throw new PostException(ErrorCode.INVALID_EDITOR, "작성자와 수정자가 다릅니다.");
+	}
 }

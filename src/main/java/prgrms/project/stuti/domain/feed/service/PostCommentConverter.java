@@ -6,9 +6,9 @@ import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentChildContents;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.page.offset.PageResponse;
 

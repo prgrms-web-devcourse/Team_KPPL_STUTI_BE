@@ -18,8 +18,8 @@ import prgrms.project.stuti.domain.feed.controller.dto.PostRequest;
 import prgrms.project.stuti.domain.feed.service.PostService;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostListResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostResponse;
 
 @RestController
 @RequiredArgsConstructor

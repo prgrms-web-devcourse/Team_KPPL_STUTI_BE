@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.feed.service.dto;
+package prgrms.project.stuti.domain.feed.service.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

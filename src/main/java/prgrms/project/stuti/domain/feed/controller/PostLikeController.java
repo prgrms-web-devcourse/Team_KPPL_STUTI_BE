@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.service.PostLikeService;
-import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 
 @RestController
 @RequiredArgsConstructor

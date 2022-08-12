@@ -1,8 +1,8 @@
-package prgrms.project.stuti.domain.feed.repository;
+package prgrms.project.stuti.domain.feed.repository.post;
 
 import java.util.List;
 
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostResponse;
 
 public interface PostCustomRepository {
 

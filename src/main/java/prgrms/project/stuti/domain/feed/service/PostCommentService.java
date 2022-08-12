@@ -16,7 +16,6 @@ import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
-import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.page.PageResponse;
@@ -35,7 +34,7 @@ public class PostCommentService {
 		Member foundMember = getMemberById(postCommentCreateDto.memberId());
 		PostComment parentPostComment = null;
 		if (postCommentCreateDto.parentId() != null) {
-			parentPostComment = getCommentById(postCommentCreateDto.parentId());
+			parentPostComment = getParentCommentById(postCommentCreateDto.parentId());
 		}
 		PostComment newPostComment = PostCommentConverter.toPostComment(postCommentCreateDto.contents(), post,
 			parentPostComment, foundMember);
@@ -49,7 +48,7 @@ public class PostCommentService {
 		PostComment postComment = getCommentById(postCommentUpdateDto.postCommentId());
 		validateEditMember(postComment, postCommentUpdateDto.memberId());
 		if (postComment.getPost() == null) { //추후 isdelete로 변경시 로직확인 필요, 대댓글인 경우 댓글 있는지 확인 필요
-			PostException.POST_NOT_FOUND();
+			PostException.POST_NOT_FOUND(postCommentUpdateDto.postId());
 		}
 		postComment.changeContents(postCommentUpdateDto.contents());
 
@@ -90,13 +89,18 @@ public class PostCommentService {
 		postCommentRepository.delete(deletePostComment);
 	}
 
-	private PostComment getCommentById(Long parentCommentId) {
-		return postCommentRepository.findById(parentCommentId)
-			.orElseThrow(() -> CommentException.PARENT_COMMENT_NOT_FOUND(parentCommentId));
+	private PostComment getCommentById(Long postCommentId) {
+		return postCommentRepository.findById(postCommentId)
+			.orElseThrow(() -> PostException.COMMENT_NOT_FOUND(postCommentId));
+	}
+
+	private PostComment getParentCommentById(Long parentPostCommentId) {
+		return postCommentRepository.findById(parentPostCommentId)
+			.orElseThrow(() -> PostException.PARENT_COMMENT_NOT_FOUND(parentPostCommentId));
 	}
 
 	private Post getPostById(Long postId) {
-		return postRepository.findById(postId).orElseThrow(PostException::POST_NOT_FOUND);
+		return postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 	}
 
 	private Member getMemberById(Long memberId) {
@@ -104,14 +108,14 @@ public class PostCommentService {
 	}
 
 	private void validatePostById(Long postId) {
-		postRepository.findById(postId).orElseThrow(PostException::POST_NOT_FOUND);
+		postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 	}
 
 	private void validateEditMember(PostComment comment, Long editMemberId) {
-		Member commentEditor = getMemberById(editMemberId);
 		Member commentCreator = comment.getMember();
+		Member commentEditor = getMemberById(editMemberId);
 		if (!commentEditor.getId().equals(commentCreator.getId())) {
-			PostException.INVALID_EDITOR();
+			PostException.INVALID_EDITOR(commentCreator.getId(), commentEditor.getId());
 		}
 	}
 }

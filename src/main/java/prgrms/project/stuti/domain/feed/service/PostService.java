@@ -61,7 +61,8 @@ public class PostService {
 
 	@Transactional
 	public PostResponse changePost(PostChangeDto postChangeDto) {
-		Post post = postRepository.findById(postChangeDto.postId()).orElseThrow(PostException::POST_NOT_FOUND);
+		Post post = postRepository.findById(postChangeDto.postId())
+			.orElseThrow(() -> PostException.POST_NOT_FOUND(postChangeDto.postId()));
 		post.changeContents(postChangeDto.contents());
 		if (postChangeDto.imageFile() != null) {
 			postImageRepository.deleteByPostId(post.getId());
@@ -79,7 +80,7 @@ public class PostService {
 
 	@Transactional
 	public void deletePost(Long postId) {
-		postRepository.findById(postId).orElseThrow(PostException::POST_NOT_FOUND);
+		postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 		postImageRepository.deleteByPostId(postId);
 		postCommentRepository.deleteAllByPostId(postId);
 		postLikeRepository.deleteByPostId(postId);

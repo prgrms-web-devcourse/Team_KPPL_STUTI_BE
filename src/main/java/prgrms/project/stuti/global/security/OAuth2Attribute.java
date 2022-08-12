@@ -22,8 +22,6 @@ public class OAuth2Attribute {
 		switch (provider) {
 			case "google":
 				return ofGoogle(attributeKey, attributes);
-			case "naver":
-				return ofNaver("id", attributes);
 			case "github":
 				return ofGithub(attributeKey, attributes);
 			default:
@@ -51,18 +49,6 @@ public class OAuth2Attribute {
 			.email((String) attributes.get("email"))
 			.picture((String) attributes.get("picture"))
 			.attributes(attributes)
-			.attributeKey(attributeKey)
-			.build();
-	}
-
-	private static OAuth2Attribute ofNaver(String attributeKey, Map<String, Object> attributes) {
-		Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-
-		return OAuth2Attribute.builder()
-			.name((String) response.get("name"))
-			.email((String) response.get("email"))
-			.picture((String) response.get("profile_image"))
-			.attributes(response)
 			.attributeKey(attributeKey)
 			.build();
 	}

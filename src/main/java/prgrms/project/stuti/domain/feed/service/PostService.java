@@ -88,7 +88,7 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public PostListResponse getMyPosts(Long memberId, Long lastPostId, int size) {
+	public PostListResponse getMemberPosts(Long memberId, Long lastPostId, int size) {
 		List<PostResponse> myPosts = postRepository.findAllWithNoOffset(lastPostId, size, memberId);
 		if (!myPosts.isEmpty()) {
 			lastPostId = getLastPostId(myPosts);

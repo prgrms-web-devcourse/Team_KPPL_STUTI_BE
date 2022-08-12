@@ -67,11 +67,11 @@ public class PostController {
 	}
 
 	@GetMapping("/api/v1/posts/members/{memberId}")
-	public ResponseEntity<PostListResponse> getMyPosts(
+	public ResponseEntity<PostListResponse> getMemberPosts(
 		@PathVariable Long memberId, @RequestParam(value = "lastPostId", required = false) Long lastPostId,
 		@RequestParam(defaultValue = "10") int size
 	) {
-		PostListResponse postListResponse = postService.getMyPosts(memberId, lastPostId, size);
+		PostListResponse postListResponse = postService.getMemberPosts(memberId, lastPostId, size);
 
 		return ResponseEntity.ok().body(postListResponse);
 	}

@@ -140,7 +140,7 @@ class PostControllerTest extends TestConfig {
 		posts.add(postResponse);
 		PostListResponse postsResponse = new PostListResponse(posts, true);
 
-		when(postService.getMyPosts(any(), any(), anyInt())).thenReturn(postsResponse);
+		when(postService.getMemberPosts(any(), any(), anyInt())).thenReturn(postsResponse);
 
 		mockMvc.perform(get("/api/v1/posts/members/{memberId}", 1L))
 			.andExpect(status().isOk())

@@ -5,7 +5,6 @@ import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +32,6 @@ public class AuthenticationController {
 
 	private final TokenService tokenService;
 	private final AuthenticationService authenticationService;
-
-	@Value("${app.cors.allowed-origins}")
-	private String[] domains;
 
 	@PostMapping("/signup")
 	public ResponseEntity<MemberSignupResponse> singup(

@@ -7,4 +7,7 @@ public record TokenExpirationResponse(String errorCode, String newToken) {
 		return new TokenExpirationResponse(errorCode.getCode(), errorCode.getMessage());
 	}
 
+	public static TokenExpirationResponse of(ErrorCode errorCode, String newAccessToken) {
+		return new TokenExpirationResponse(errorCode.getCode(), newAccessToken);
+	}
 }

@@ -20,7 +20,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.global.page.PageResponse;
@@ -109,8 +109,8 @@ class PostCommentControllerTest extends TestConfig {
 	@Test
 	@DisplayName("게시글의 댓글을 페이징하여 조회한다")
 	void testGetAllCommentsByPostId() throws Exception {
-		List<CommentParentContents> contents = new ArrayList<>();
-		PageResponse<CommentParentContents> pageResponse = new PageResponse<>(contents, true, 3L);
+		List<PostCommentParent> contents = new ArrayList<>();
+		PageResponse<PostCommentParent> pageResponse = new PageResponse<>(contents, true, 3L);
 
 		when(postCommentService.getPostComments(any())).thenReturn(pageResponse);
 

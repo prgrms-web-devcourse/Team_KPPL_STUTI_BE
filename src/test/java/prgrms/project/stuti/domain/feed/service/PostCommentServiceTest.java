@@ -16,7 +16,7 @@ import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
@@ -202,7 +202,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 			}
 		}
 
-		PageResponse<CommentParentContents> postComments = postCommentService.getPostComments(
+		PageResponse<PostCommentParent> postComments = postCommentService.getPostComments(
 			new PostCommentGetDto(post.getId(), null, 10));
 		System.out.println(postComments + "가져와 ");
 		System.out.println(postComments.contents().get(0).children().size() + "자식 사이즈");

@@ -12,7 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.service.PostCommentConverter;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
 import prgrms.project.stuti.global.page.PageResponse;
 
 @Repository
@@ -22,7 +22,7 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public PageResponse<CommentParentContents> findAllByPostIdAndParentIdIsNUllWithNoOffset(Long postId,
+	public PageResponse<PostCommentParent> findAllByPostIdAndParentIdIsNUllWithNoOffset(Long postId,
 		Long lastCommentId, int size) {
 
 		BooleanBuilder dynamicLtId = new BooleanBuilder();

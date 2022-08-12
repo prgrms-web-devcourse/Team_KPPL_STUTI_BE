@@ -4,8 +4,8 @@ import java.util.List;
 
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostComment;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentChildContents;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentChild;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
@@ -39,16 +39,16 @@ public class PostCommentConverter {
 		return new PostCommentGetDto(postId, lastCommentId, size);
 	}
 
-	public static PageResponse<CommentParentContents> toCommentPageResponse(List<PostComment> postComments, boolean hasNext,
+	public static PageResponse<PostCommentParent> toCommentPageResponse(List<PostComment> postComments, boolean hasNext,
 		Long totalParentComments) {
-		List<CommentParentContents> contents = createContents(postComments);
+		List<PostCommentParent> contents = createContents(postComments);
 
 		return new PageResponse<>(contents, hasNext, totalParentComments);
 	}
 
-	private static List<CommentParentContents> createContents(List<PostComment> postComments) {
+	private static List<PostCommentParent> createContents(List<PostComment> postComments) {
 		return postComments.stream().map(
-			comment -> CommentParentContents.builder()
+			comment -> PostCommentParent.builder()
 				.postCommentId(comment.getId())
 				.parentId(null)
 				.profileImageUrl(comment.getMember().getProfileImageUrl())
@@ -57,7 +57,7 @@ public class PostCommentConverter {
 				.contents(comment.getContent())
 				.updatedAt(comment.getUpdatedAt())
 				.children(comment.getChildren().stream().map(
-					childComment -> PostCommentChildContents.builder()
+					childComment -> PostCommentChild.builder()
 						.parentId(childComment.getParent().getId())
 						.postCommentId(childComment.getId())
 						.profileImageUrl(childComment.getMember().getProfileImageUrl())

@@ -11,17 +11,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.global.cache.model.RefreshToken;
 import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
 import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.error.dto.ErrorCode;
+import prgrms.project.stuti.global.error.dto.TokenExpirationResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
-import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.util.CoderUtil;
@@ -40,47 +45,62 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String accessToken = tokenService.resolveToken((HttpServletRequest)request);
 		boolean isLogout = request.getServletPath().equals("/api/v1/logout");
+		ObjectMapper objectMapper = new ObjectMapper();
 
-		// 토큰이 있는지, 유효한지 검증
+		// 1. accessToken 이 유효한경우
 		if (!isLogout && accessToken != null && tokenService.verifyToken(accessToken)) {
-			// 블랙리스트에 존재하는 토큰인지 체크
 			checkBlackList(accessToken);
 
-			// 토큰에서 email 과 role 를 가져온다.
 			String memberId = tokenService.getUid(accessToken);
 			String[] roles = tokenService.getRole(accessToken);
 
-			// ContextHolder 에 저장한 후 다시 accessToken 을 쿠키로 전달
 			setAuthenticationToSecurityContextHolder(Long.parseLong(memberId), roles);
-
+			filterChain.doFilter(request, response);
+			return;
 		} else if (!isLogout && accessToken != null) {
-			// refresh token 을 redis 에서 찾은 후 존재하는 경우(+유효) accessToken 을 재발급하여 제공한다.
-			// refresh token 도 존재하지 않은경우 재로그인이 필요하다.
-			// 토큰이 유효하지 않은경우
+			// 2. accessToken 에 해당하는 refreshToken 이 존재하지 않은 경우 : T002
 			Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
-			if(optionalRefreshToken.isEmpty()){
-				TokenException.refreshTokenExpiration(null);
+			if (optionalRefreshToken.isEmpty()) {
+				refreshTokenExpirationException(response, objectMapper);
+				return;
 			}
-			else{
-				RefreshToken refreshToken = optionalRefreshToken.get();
-				String refreshTokenValue = refreshToken.getRefreshTokenValue();
-				if(tokenService.verifyToken(refreshTokenValue)) {
-					String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
-					Long memberId = refreshToken.getMemberId();
-					// accessToken 을 매핑되는 refreshToken 으로 갱신한 후 cookie 에 담은 후 contextholder 에 등록한다.
-					String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
 
-					refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
-					refreshTokenRepository.delete(refreshToken);
+			RefreshToken refreshToken = optionalRefreshToken.get();
+			String refreshTokenValue = refreshToken.getRefreshTokenValue();
+			// 3. accessToken 에 해당하는 refreshToken 이 존재하고 유효한 경우 : T001
+			if (tokenService.verifyToken(refreshTokenValue)) {
+				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
+				Long memberId = refreshToken.getMemberId();
+				String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
 
-					TokenException.accessTokenExpiration(CoderUtil.encode(newAccessToken));
-				}else {
-					TokenException.refreshTokenExpiration(null);
-				}
+				refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
+				refreshTokenRepository.delete(refreshToken);
+
+				accessTokenExpirationException(response, objectMapper, CoderUtil.encode(newAccessToken));
+				return;
 			}
+			// 4. refreshtoken 이 존재하는데 유효하지 않은경우 : T002
+			refreshTokenExpirationException(response, objectMapper);
+			return;
 		}
-		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.
 		filterChain.doFilter(request, response);
+	}
+
+	private void accessTokenExpirationException(HttpServletResponse response, ObjectMapper objectMapper,
+		String newAccessToken) throws IOException {
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding("UTF-8");
+		objectMapper.writeValue(response.getWriter(),
+			TokenExpirationResponse.of(ErrorCode.ACCESS_TOKEN_EXPIRATION, newAccessToken));
+	}
+
+	private void refreshTokenExpirationException(HttpServletResponse response, ObjectMapper objectMapper) throws
+		IOException {
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding("UTF-8");
+		objectMapper.writeValue(response.getWriter(), TokenExpirationResponse.of(ErrorCode.REFRESH_TOKEN_EXPIRATION));
 	}
 
 	private RefreshToken makeRefreshToken(RefreshToken refreshToken, Long memberId, String newAccessToken) {

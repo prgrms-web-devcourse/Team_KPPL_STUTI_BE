@@ -23,7 +23,6 @@ import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.page.PageResponse;
 
@@ -134,7 +133,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 			.contents("존재하지 않는 댓글에 대한 수정댓글입니다.")
 			.build();
 
-		assertThrows(CommentException.class, () -> postCommentService.changeComment(postCommentUpdateDto));
+		assertThrows(PostException.class, () -> postCommentService.changeComment(postCommentUpdateDto));
 	}
 
 	@Test
@@ -174,7 +173,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 
 		postCommentService.deleteComment(post.getId(), postComment.getId(), member.getId());
 
-		assertThrows(CommentException.class, () -> postCommentService.deleteComment(post.getId(), postComment.getId(),
+		assertThrows(PostException.class, () -> postCommentService.deleteComment(post.getId(), postComment.getId(),
 			member.getId()));
 	}
 
@@ -241,7 +240,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 	void testGetCommentContentsWithUnknownCommentId() {
 		Post post = createPost(member);
 
-		assertThrows(CommentException.class, () -> postCommentService.getCommentContents(post.getId(), 1L));
+		assertThrows(PostException.class, () -> postCommentService.getCommentContents(post.getId(), 1L));
 	}
 
 	private Post createPost(Member member) {

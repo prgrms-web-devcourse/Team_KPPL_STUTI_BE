@@ -1,11 +1,9 @@
 package prgrms.project.stuti.domain.member.controller;
 
-import java.net.URI;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +28,11 @@ import prgrms.project.stuti.global.util.CoderUtil;
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class AuthenticationController {
-
 	private final TokenService tokenService;
 	private final AuthenticationService authenticationService;
+
+	@Value("${app.oauth.domain}")
+	private String domain;
 
 	@PostMapping("/signup")
 	public ResponseEntity<MemberSignupResponse> singup(
@@ -46,10 +46,8 @@ public class AuthenticationController {
 		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
 			CoderUtil.encode(tokens.accessToken()));
 
-		URI uri = URI.create(request.getScheme() + "://" + request.getHeader(HttpHeaders.HOST));
-
 		return ResponseEntity
-			.created(uri)
+			.ok()
 			.body(memberSignupResponse);
 	}
 
@@ -64,8 +62,6 @@ public class AuthenticationController {
 		MemberResponse memberResponse = authenticationService.getMemberResponse(memberId);
 		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
 			CoderUtil.encode(tokens.accessToken()));
-
-		// URI uri = URI.create(request.getHeader("Referer"));
 
 		return ResponseEntity
 			.ok()

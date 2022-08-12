@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -33,6 +32,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 	@Value("${app.oauth.signupTime}")
 	private Long signupTime;
+
+	@Value("${app.oauth.domain}")
+	private String domain;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -67,8 +69,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 			String param1 = "?email=" + CoderUtil.encode(temporaryMemberEmail);
 			String param2 = "&name=" + CoderUtil.encode(name);
-			String targetUri =
-				request.getScheme() + "://" + request.getHeader(HttpHeaders.HOST) + "/signup" + param1 + param2;
+			String targetUri = domain + "/signup" + param1 + param2;
 
 			response.sendRedirect(targetUri);
 			return;
@@ -76,8 +77,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		// 이미 회원가입을 한 유저의 경우
 		Long memberId = optionalMember.get().getId();
 
-		String targetUri =
-			request.getScheme() + "://" + request.getHeader(HttpHeaders.HOST) + "/login" + "?id=" + memberId;
+		String targetUri = domain + "/login" + "?id=" + memberId;
 		response.sendRedirect(targetUri);
 
 	}

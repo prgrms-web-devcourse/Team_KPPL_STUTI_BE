@@ -28,6 +28,7 @@ import prgrms.project.stuti.global.page.PageResponse;
 public class StudyGroupQuestionRestController {
 
 	private final StudyGroupQuestionService studyGroupQuestionService;
+	private static final String DEFAULT_SIZE = "5";
 
 	@PostMapping
 	public ResponseEntity<StudyGroupQuestionResponse> createStudyGroupQuestion(
@@ -43,7 +44,7 @@ public class StudyGroupQuestionRestController {
 
 	@GetMapping
 	public ResponseEntity<PageResponse<StudyGroupQuestionsResponse>> getStudyGroupQuestions(
-		@PathVariable Long studyGroupId, @RequestParam(defaultValue = "5") Long size,
+		@PathVariable Long studyGroupId, @RequestParam(defaultValue = DEFAULT_SIZE) Long size,
 		@RequestParam(required = false) Long lastStudyGroupQuestionId
 	) {
 		StudyGroupQuestionDto.PageDto pageDto =
@@ -60,9 +61,8 @@ public class StudyGroupQuestionRestController {
 		@PathVariable Long studyGroupQuestionId,
 		@Valid @RequestBody StudyGroupQuestionRequest.UpdateRequest updateRequest
 	) {
-		StudyGroupQuestionDto.UpdateDto updateDto =
-			StudyGroupQuestionMapper
-				.toStudyGroupQuestionUpdateDto(memberId, studyGroupId, studyGroupQuestionId, updateRequest);
+		StudyGroupQuestionDto.UpdateDto updateDto = StudyGroupQuestionMapper
+			.toStudyGroupQuestionUpdateDto(memberId, studyGroupId, studyGroupQuestionId, updateRequest);
 		StudyGroupQuestionResponse questionResponse = studyGroupQuestionService.updateStudyGroupQuestion(updateDto);
 
 		return ResponseEntity.ok(questionResponse);
@@ -74,8 +74,7 @@ public class StudyGroupQuestionRestController {
 	) {
 		StudyGroupQuestionDto.DeleteDto deleteDto =
 			StudyGroupQuestionMapper.toStudyGroupQuestionDeleteDto(memberId, studyGroupId, studyGroupQuestionId);
-		StudyGroupQuestionResponse questionResponse =
-			studyGroupQuestionService.deleteStudyGroupQuestion(deleteDto);
+		StudyGroupQuestionResponse questionResponse = studyGroupQuestionService.deleteStudyGroupQuestion(deleteDto);
 
 		return ResponseEntity.ok(questionResponse);
 	}

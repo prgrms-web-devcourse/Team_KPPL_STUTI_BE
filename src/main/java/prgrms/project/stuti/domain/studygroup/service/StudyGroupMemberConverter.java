@@ -7,10 +7,9 @@ import java.util.stream.Collectors;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
-import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse.StudyGroupMemberResponse;
@@ -22,18 +21,14 @@ public class StudyGroupMemberConverter {
 		return new StudyGroupMemberIdResponse(studyGroupMemberId);
 	}
 
-	public static StudyGroupMembersResponse toStudyGroupMembersResponse(List<StudyGroupMember> studyGroupMembers) {
-		Map<Boolean, List<StudyGroupMember>> studyGroupMembersMap = studyGroupMembers
+	public static StudyGroupMembersResponse toStudyGroupMembersResponse(
+		StudyGroup studyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto> studyGroupMemberQueryDtos
+	) {
+
+		Map<Boolean, List<StudyGroupQueryDto.StudyGroupMemberDto>> studyGroupMembersDtoMap = studyGroupMemberQueryDtos
 			.stream()
 			.collect(Collectors.partitioningBy(
-				studyGroupMember ->
-					studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)));
-
-		List<StudyGroupMember> studyMembers = studyGroupMembersMap.get(false);
-		StudyGroupMember studyGroupMember = studyMembers.get(0);
-		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
-
-		List<StudyGroupMember> studyApplicants = studyGroupMembersMap.get(true);
+				dto -> dto.studyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)));
 
 		return StudyGroupMembersResponse
 			.builder()
@@ -42,28 +37,29 @@ public class StudyGroupMemberConverter {
 			.title(studyGroup.getTitle())
 			.numberOfMembers(studyGroup.getNumberOfMembers())
 			.numberOfRecruits(studyGroup.getNumberOfRecruits())
-			.studyMembers(toStudyGroupMemberResponse(studyMembers))
+			.studyMembers(toStudyGroupMemberResponse(studyGroupMembersDtoMap.get(false)))
 			.numberOfApplicants(studyGroup.getNumberOfApplicants())
-			.studyApplicants(toStudyGroupMemberResponse(studyApplicants))
+			.studyApplicants(toStudyGroupMemberResponse(studyGroupMembersDtoMap.get(true)))
 			.build();
 	}
 
-	private static List<StudyGroupMemberResponse> toStudyGroupMemberResponse(List<StudyGroupMember> studyGroupMembers) {
-		return studyGroupMembers.isEmpty()
+	private static List<StudyGroupMemberResponse> toStudyGroupMemberResponse(
+		List<StudyGroupQueryDto.StudyGroupMemberDto> studyGroupMemberDtos
+	) {
+		return studyGroupMemberDtos.isEmpty()
 			? Collections.emptyList()
-			: studyGroupMembers.stream().map(studyGroupMember -> {
-			Member member = studyGroupMember.getMember();
-
-			return StudyGroupMemberResponse
+			: studyGroupMemberDtos
+			.stream()
+			.map(studyGroupMemberDto -> StudyGroupMemberResponse
 				.builder()
-				.studyGroupMemberId(studyGroupMember.getId())
-				.profileImageUrl(member.getProfileImageUrl())
-				.nickname(member.getNickName())
-				.field(member.getField().getFieldValue())
-				.career(member.getCareer().getCareerValue())
-				.mbti(member.getMbti())
-				.studyGroupMemberRole(studyGroupMember.getStudyGroupMemberRole().getValue())
-				.build();
-		}).toList();
+				.studyGroupMemberId(studyGroupMemberDto.studyGroupMemberId())
+				.profileImageUrl(studyGroupMemberDto.profileImageUrl())
+				.nickname(studyGroupMemberDto.nickname())
+				.field(studyGroupMemberDto.field().getFieldValue())
+				.career(studyGroupMemberDto.career().getCareerValue())
+				.mbti(studyGroupMemberDto.mbti())
+				.studyGroupMemberRole(studyGroupMemberDto.studyGroupMemberRole().getValue())
+				.build())
+			.toList();
 	}
 }

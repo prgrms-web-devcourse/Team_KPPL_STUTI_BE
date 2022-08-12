@@ -1,14 +1,13 @@
-package prgrms.project.stuti.domain.studygroup.repository;
+package prgrms.project.stuti.domain.studygroup.repository.dto;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
-import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
+import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 
 public record StudyGroupQueryDto() {
@@ -39,6 +38,18 @@ public record StudyGroupQueryDto() {
 	public static record StudyGroupsDto(
 		StudyGroup studyGroup,
 		Long memberId
+	) {
+
+	}
+
+	public static record StudyGroupMemberDto(
+		Long studyGroupMemberId,
+		String profileImageUrl,
+		String nickname,
+		Field field,
+		Career career,
+		Mbti mbti,
+		StudyGroupMemberRole studyGroupMemberRole
 	) {
 
 	}

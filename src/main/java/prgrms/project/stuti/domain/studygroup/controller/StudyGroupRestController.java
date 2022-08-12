@@ -31,6 +31,7 @@ import prgrms.project.stuti.global.page.CursorPageResponse;
 public class StudyGroupRestController {
 
 	private final StudyGroupService studyGroupService;
+	private static final String DEFAULT_SIZE = "20";
 
 	@PostMapping
 	public ResponseEntity<StudyGroupIdResponse> createStudyGroup(
@@ -45,7 +46,7 @@ public class StudyGroupRestController {
 
 	@GetMapping
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getStudyGroups(
-		@RequestParam(defaultValue = "20") Long size, StudyGroupRequest.FindCondition condition
+		@RequestParam(defaultValue = DEFAULT_SIZE) Long size, StudyGroupRequest.FindCondition condition
 	) {
 		StudyGroupDto.FindCondition conditionDto =
 			StudyGroupMapper.toStudyGroupFindConditionDto(size, condition);
@@ -56,7 +57,7 @@ public class StudyGroupRestController {
 
 	@GetMapping("/members/{memberId}")
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getMemberStudyGroups(
-		@PathVariable Long memberId, @RequestParam(defaultValue = "20") Long size,
+		@PathVariable Long memberId, @RequestParam(defaultValue = DEFAULT_SIZE) Long size,
 		StudyGroupRequest.FindCondition condition
 	) {
 		StudyGroupDto.FindCondition conditionDto =

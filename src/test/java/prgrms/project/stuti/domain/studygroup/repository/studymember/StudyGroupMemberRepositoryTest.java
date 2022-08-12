@@ -1,18 +1,25 @@
-package prgrms.project.stuti.domain.studygroup.repository;
+package prgrms.project.stuti.domain.studygroup.repository.studymember;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import prgrms.project.stuti.config.RepositoryTestConfig;
+import prgrms.project.stuti.domain.member.model.Career;
+import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
+import prgrms.project.stuti.domain.member.model.Member;
+import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.studygroup.model.PreferredMbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
@@ -20,8 +27,8 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
-import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 
 class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 
@@ -58,30 +65,30 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 
 	@Test
 	@DisplayName("해당 스터디의 리더라면 true 를 반환한다.")
-	void testIsLeader() {
+	void testIsStudyLeader() {
 		//given
 		studyGroupMemberRepository.save(new StudyGroupMember(
 			StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
 
 		//when
-		boolean isLeader = studyGroupMemberRepository.isStudyLeader(member.getId(), studyGroup.getId());
+		boolean isStudyLeader = studyGroupMemberRepository.isStudyLeader(member.getId(), studyGroup.getId());
 
 		//then
-		assertTrue(isLeader);
+		assertThat(isStudyLeader).isTrue();
 	}
 
 	@Test
 	@DisplayName("해당 스터디 그룹의 리더가 아니라면 false 를 반환한다.")
-	void testIsNotLeader() {
+	void testIsNotStudyLeader() {
 		//given
 		studyGroupMemberRepository.save(
 			new StudyGroupMember(StudyGroupMemberRole.STUDY_MEMBER, otherMember, studyGroup));
 
 		//when
-		boolean isLeader = studyGroupMemberRepository.isStudyLeader(otherMember.getId(), studyGroup.getId());
+		boolean isStudyLeader = studyGroupMemberRepository.isStudyLeader(otherMember.getId(), studyGroup.getId());
 
 		//then
-		assertFalse(isLeader);
+		assertThat(isStudyLeader).isFalse();
 	}
 
 	@Test
@@ -96,7 +103,7 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 		boolean isExists = studyGroupMemberRepository.existsByMemberIdAndStudyGroupId(memberId, studyGroupId);
 
 		//then
-		assertTrue(isExists);
+		assertThat(isExists).isTrue();
 	}
 
 	@Test
@@ -110,8 +117,8 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 			.findStudyGroupMemberById(studyGroupMemberId);
 
 		//then
-		assertTrue(studyGroupMember.isPresent());
-		assertEquals(studyGroupMemberId, studyGroupMember.get().getId());
+		assertThat(studyGroupMember).isPresent();
+		assertThat(studyGroupMember.get().getId()).isEqualTo(studyGroupMemberId);
 	}
 
 	@Test
@@ -121,14 +128,69 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 		StudyGroupMember studyGroupMember = studyGroupMemberRepository
 			.save(new StudyGroupMember(StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
 		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
-		studyGroup.delete();
 		Long studyGroupMemberId = studyGroupMember.getId();
 
 		//when
-		Optional<StudyGroupMember> retrievedStudyGroupMember = studyGroupMemberRepository
-			.findStudyGroupMemberById(studyGroupMemberId);
+		studyGroup.delete();
+		Optional<StudyGroupMember> retrievedStudyGroupMember =
+			studyGroupMemberRepository.findStudyGroupMemberById(studyGroupMemberId);
 
 		//then
-		assertTrue(retrievedStudyGroupMember.isEmpty());
+		assertThat(studyGroupMember).isNotNull();
+		assertThat(retrievedStudyGroupMember).isEmpty();
+	}
+
+	@Test
+	@DisplayName("스터디 그룹 아이디로 스터디에 참여하는 스터디 멤버들을 조회한다.")
+	void testFindStudyGroupMembersByStudyGroupId() {
+		//given
+		saveTwoMembersAndTwoApplicants();
+		Long studyGroupId = studyGroup.getId();
+
+		//when
+		Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> studyGroupMembersMap =
+			studyGroupMemberRepository.findStudyGroupMembersByStudyGroupId(studyGroupId);
+
+		//then
+		Optional<StudyGroup> studyGroup = studyGroupMembersMap.keySet().stream().findFirst();
+		assertThat(studyGroup).isPresent();
+		assertThat(
+			studyGroupMembersMap
+				.get(studyGroup.get())
+				.stream()
+				.filter(m -> m.studyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_MEMBER)))
+			.hasSize(2);
+		assertThat(
+			studyGroupMembersMap
+				.get(studyGroup.get())
+				.stream()
+				.filter(m -> m.studyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)))
+			.hasSize(2);
+	}
+
+	public void saveTwoMembersAndTwoApplicants() {
+		for (int i = 0; i < 2; i++) {
+			saveStudyGroupMember(StudyGroupMemberRole.STUDY_MEMBER);
+			saveStudyGroupMember(StudyGroupMemberRole.STUDY_APPLICANT);
+		}
+	}
+
+	public void saveStudyGroupMember(StudyGroupMemberRole studyGroupMemberRole) {
+		Member newMember = saveMember();
+		studyGroupMemberRepository.save(new StudyGroupMember(studyGroupMemberRole, newMember, studyGroup));
+	}
+
+	public Member saveMember() {
+		String randomString = RandomStringUtils.randomAlphabetic(5);
+
+		return memberRepository.save(
+			Member.builder()
+				.memberRole(MemberRole.ROLE_MEMBER)
+				.field(Field.ANDROID)
+				.career(Career.SENIOR)
+				.mbti(Mbti.ENFJ)
+				.email(randomString + "@gmail.com")
+				.nickName(randomString)
+				.build());
 	}
 }

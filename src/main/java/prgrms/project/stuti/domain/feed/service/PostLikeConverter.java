@@ -2,7 +2,7 @@ package prgrms.project.stuti.domain.feed.service;
 
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostLike;
-import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 
 public class PostLikeConverter {

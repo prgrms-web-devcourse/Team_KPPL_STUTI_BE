@@ -6,7 +6,7 @@ import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 
 public class PostCommentMapper {
 
-	public static PostCommentCreateDto toCommentCreateDto(PostCommentRequest postCommentRequest, Long postId,
+	public static PostCommentCreateDto toPostCommentCreateDto(PostCommentRequest postCommentRequest, Long postId,
 		Long memberId) {
 		return PostCommentCreateDto.builder()
 			.memberId(memberId)
@@ -16,7 +16,7 @@ public class PostCommentMapper {
 			.build();
 	}
 
-	public static PostCommentUpdateDto toCommentUpdateDto(PostCommentRequest postCommentRequest, Long postId,
+	public static PostCommentUpdateDto toPostCommentUpdateDto(PostCommentRequest postCommentRequest, Long postId,
 		Long commentId, Long memberId) {
 		return PostCommentUpdateDto.builder()
 			.memberId(memberId)

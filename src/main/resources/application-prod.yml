@@ -34,7 +34,7 @@ cloud:
 
 app:
   cors:
-    allowed-origins: 'https://stu-ti.netlify.app'
+    allowed-origins: http://localhost:3000, https://stu-ti.netlify.app
   oauth:
     domain: "https://stu-ti.netlify.app"
 

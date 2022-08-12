@@ -3,6 +3,7 @@ package prgrms.project.stuti.domain.studygroup.service;
 import static prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupMemberDto;
@@ -39,11 +41,17 @@ public class StudyGroupMemberService {
 
 	@Transactional(readOnly = true)
 	public StudyGroupMembersResponse getStudyGroupMembers(StudyGroupMemberDto.ReadDto readDto) {
-		validateStudyLeader(readDto.memberId(), readDto.studyGroupId());
-		List<StudyGroupMember> studyGroupMembers =
-			studyGroupMemberRepository.findStudyGroupMembers(readDto.studyGroupId());
+		Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> studyGroupMemberDtoMap =
+			studyGroupMemberRepository.findStudyGroupMembersByStudyGroupId(readDto.studyGroupId());
+		StudyGroup studyGroup = studyGroupMemberDtoMap
+			.keySet()
+			.stream()
+			.findFirst()
+			.orElseThrow(() ->  StudyGroupException.notFoundStudyGroup(readDto.studyGroupId()));
 
-		return StudyGroupMemberConverter.toStudyGroupMembersResponse(studyGroupMembers);
+		validateStudyLeader(readDto.memberId(), readDto.studyGroupId());
+
+		return StudyGroupMemberConverter.toStudyGroupMembersResponse(studyGroup, studyGroupMemberDtoMap.get(studyGroup));
 	}
 
 	@Transactional
@@ -53,9 +61,7 @@ public class StudyGroupMemberService {
 		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
 
 		if (isApplicant(studyGroupMember)) {
-			studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
-			studyGroup.decreaseNumberOfApplicants();
-			studyGroup.increaseNumberOfMembers();
+			updateRoleToStudyMember(studyGroupMember, studyGroup);
 		}
 
 		return StudyGroupMemberConverter.toStudyGroupMemberIdResponse(updateDto.studyGroupMemberId());
@@ -67,15 +73,7 @@ public class StudyGroupMemberService {
 		StudyGroupMember studyGroupMember = findStudyGroupMember(deleteDto.studyGroupMemberId());
 		StudyGroup studyGroup = studyGroupMember.getStudyGroup();
 
-		studyGroupMemberRepository.deleteById(deleteDto.studyGroupMemberId());
-
-		if (isApplicant(studyGroupMember)) {
-			studyGroup.decreaseNumberOfApplicants();
-
-			return;
-		}
-
-		studyGroup.decreaseNumberOfMembers();
+		deleteById(deleteDto, studyGroupMember, studyGroup);
 	}
 
 	private StudyGroupMember findStudyGroupMember(Long studyGroupMemberId) {
@@ -100,8 +98,8 @@ public class StudyGroupMemberService {
 	}
 
 	private StudyGroupMember saveStudyApplicant(Long memberId, Long studyGroupId) {
-		Member member = findMember(memberId);
-		StudyGroup studyGroup = findStudyGroup(studyGroupId);
+		Member member = findMemberById(memberId);
+		StudyGroup studyGroup = findStudyGroupById(studyGroupId);
 		studyGroup.increaseNumberOfApplicants();
 
 		return studyGroupMemberRepository.save(new StudyGroupMember(STUDY_APPLICANT, member, studyGroup));
@@ -111,11 +109,31 @@ public class StudyGroupMemberService {
 		return studyGroupMember.getStudyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT);
 	}
 
-	private Member findMember(Long memberId) {
+	private void updateRoleToStudyMember(StudyGroupMember studyGroupMember, StudyGroup studyGroup) {
+		studyGroupMember.updateStudyGroupMemberRole(StudyGroupMemberRole.STUDY_MEMBER);
+		studyGroup.decreaseNumberOfApplicants();
+		studyGroup.increaseNumberOfMembers();
+	}
+
+	private void deleteById(
+		StudyGroupMemberDto.DeleteDto deleteDto, StudyGroupMember studyGroupMember, StudyGroup studyGroup
+	) {
+		studyGroupMemberRepository.deleteById(deleteDto.studyGroupMemberId());
+
+		if (isApplicant(studyGroupMember)) {
+			studyGroup.decreaseNumberOfApplicants();
+
+			return;
+		}
+
+		studyGroup.decreaseNumberOfMembers();
+	}
+
+	private Member findMemberById(Long memberId) {
 		return memberRepository.findMemberById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 	}
 
-	private StudyGroup findStudyGroup(Long studyGroupId) {
+	private StudyGroup findStudyGroupById(Long studyGroupId) {
 		return studyGroupRepository.findStudyGroupById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 	}

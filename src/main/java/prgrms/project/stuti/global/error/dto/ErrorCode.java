@@ -9,7 +9,8 @@ public enum ErrorCode {
 
 	//common
 	INVALID_METHOD_ARGUMENT("C001", "Invalid method argument", HttpStatus.BAD_REQUEST),
-	UNKNOWN_SERVER_ERROR("S001", "Unknown server error", HttpStatus.INTERNAL_SERVER_ERROR),
+	UNKNOWN_SERVER_ERROR("C002", "Unknown server error", HttpStatus.INTERNAL_SERVER_ERROR),
+	METHOD_NOT_ALLOWED("C003", "http method not allowed", HttpStatus.METHOD_NOT_ALLOWED),
 
 	//study group
 	INVALID_STUDY_PERIOD("SG001", "Invalid study period", HttpStatus.BAD_REQUEST),

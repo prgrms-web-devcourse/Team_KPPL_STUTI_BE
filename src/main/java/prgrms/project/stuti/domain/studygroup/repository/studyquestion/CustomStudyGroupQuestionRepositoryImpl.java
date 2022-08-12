@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -37,9 +36,9 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 			.join(studyGroupQuestion.member, member)
 			.join(studyGroupQuestion.studyGroup, studyGroup)
 			.where(
-				parentIdIsNull(true),
-				equalStudyGroup(pageDto.studyGroupId()),
-				lessThanLastStudyGroupQuestionId(pageDto.lastStudyGroupQuestionId()))
+				parentIdIsNull(),
+				eqAndNotDeletedStudyGroup(pageDto.studyGroupId()),
+				ltLastStudyGroupQuestionId(pageDto.lastStudyGroupQuestionId()))
 			.orderBy(studyGroupQuestion.id.desc())
 			.limit(pageDto.size() + NumberUtils.LONG_ONE)
 			.fetch();
@@ -61,25 +60,30 @@ public class CustomStudyGroupQuestionRepositoryImpl implements CustomStudyGroupQ
 			.from(studyGroupQuestion)
 			.join(studyGroupQuestion.member, member)
 			.join(studyGroupQuestion.studyGroup, studyGroup)
-			.where(parentIdIsNull(false), studyGroupQuestion.parent.id.in(parentIds))
+			.where(parentIdIsNotNull(), studyGroupQuestion.parent.id.in(parentIds))
 			.orderBy(studyGroupQuestion.id.asc())
 			.fetch();
 
 		Long totalElements = jpaQueryFactory
 			.select(studyGroupQuestion.count())
 			.from(studyGroupQuestion)
-			.where(parentIdIsNull(true), equalStudyGroup(pageDto.studyGroupId()))
+			.join(studyGroupQuestion.studyGroup, studyGroup)
+			.where(parentIdIsNull(), eqAndNotDeletedStudyGroup(pageDto.studyGroupId()))
 			.fetchOne();
 
 		return StudyGroupQuestionConverter
 			.toStudyGroupQuestionsPageResponse(parentQuestions, childrenQuestions, hasNext, totalElements);
 	}
 
-	private BooleanExpression parentIdIsNull(boolean flag) {
-		return flag ? studyGroupQuestion.parent.id.isNull() : studyGroupQuestion.parent.id.isNotNull();
+	private BooleanExpression parentIdIsNull() {
+		return studyGroupQuestion.parent.id.isNull();
 	}
 
-	private BooleanExpression lessThanLastStudyGroupQuestionId(Long lastStudyGroupQuestionId) {
+	private BooleanExpression parentIdIsNotNull() {
+		return studyGroupQuestion.parent.id.isNotNull();
+	}
+
+	private BooleanExpression ltLastStudyGroupQuestionId(Long lastStudyGroupQuestionId) {
 		return lastStudyGroupQuestionId == null ? null : studyGroupQuestion.id.lt(lastStudyGroupQuestionId);
 	}
 }

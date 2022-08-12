@@ -41,18 +41,21 @@ public class StudyGroupQuestionConverter {
 	) {
 		return parentQuestions
 			.stream()
-			.map(p -> StudyGroupQuestionsResponse
+			.map(parentQuestion -> StudyGroupQuestionsResponse
 				.builder()
-				.studyGroupQuestionId(p.studyGroupQuestionId())
-				.parentId(p.parentId())
-				.profileImageUrl(p.profileImageUrl())
-				.memberId(p.memberId())
-				.nickname(p.nickname())
-				.contents(p.contents())
-				.updatedAt(p.updatedAt())
-				.children(childrenQuestions
-					.stream()
-					.filter(c -> c.parentId().equals(p.studyGroupQuestionId())).toList())
-				.build()).toList();
+				.studyGroupQuestionId(parentQuestion.studyGroupQuestionId())
+				.parentId(parentQuestion.parentId())
+				.profileImageUrl(parentQuestion.profileImageUrl())
+				.memberId(parentQuestion.memberId())
+				.nickname(parentQuestion.nickname())
+				.contents(parentQuestion.contents())
+				.updatedAt(parentQuestion.updatedAt())
+				.children(
+					childrenQuestions
+						.stream()
+						.filter(c -> c.parentId().equals(parentQuestion.studyGroupQuestionId()))
+						.toList())
+				.build())
+			.toList();
 	}
 }

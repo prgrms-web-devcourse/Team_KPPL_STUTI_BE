@@ -1,7 +1,6 @@
 package prgrms.project.stuti.domain.member.controller;
 
 import java.net.URI;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -9,7 +8,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,9 +20,6 @@ import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.cache.model.RefreshToken;
-import prgrms.project.stuti.global.error.exception.MemberException;
-import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;
 import prgrms.project.stuti.global.token.Tokens;
@@ -38,13 +33,11 @@ public class AuthenticationController {
 	private final TokenService tokenService;
 	private final AuthenticationService authenticationService;
 
-	@Value("${app.oauth.domain}")
-	private String domain;
-
 	@PostMapping("/signup")
-	public ResponseEntity<MemberSignupResponse> singup(@Valid @RequestBody MemberSaveRequest memberSaveRequest) {
-		MemberResponse memberResponse = authenticationService.signupMember(
-			MemberMapper.toMemberDto(memberSaveRequest));
+	public ResponseEntity<MemberSignupResponse> singup(
+		HttpServletRequest request, @Valid @RequestBody MemberSaveRequest memberSaveRequest
+	) {
+		MemberResponse memberResponse = authenticationService.signupMember(MemberMapper.toMemberDto(memberSaveRequest));
 		Long memberId = memberResponse.id();
 
 		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
@@ -52,7 +45,7 @@ public class AuthenticationController {
 		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
 			CoderUtil.encode(tokens.accessToken()));
 
-		URI uri = URI.create(domain);
+		URI uri = URI.create(request.getScheme() + "://" + request.getHeader(HttpHeaders.HOST));
 
 		return ResponseEntity
 			.created(uri)
@@ -71,10 +64,10 @@ public class AuthenticationController {
 		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
 			CoderUtil.encode(tokens.accessToken()));
 
-		URI uri = URI.create(request.getHeader("Referer"));
+		// URI uri = URI.create(request.getHeader("Referer"));
 
 		return ResponseEntity
-			.created(uri)
+			.ok()
 			.body(memberSignupResponse);
 	}
 

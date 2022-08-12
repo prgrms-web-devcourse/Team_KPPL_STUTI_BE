@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.feed.repository;
+package prgrms.project.stuti.domain.feed.repository.postcomment;
 
 import static prgrms.project.stuti.domain.feed.model.QPostComment.*;
 
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.service.PostCommentConverter;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @Repository
 @RequiredArgsConstructor
@@ -37,23 +37,24 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 			.limit(size)
 			.fetch();
 
-		Long totalParentComments = totalParentComments(postId);
-
+		long totalParentComments = totalParentComments(postId);
 		boolean hasNext = false;
 		if (postComments.size() == size) {
 			Long lastCalledComment = postComments.get(postComments.size() - 1).getId();
 			hasNext = hasNext(postId, lastCalledComment);
 		}
 
-		return PostCommentConverter.toCommentResponse(postComments, hasNext, totalParentComments);
+		return PostCommentConverter.toCommentPageResponse(postComments, hasNext, totalParentComments);
 	}
 
 	@Override
-	public Long totalParentComments(Long postId) {
-		return jpaQueryFactory.select(postComment.count())
+	public long totalParentComments(Long postId) {
+		Long totalParentComments = jpaQueryFactory.select(postComment.count())
 			.from(postComment)
 			.where(postComment.post.id.eq(postId), postComment.parent.isNull())
 			.fetchOne();
+
+		return totalParentComments == null ? 0 : totalParentComments;
 	}
 
 	private boolean hasNext(Long postId, Long lastCommentId) {

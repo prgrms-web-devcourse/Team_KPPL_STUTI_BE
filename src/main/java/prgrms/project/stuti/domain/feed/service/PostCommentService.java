@@ -6,20 +6,20 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.model.Post;
-import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
-import prgrms.project.stuti.domain.feed.repository.PostRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
+import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.PostException;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -37,11 +37,11 @@ public class PostCommentService {
 		if (postCommentCreateDto.parentId() != null) {
 			parentPostComment = getCommentById(postCommentCreateDto.parentId());
 		}
-		PostComment newPostComment = PostCommentConverter.toComment(postCommentCreateDto.contents(), post,
+		PostComment newPostComment = PostCommentConverter.toPostComment(postCommentCreateDto.contents(), post,
 			parentPostComment, foundMember);
 		PostComment savedPostComment = postCommentRepository.save(newPostComment);
 
-		return PostCommentConverter.toCommentResponse(savedPostComment);
+		return PostCommentConverter.toPostCommentResponse(savedPostComment);
 	}
 
 	@Transactional
@@ -53,7 +53,7 @@ public class PostCommentService {
 		}
 		postComment.changeContents(postCommentUpdateDto.contents());
 
-		return PostCommentConverter.toCommentResponse(postComment);
+		return PostCommentConverter.toPostCommentResponse(postComment);
 	}
 
 	@Transactional
@@ -64,7 +64,7 @@ public class PostCommentService {
 
 		deleteComments(foundPostComment);
 
-		return PostCommentConverter.toCommentResponse(foundPostComment);
+		return PostCommentConverter.toPostCommentResponse(foundPostComment);
 	}
 
 	@Transactional(readOnly = true)
@@ -80,7 +80,7 @@ public class PostCommentService {
 		validatePostById(postId);
 		PostComment postComment = getCommentById(commentId);
 
-		return PostCommentConverter.toCommentContentsResponse(postComment);
+		return PostCommentConverter.toPostCommentContentsResponse(postComment);
 	}
 
 	private void deleteComments(PostComment deletePostComment) {

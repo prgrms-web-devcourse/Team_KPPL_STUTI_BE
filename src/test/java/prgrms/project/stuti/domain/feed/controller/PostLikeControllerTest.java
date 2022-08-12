@@ -16,7 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.PostLikeService;
-import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 
 @WebMvcTest(PostLikeController.class)
 class PostLikeControllerTest extends TestConfig {

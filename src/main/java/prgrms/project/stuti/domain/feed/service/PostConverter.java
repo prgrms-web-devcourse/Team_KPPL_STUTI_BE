@@ -5,8 +5,8 @@ import java.util.List;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostListResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 
 public class PostConverter {

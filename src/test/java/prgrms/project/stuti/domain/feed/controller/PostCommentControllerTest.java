@@ -21,9 +21,9 @@ import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @WebMvcTest(PostCommentController.class)
 class PostCommentControllerTest extends TestConfig {

@@ -2,7 +2,7 @@ package prgrms.project.stuti.global.security;
 
 import static org.springframework.http.HttpMethod.*;
 
-import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -36,24 +34,8 @@ public class WebSecurityConfig {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final BlackListTokenRepository blackListTokenRepository;
 
-	@Value("${app.oauth.domain}")
-	private String domain;
-
-	@Bean
-	public AuthenticationEntryPoint authenticationEntryPoint() {
-		return (request, response, e) -> {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			response.sendRedirect(domain);
-		};
-	}
-
-	@Bean
-	public AccessDeniedHandler accessDeniedHandler() {
-		return (request, response, e) -> {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			response.sendRedirect(domain);
-		};
-	}
+	@Value("${app.cors.allowed-origins}")
+	private String [] domains;
 
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -95,7 +77,7 @@ public class WebSecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.addAllowedOrigin(domain);
+		configuration.setAllowedOrigins(Arrays.asList(domains));
 		configuration.addAllowedHeader("*");
 		configuration.addAllowedMethod("*");
 		configuration.setAllowCredentials(true);

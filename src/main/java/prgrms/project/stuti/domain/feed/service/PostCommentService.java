@@ -19,7 +19,7 @@ import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.PostException;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @Service
 @RequiredArgsConstructor

@@ -22,7 +22,7 @@ import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @RestController
 @RequiredArgsConstructor

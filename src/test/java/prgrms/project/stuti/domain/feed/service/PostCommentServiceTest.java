@@ -25,7 +25,7 @@ import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.PostException;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @SpringBootTest
 class PostCommentServiceTest extends ServiceTestConfig {

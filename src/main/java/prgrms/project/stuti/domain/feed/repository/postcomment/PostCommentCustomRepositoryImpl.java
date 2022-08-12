@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.service.PostCommentConverter;
 import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @Repository
 @RequiredArgsConstructor

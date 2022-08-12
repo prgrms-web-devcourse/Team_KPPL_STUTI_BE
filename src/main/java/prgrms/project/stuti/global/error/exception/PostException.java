@@ -11,7 +11,7 @@ public class PostException extends BusinessException {
 	}
 
 	public static PostException POST_NOT_FOUND(Long postId) {
-		throw new PostException(ErrorCode.POST_NOT_FOUND,
+		throw new PostException(ErrorCode.NOT_FOUND_POST,
 			MessageFormat.format("존재하지 않는 게시글입니다. (postId: {0})", postId));
 	}
 
@@ -33,12 +33,12 @@ public class PostException extends BusinessException {
 	}
 
 	public static PostException PARENT_COMMENT_NOT_FOUND(Long parentPostCommentId) {
-		throw new PostException(ErrorCode.PARENT_POST_COMMENT_NOT_FOUND,
+		throw new PostException(ErrorCode.NOT_FOUND_PARENT_POST_COMMENT,
 			MessageFormat.format("상위 댓글이 존재하지 않습니다. (parentPostCommentId: {0})", parentPostCommentId));
 	}
 
 	public static PostException COMMENT_NOT_FOUND(Long postCommentId) {
-		throw new PostException(ErrorCode.POST_COMMENT_NOT_FOUND,
+		throw new PostException(ErrorCode.NOT_FOUND_POST_COMMENT,
 			MessageFormat.format("댓글이 존재하지 않습니다. (postCommentId: {0})", postCommentId));
 	}
 }

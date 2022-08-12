@@ -14,12 +14,12 @@ import prgrms.project.stuti.global.page.offset.PageResponse;
 
 public class PostCommentConverter {
 
-	public static PostComment toComment(String contents, Post post, PostComment parentPostComment,
+	public static PostComment toPostComment(String contents, Post post, PostComment parentPostComment,
 		Member commentWriteMember) {
 		return new PostComment(contents, parentPostComment, commentWriteMember, post);
 	}
 
-	public static PostCommentResponse toCommentResponse(PostComment savedPostComment) {
+	public static PostCommentResponse toPostCommentResponse(PostComment savedPostComment) {
 		Long parentId = null;
 		if (savedPostComment.getParent() != null) {
 			parentId = savedPostComment.getParent().getId();
@@ -35,11 +35,11 @@ public class PostCommentConverter {
 			.build();
 	}
 
-	public static PostCommentGetDto toCommentGetDto(Long postId, Long lastCommentId, int size) {
+	public static PostCommentGetDto toPostCommentGetDto(Long postId, Long lastCommentId, int size) {
 		return new PostCommentGetDto(postId, lastCommentId, size);
 	}
 
-	public static PageResponse<CommentParentContents> toCommentResponse(List<PostComment> postComments, boolean hasNext,
+	public static PageResponse<CommentParentContents> toCommentPageResponse(List<PostComment> postComments, boolean hasNext,
 		Long totalParentComments) {
 		List<CommentParentContents> contents = createContents(postComments);
 
@@ -70,7 +70,7 @@ public class PostCommentConverter {
 		).toList();
 	}
 
-	public static PostCommentContentsResponse toCommentContentsResponse(PostComment postComment) {
+	public static PostCommentContentsResponse toPostCommentContentsResponse(PostComment postComment) {
 		Long parentId = null;
 		if (postComment.getParent() != null) {
 			parentId = postComment.getParent().getId();

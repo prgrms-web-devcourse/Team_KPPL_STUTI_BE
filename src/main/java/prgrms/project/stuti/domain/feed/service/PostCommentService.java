@@ -37,11 +37,11 @@ public class PostCommentService {
 		if (postCommentCreateDto.parentId() != null) {
 			parentPostComment = getCommentById(postCommentCreateDto.parentId());
 		}
-		PostComment newPostComment = PostCommentConverter.toComment(postCommentCreateDto.contents(), post,
+		PostComment newPostComment = PostCommentConverter.toPostComment(postCommentCreateDto.contents(), post,
 			parentPostComment, foundMember);
 		PostComment savedPostComment = postCommentRepository.save(newPostComment);
 
-		return PostCommentConverter.toCommentResponse(savedPostComment);
+		return PostCommentConverter.toPostCommentResponse(savedPostComment);
 	}
 
 	@Transactional
@@ -53,7 +53,7 @@ public class PostCommentService {
 		}
 		postComment.changeContents(postCommentUpdateDto.contents());
 
-		return PostCommentConverter.toCommentResponse(postComment);
+		return PostCommentConverter.toPostCommentResponse(postComment);
 	}
 
 	@Transactional
@@ -64,7 +64,7 @@ public class PostCommentService {
 
 		deleteComments(foundPostComment);
 
-		return PostCommentConverter.toCommentResponse(foundPostComment);
+		return PostCommentConverter.toPostCommentResponse(foundPostComment);
 	}
 
 	@Transactional(readOnly = true)
@@ -80,7 +80,7 @@ public class PostCommentService {
 		validatePostById(postId);
 		PostComment postComment = getCommentById(commentId);
 
-		return PostCommentConverter.toCommentContentsResponse(postComment);
+		return PostCommentConverter.toPostCommentContentsResponse(postComment);
 	}
 
 	private void deleteComments(PostComment deletePostComment) {

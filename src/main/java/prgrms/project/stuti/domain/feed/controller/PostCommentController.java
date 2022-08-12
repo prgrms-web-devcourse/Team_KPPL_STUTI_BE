@@ -33,7 +33,7 @@ public class PostCommentController {
 	@PostMapping("/api/v1/posts/{postId}/comments")
 	public ResponseEntity<PostCommentResponse> createComment(@PathVariable Long postId,
 		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
-		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toCommentCreateDto(postCommentRequest, postId,
+		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toPostCommentCreateDto(postCommentRequest, postId,
 			memberId);
 		PostCommentResponse postCommentResponse = postCommentService.createComment(postCommentCreateDto);
 
@@ -43,7 +43,7 @@ public class PostCommentController {
 	@PostMapping("/api/v1/posts/{postId}/comments/{commentId}")
 	public ResponseEntity<PostCommentResponse> changeComment(@PathVariable Long postId, @PathVariable Long commentId,
 		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
-		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toCommentUpdateDto(postCommentRequest, postId,
+		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toPostCommentUpdateDto(postCommentRequest, postId,
 			commentId, memberId);
 		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentUpdateDto);
 
@@ -62,7 +62,7 @@ public class PostCommentController {
 	public ResponseEntity<PageResponse<CommentParentContents>> getPostComments(@PathVariable Long postId,
 		@RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
 		@RequestParam(defaultValue = "10") int size) {
-		PostCommentGetDto postCommentGetDto = PostCommentConverter.toCommentGetDto(postId, lastCommentId, size);
+		PostCommentGetDto postCommentGetDto = PostCommentConverter.toPostCommentGetDto(postId, lastCommentId, size);
 		PageResponse<CommentParentContents> commentResponse = postCommentService.getPostComments(postCommentGetDto);
 
 		return ResponseEntity.ok().body(commentResponse);

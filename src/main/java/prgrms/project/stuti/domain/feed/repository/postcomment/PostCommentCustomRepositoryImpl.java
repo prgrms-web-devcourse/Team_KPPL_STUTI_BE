@@ -45,7 +45,7 @@ public class PostCommentCustomRepositoryImpl implements PostCommentCustomReposit
 			hasNext = hasNext(postId, lastCalledComment);
 		}
 
-		return PostCommentConverter.toCommentResponse(postComments, hasNext, totalParentComments);
+		return PostCommentConverter.toCommentPageResponse(postComments, hasNext, totalParentComments);
 	}
 
 	@Override

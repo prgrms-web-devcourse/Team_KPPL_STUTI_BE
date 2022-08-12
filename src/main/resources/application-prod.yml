@@ -34,9 +34,9 @@ cloud:
 
 app:
   cors:
-    allowed-origins: 'http://localhost:3000'
+    allowed-origins: 'https://stu-ti.netlify.app'
   oauth:
-    domain: "http://localhost:3000"
+    domain: "https://stu-ti.netlify.app"
 
 # Sentry
 DSN: https://e6ac8fba443a46ea8425aadf84c6325c@o1332931.ingest.sentry.io/6597826

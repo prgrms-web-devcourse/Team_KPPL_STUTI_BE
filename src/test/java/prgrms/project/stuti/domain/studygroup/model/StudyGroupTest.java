@@ -37,6 +37,8 @@ class StudyGroupTest {
 	@Test
 	@DisplayName("스터디 그룹의 지원자수가 0 밑으로 감소하지 않는다.")
 	void testDecreaseNumberOfApplicants() {
+		int numberOfBeforeAction = studyGroup.getNumberOfApplicants();
+
 		studyGroup.decreaseNumberOfApplicants();
 		studyGroup.decreaseNumberOfApplicants();
 		studyGroup.decreaseNumberOfApplicants();
@@ -44,6 +46,7 @@ class StudyGroupTest {
 		studyGroup.decreaseNumberOfApplicants();
 		studyGroup.decreaseNumberOfApplicants();
 
+		assertThat(numberOfBeforeAction).isLessThan(5);
 		assertThat(studyGroup.getNumberOfApplicants()).isNotNegative();
 	}
 
@@ -60,6 +63,8 @@ class StudyGroupTest {
 	@Test
 	@DisplayName("스터디 그룹의 멤버수가 0 밑으로 감소하지 않는다.")
 	void testDecreaseNumberOfMembers() {
+		int numberOfBeforeAction = studyGroup.getNumberOfMembers();
+
 		studyGroup.decreaseNumberOfMembers();
 		studyGroup.decreaseNumberOfMembers();
 		studyGroup.decreaseNumberOfMembers();
@@ -67,15 +72,19 @@ class StudyGroupTest {
 		studyGroup.decreaseNumberOfMembers();
 		studyGroup.decreaseNumberOfMembers();
 
+		assertThat(numberOfBeforeAction).isLessThan(5);
 		assertThat(studyGroup.getNumberOfMembers()).isNotNegative();
 	}
 
 	@Test
 	@DisplayName("스터디 그룹의 모집인원이 다 채워진 상태에서 스터디 멤버의 인원수를 증시키면 예외가 발생한다.")
 	void testFullOfNumberOfRecruits() {
+		int numberOfBeforeAction = studyGroup.getNumberOfMembers();
+
 		studyGroup.increaseNumberOfMembers();
 		studyGroup.increaseNumberOfMembers();
 
+		assertThat(numberOfBeforeAction).isLessThan(studyGroup.getNumberOfRecruits());
 		assertThatThrownBy(() -> studyGroup.increaseNumberOfMembers()).isInstanceOf(StudyGroupException.class);
 	}
 }

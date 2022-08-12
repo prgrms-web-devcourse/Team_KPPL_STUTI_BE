@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
 		HttpRequestMethodNotSupportedException ex) {
 		log.info("Got HttpRequestMethodNotSupportedException: {}", ex.getMessage(), ex);
 
-		return ErrorResponseMapper.toErrorResponse(ErrorCode.INVALID_METHOD_ARGUMENT);
+		return ErrorResponseMapper.toErrorResponse(ErrorCode.METHOD_NOT_ALLOWED);
 	}
 
 	@ExceptionHandler(TokenException.class)

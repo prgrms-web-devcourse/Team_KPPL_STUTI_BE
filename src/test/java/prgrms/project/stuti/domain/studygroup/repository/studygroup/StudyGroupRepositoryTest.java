@@ -92,7 +92,10 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 	@DisplayName("전체 스터디 그룹을 동적 쿼리 && 커서 페이징 방식으로 조회한다.")
 	void testFindAllWithCursorPaginationByConditions() {
 		//given
-		saveStudyGroupOfFiveFrontendTopicAndFiveBackendTopic();
+		for (int i = 0; i < 5; i++) {
+			saveStudyGroup(Topic.FRONTEND);
+			saveStudyGroup(Topic.BACKEND);
+		}
 
 		StudyGroupDto.FindCondition conditionDto = StudyGroupDto.FindCondition
 			.builder()
@@ -115,7 +118,10 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 	@DisplayName("멤버가 참여했던 혹은 생성한 스터디 그룹들을 커서 페이징 방식으로 조회한다.")
 	void testFindMembersAllWithCursorPaginationByConditions() {
 		//given
-		saveStudyGroupOfFiveFrontendTopicAndFiveBackendTopic();
+		for (int i = 0; i < 5; i++) {
+			saveStudyGroup(Topic.FRONTEND);
+			saveStudyGroup(Topic.BACKEND);
+		}
 
 		StudyGroupDto.FindCondition conditionDto = StudyGroupDto.FindCondition
 			.builder()
@@ -132,13 +138,6 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 		assertThat(pageResponses.contents()).hasSize(3);
 		assertThat(pageResponses.hasNext()).isTrue();
 		pageResponses.contents().forEach(content -> assertThat(content.memberId()).isEqualTo(member.getId()));
-	}
-
-	public void saveStudyGroupOfFiveFrontendTopicAndFiveBackendTopic() {
-		for (int i = 0; i < 5; i++) {
-			saveStudyGroup(Topic.FRONTEND);
-			saveStudyGroup(Topic.BACKEND);
-		}
 	}
 
 	public void saveStudyGroup(Topic topic) {

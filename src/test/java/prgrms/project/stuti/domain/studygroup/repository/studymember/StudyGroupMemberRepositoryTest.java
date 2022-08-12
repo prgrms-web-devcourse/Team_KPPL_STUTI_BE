@@ -144,7 +144,11 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 	@DisplayName("스터디 그룹 아이디로 스터디에 참여하는 스터디 멤버들을 조회한다.")
 	void testFindStudyGroupMembersByStudyGroupId() {
 		//given
-		saveTwoMembersAndTwoApplicants();
+		for (int i = 0; i < 2; i++) {
+			saveStudyGroupMember(StudyGroupMemberRole.STUDY_MEMBER);
+			saveStudyGroupMember(StudyGroupMemberRole.STUDY_APPLICANT);
+		}
+
 		Long studyGroupId = studyGroup.getId();
 
 		//when
@@ -166,13 +170,6 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 				.stream()
 				.filter(m -> m.studyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)))
 			.hasSize(2);
-	}
-
-	public void saveTwoMembersAndTwoApplicants() {
-		for (int i = 0; i < 2; i++) {
-			saveStudyGroupMember(StudyGroupMemberRole.STUDY_MEMBER);
-			saveStudyGroupMember(StudyGroupMemberRole.STUDY_APPLICANT);
-		}
 	}
 
 	public void saveStudyGroupMember(StudyGroupMemberRole studyGroupMemberRole) {

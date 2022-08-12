@@ -54,7 +54,7 @@ class StudyGroupQuestionRepositoryTest extends RepositoryTestConfig {
 	@Test
 	@DisplayName("스터디 그룹 문의댓글을 아이디로 페치조인하여 조회한다.")
 	void testFindFetchStudyGroupQuestionsById() {
-	    //given
+		//given
 		StudyGroupQuestion studyGroupQuestion = studyGroupQuestionRepository.save(saveParentQuestion());
 
 		//when
@@ -71,8 +71,16 @@ class StudyGroupQuestionRepositoryTest extends RepositoryTestConfig {
 	@DisplayName("부모댓글은 아이디 내림차순, 자식댓글은 아이디 오름차순으로 스터디 그룹 문의댓글 리스트를 페이징 처리하여 조회한다.")
 	void testFindAllWithPagination() {
 		//given
-		saveTwoParentQuestionAndEightChildrenQuestions();
-		StudyGroupQuestionDto.PageDto pageDto = new StudyGroupQuestionDto.PageDto(studyGroup.getId(), 10L, null);
+		for (int i = 0; i < 2; i++) {
+			StudyGroupQuestion parentQuestion = saveParentQuestion();
+
+			for (int j = 0; j < 4; j++) {
+				saveChildrenQuestions(parentQuestion);
+			}
+		}
+
+		StudyGroupQuestionDto.PageDto pageDto =
+			new StudyGroupQuestionDto.PageDto(studyGroup.getId(), 10L, null);
 
 		//when
 		PageResponse<StudyGroupQuestionsResponse> pageResponses =
@@ -93,22 +101,13 @@ class StudyGroupQuestionRepositoryTest extends RepositoryTestConfig {
 			.isLessThan(content1.children().get(1).studyGroupQuestionId());
 	}
 
-	public void saveTwoParentQuestionAndEightChildrenQuestions() {
-		for (int i = 0; i < 2; i++) {
-			StudyGroupQuestion parentQuestion = saveParentQuestion();
-			saveFourChildrenQuestions(parentQuestion);
-		}
-	}
-
 	public StudyGroupQuestion saveParentQuestion() {
 		return studyGroupQuestionRepository
 			.save(new StudyGroupQuestion("parent question", null, member, studyGroup));
 	}
 
-	public void saveFourChildrenQuestions(StudyGroupQuestion parentQuestion) {
-		for (int i = 0; i < 4; i++) {
-			studyGroupQuestionRepository
-				.save(new StudyGroupQuestion("children question", parentQuestion, member, studyGroup));
-		}
+	public void saveChildrenQuestions(StudyGroupQuestion parentQuestion) {
+		studyGroupQuestionRepository
+			.save(new StudyGroupQuestion("children question", parentQuestion, member, studyGroup));
 	}
 }

@@ -19,15 +19,18 @@ public class PostLikeController {
 	private final PostLikeService postLikeService;
 
 	@PostMapping("/api/v1/posts/{postId}/likes")
-	public ResponseEntity<PostLikeIdResponse> createPostLike(@PathVariable Long postId,
-		@AuthenticationPrincipal Long memberId) {
+	public ResponseEntity<PostLikeIdResponse> createPostLike(
+		@PathVariable Long postId, @AuthenticationPrincipal Long memberId
+	) {
 		PostLikeIdResponse postLikeIdResponse = postLikeService.createPostLike(postId, memberId);
 
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postLikeIdResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/likes")
-	public ResponseEntity<Void> cancelPostLike(@PathVariable Long postId, @AuthenticationPrincipal Long memberId) {
+	public ResponseEntity<Void> cancelPostLike(
+		@PathVariable Long postId, @AuthenticationPrincipal Long memberId
+	) {
 		postLikeService.cancelPostLike(postId, memberId);
 
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).build();

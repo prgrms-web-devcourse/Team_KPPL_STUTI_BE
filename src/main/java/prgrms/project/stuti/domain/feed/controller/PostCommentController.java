@@ -31,8 +31,10 @@ public class PostCommentController {
 	private final PostCommentService postCommentService;
 
 	@PostMapping("/api/v1/posts/{postId}/comments")
-	public ResponseEntity<PostCommentResponse> createComment(@PathVariable Long postId,
-		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
+	public ResponseEntity<PostCommentResponse> createComment(
+		@PathVariable Long postId, @Valid @RequestBody PostCommentRequest postCommentRequest,
+		@AuthenticationPrincipal Long memberId
+	) {
 		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toPostCommentCreateDto(postCommentRequest, postId,
 			memberId);
 		PostCommentResponse postCommentResponse = postCommentService.createComment(postCommentCreateDto);
@@ -41,8 +43,10 @@ public class PostCommentController {
 	}
 
 	@PostMapping("/api/v1/posts/{postId}/comments/{commentId}")
-	public ResponseEntity<PostCommentResponse> changeComment(@PathVariable Long postId, @PathVariable Long commentId,
-		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
+	public ResponseEntity<PostCommentResponse> changeComment(
+		@PathVariable Long postId, @PathVariable Long commentId,
+		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId
+		) {
 		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toPostCommentUpdateDto(postCommentRequest, postId,
 			commentId, memberId);
 		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentUpdateDto);
@@ -51,17 +55,19 @@ public class PostCommentController {
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/comments/{commentId}")
-	public ResponseEntity<PostCommentResponse> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
-		@AuthenticationPrincipal Long memberId) {
+	public ResponseEntity<PostCommentResponse> deleteComment(
+		@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal Long memberId
+	) {
 		PostCommentResponse postCommentResponse = postCommentService.deleteComment(postId, commentId, memberId);
 
 		return ResponseEntity.ok(postCommentResponse);
 	}
 
 	@GetMapping("/api/v1/posts/{postId}/comments")
-	public ResponseEntity<PageResponse<CommentParentContents>> getPostComments(@PathVariable Long postId,
-		@RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
-		@RequestParam(defaultValue = "10") int size) {
+	public ResponseEntity<PageResponse<CommentParentContents>> getPostComments(
+		@PathVariable Long postId, @RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
+		@RequestParam(defaultValue = "10") int size
+	) {
 		PostCommentGetDto postCommentGetDto = PostCommentConverter.toPostCommentGetDto(postId, lastCommentId, size);
 		PageResponse<CommentParentContents> commentResponse = postCommentService.getPostComments(postCommentGetDto);
 

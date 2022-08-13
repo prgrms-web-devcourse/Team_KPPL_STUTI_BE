@@ -41,7 +41,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 		String email = (String)attributes.get("email");
-		String name = (String)attributes.get("name");
+		Optional<String> optionalName = Optional.ofNullable((String)attributes.get("name"));
+		String name = optionalName.orElse("");
 		String picture = (String)attributes.get("picture");
 
 		Optional<Member> optionalMember = memberService.getMember(new Email(email));

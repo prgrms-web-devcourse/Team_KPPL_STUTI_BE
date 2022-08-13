@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -36,6 +37,9 @@ public class WebSecurityConfig {
 
 	@Value("${app.cors.allowed-origins}")
 	private String [] domains;
+
+	@Value("${app.oauth.domain}")
+	private String domain;
 
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -63,6 +67,7 @@ public class WebSecurityConfig {
 			.oauth2Login(
 				oauth2Login -> oauth2Login
 					.successHandler(successHandler)
+					.failureHandler(failureHandler())
 					.userInfoEndpoint()
 					.userService(oAuth2UserService)
 			)
@@ -71,6 +76,11 @@ public class WebSecurityConfig {
 				UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
+	}
+
+	@Bean
+	SimpleUrlAuthenticationFailureHandler failureHandler() {
+		return new SimpleUrlAuthenticationFailureHandler(domain);
 	}
 
 	@Bean

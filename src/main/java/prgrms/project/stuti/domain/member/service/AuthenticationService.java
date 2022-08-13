@@ -72,10 +72,12 @@ public class AuthenticationService {
 		}
 	}
 
-	public void checkRefreshToken(String accessToken) {
-		if(refreshTokenRepository.findById(accessToken).isEmpty()){
+	public String checkAndGetRefreshToken(String accessToken) {
+		Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
+		if(optionalRefreshToken.isEmpty()){
 			TokenException.refreshTokenExpiration(null);
 		}
+		return optionalRefreshToken.get().getRefreshTokenValue();
 	}
 
 	private RefreshToken createRefreshToken(Long memberId, Tokens tokens, long refreshPeriod, Date now) {

@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -33,7 +32,6 @@ public class TokenService {
 	private final byte[] keyBytes;
 	private final Key key;
 
-
 	public TokenService(JwtProperties jwtProperties) {
 		this.refreshTokenPeriod = jwtProperties.getRefreshTokenExpiry();
 		this.accessTokenPeriod = jwtProperties.getTokenExpiry();
@@ -44,7 +42,6 @@ public class TokenService {
 		this.keyBytes = secretKey.getBytes();
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
-
 
 	public Tokens generateTokens(String uid, String roles) {
 		Claims claims = Jwts.claims().setSubject(uid);
@@ -152,19 +149,15 @@ public class TokenService {
 		return token != null ? CoderUtil.decode(token) : null;
 	}
 
-	public ResponseCookie addAccessTokenToCookie(String accessToken, TokenType tokenType) {
-		return ResponseCookie.from(AUTHORIZATION, "1234")
-			.path("/")
-			.httpOnly(true)
-			.secure(true)
-			.sameSite("none")
-			.maxAge(60)
-			.build();
-	}
-
-	public void verifyTokenWithException(String accessToken){
+	public void verifyAccessTokenWithException(String accessToken) {
 		if (!this.verifyToken(accessToken)) {
 			TokenException.accessTokenExpiration(accessToken);
+		}
+	}
+
+	public void verifyRefreshTokenWithException(String refreshTokenValue) {
+		if (!this.verifyToken(refreshTokenValue)) {
+			TokenException.refreshTokenExpiration(refreshTokenValue);
 		}
 	}
 }

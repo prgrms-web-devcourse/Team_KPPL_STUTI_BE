@@ -82,8 +82,9 @@ public class AuthenticationController {
 	@GetMapping("/auth")
 	public ResponseEntity<MemberResponse> memberInfo(HttpServletRequest request) {
 		String accessToken = tokenService.resolveToken(request);
-		tokenService.verifyTokenWithException(accessToken);
-		authenticationService.checkRefreshToken(accessToken);
+		String refreshTokenValue = authenticationService.checkAndGetRefreshToken(accessToken);
+		tokenService.verifyRefreshTokenWithException(refreshTokenValue);
+		tokenService.verifyAccessTokenWithException(accessToken);
 		String memberId = tokenService.getUid(accessToken);
 		MemberResponse memberResponse = authenticationService.getMemberResponse(Long.parseLong(memberId));
 

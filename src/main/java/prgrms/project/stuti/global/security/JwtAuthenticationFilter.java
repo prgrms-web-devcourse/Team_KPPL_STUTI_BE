@@ -50,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		// 1. accessToken 이 유효한경우
 		if (!isLogout && accessToken != null && tokenService.verifyToken(accessToken)) {
+			System.out.println("1");
 			checkBlackList(accessToken);
 
 			String memberId = tokenService.getUid(accessToken);
@@ -62,27 +63,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// 2. accessToken 에 해당하는 refreshToken 이 존재하지 않은 경우 : T002
 			Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
 			if (optionalRefreshToken.isEmpty()) {
+				System.out.println("2");
 				refreshTokenExpirationException(response, objectMapper);
 				return;
 			}
 
+			System.out.println("3");
 			RefreshToken refreshToken = optionalRefreshToken.get();
-			String refreshTokenValue = refreshToken.getRefreshTokenValue();
+			// String refreshTokenValue = refreshToken.getRefreshTokenValue();
 			// 3. accessToken 에 해당하는 refreshToken 이 존재하고 유효한 경우 : T001
-			if (tokenService.verifyToken(refreshTokenValue)) {
-				String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
-				Long memberId = refreshToken.getMemberId();
-				String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
+			// if (tokenService.verifyToken(refreshTokenValue)) {
+			String[] role = tokenService.getRole(refreshToken.getRefreshTokenValue());
+			Long memberId = refreshToken.getMemberId();
+			String newAccessToken = tokenService.generateAccessToken(memberId.toString(), role);
 
-				refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
-				refreshTokenRepository.delete(refreshToken);
+			refreshTokenRepository.save(makeRefreshToken(refreshToken, memberId, newAccessToken));
+			refreshTokenRepository.delete(refreshToken);
 
-				accessTokenExpirationException(response, objectMapper, CoderUtil.encode(newAccessToken));
-				return;
-			}
-			// 4. refreshtoken 이 존재하는데 유효하지 않은경우 : T002
-			refreshTokenExpirationException(response, objectMapper);
+			accessTokenExpirationException(response, objectMapper, CoderUtil.encode(newAccessToken));
 			return;
+			// }
+			// 4. refreshtoken 이 존재하는데 유효하지 않은경우 : T002
+			// refreshTokenExpirationException(response, objectMapper);
+			// return;
 		}
 		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.
 		filterChain.doFilter(request, response);

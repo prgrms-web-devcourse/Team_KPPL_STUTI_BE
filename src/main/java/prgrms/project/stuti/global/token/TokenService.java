@@ -63,7 +63,7 @@ public class TokenService {
 
 	public String generateAccessToken(String uid, String[] roles) {
 		Claims claims = Jwts.claims().setSubject(uid);
-		claims.put("roles", roles);
+		claims.put("roles", roles[0]);
 		Date now = new Date();
 
 		return this.generateAccessToken(claims, now);

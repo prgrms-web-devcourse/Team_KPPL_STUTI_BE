@@ -3,7 +3,6 @@ package prgrms.project.stuti.domain.member.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,9 +29,6 @@ import prgrms.project.stuti.global.util.CoderUtil;
 public class AuthenticationController {
 	private final TokenService tokenService;
 	private final AuthenticationService authenticationService;
-
-	@Value("${app.oauth.domain}")
-	private String domain;
 
 	@PostMapping("/signup")
 	public ResponseEntity<MemberSignupResponse> singup(

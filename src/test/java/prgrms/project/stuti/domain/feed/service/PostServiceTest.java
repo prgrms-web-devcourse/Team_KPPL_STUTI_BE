@@ -293,7 +293,7 @@ class PostServiceTest {
 			postImageRepository.save(postImage);
 		}
 
-		PostListResponse myPosts = postService.getMyPosts(savedMember.getId(), savedPost.getId(), 3);
+		PostListResponse myPosts = postService.getMemberPosts(savedMember.getId(), savedPost.getId(), 3);
 
 		assertThat(myPosts.hasNext()).isTrue();
 		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");

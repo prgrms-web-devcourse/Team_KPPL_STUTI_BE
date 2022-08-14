@@ -14,16 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import prgrms.project.stuti.config.ServiceTestConfig;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostComment;
-import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.global.error.exception.CommentException;
 import prgrms.project.stuti.global.error.exception.PostException;
 import prgrms.project.stuti.global.page.PageResponse;
 
@@ -109,7 +108,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 		Post post = createPost(member);
 		PostComment postComment = new PostComment("댓글입니다.", null, member, post);
 		PostComment savedPostComment = postCommentRepository.save(postComment);
-		PostCommentUpdateDto postCommentUpdateDto = PostCommentUpdateDto.builder()
+		PostCommentChangeDto postCommentChangeDto = PostCommentChangeDto.builder()
 			.memberId(member.getId())
 			.postId(post.getId())
 			.postCommentId(savedPostComment.getId())
@@ -117,16 +116,16 @@ class PostCommentServiceTest extends ServiceTestConfig {
 			.contents("수정된 댓글입니다.")
 			.build();
 
-		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentUpdateDto);
+		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentChangeDto);
 
-		assertThat(postCommentResponse.contents()).isEqualTo(postCommentUpdateDto.contents());
+		assertThat(postCommentResponse.contents()).isEqualTo(postCommentChangeDto.contents());
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 댓글은 수정 할 수 없다")
 	void testChangeCommentWithNotExist() {
 		Post post = createPost(member);
-		PostCommentUpdateDto postCommentUpdateDto = PostCommentUpdateDto.builder()
+		PostCommentChangeDto postCommentChangeDto = PostCommentChangeDto.builder()
 			.memberId(member.getId())
 			.postId(post.getId())
 			.postCommentId(0L)
@@ -134,7 +133,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 			.contents("존재하지 않는 댓글에 대한 수정댓글입니다.")
 			.build();
 
-		assertThrows(CommentException.class, () -> postCommentService.changeComment(postCommentUpdateDto));
+		assertThrows(PostException.class, () -> postCommentService.changeComment(postCommentChangeDto));
 	}
 
 	@Test
@@ -174,7 +173,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 
 		postCommentService.deleteComment(post.getId(), postComment.getId(), member.getId());
 
-		assertThrows(CommentException.class, () -> postCommentService.deleteComment(post.getId(), postComment.getId(),
+		assertThrows(PostException.class, () -> postCommentService.deleteComment(post.getId(), postComment.getId(),
 			member.getId()));
 	}
 
@@ -203,7 +202,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 			}
 		}
 
-		PageResponse<CommentParentContents> postComments = postCommentService.getPostComments(
+		PageResponse<PostCommentParent> postComments = postCommentService.getPostComments(
 			new PostCommentGetDto(post.getId(), null, 10));
 		System.out.println(postComments + "가져와 ");
 		System.out.println(postComments.contents().get(0).children().size() + "자식 사이즈");
@@ -241,7 +240,7 @@ class PostCommentServiceTest extends ServiceTestConfig {
 	void testGetCommentContentsWithUnknownCommentId() {
 		Post post = createPost(member);
 
-		assertThrows(CommentException.class, () -> postCommentService.getCommentContents(post.getId(), 1L));
+		assertThrows(PostException.class, () -> postCommentService.getCommentContents(post.getId(), 1L));
 	}
 
 	private Post createPost(Member member) {

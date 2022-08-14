@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentConverter;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
 import prgrms.project.stuti.global.page.PageResponse;
 
 @RestController
@@ -47,9 +47,9 @@ public class PostCommentController {
 		@PathVariable Long postId, @PathVariable Long commentId,
 		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId
 		) {
-		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toPostCommentUpdateDto(postCommentRequest, postId,
+		PostCommentChangeDto postCommentChangeDto = PostCommentMapper.toPostCommentChangeDto(postCommentRequest, postId,
 			commentId, memberId);
-		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentUpdateDto);
+		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentChangeDto);
 
 		return ResponseEntity.ok().body(postCommentResponse);
 	}
@@ -64,12 +64,12 @@ public class PostCommentController {
 	}
 
 	@GetMapping("/api/v1/posts/{postId}/comments")
-	public ResponseEntity<PageResponse<CommentParentContents>> getPostComments(
+	public ResponseEntity<PageResponse<PostCommentParent>> getPostComments(
 		@PathVariable Long postId, @RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
 		@RequestParam(defaultValue = "10") int size
 	) {
 		PostCommentGetDto postCommentGetDto = PostCommentConverter.toPostCommentGetDto(postId, lastCommentId, size);
-		PageResponse<CommentParentContents> commentResponse = postCommentService.getPostComments(postCommentGetDto);
+		PageResponse<PostCommentParent> commentResponse = postCommentService.getPostComments(postCommentGetDto);
 
 		return ResponseEntity.ok().body(commentResponse);
 	}

@@ -1,7 +1,13 @@
 package prgrms.project.stuti.domain.feed.controller;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.payload.JsonFieldType.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -13,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.ResultActions;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.PostLikeService;
@@ -27,27 +34,56 @@ class PostLikeControllerTest extends TestConfig {
 	@Test
 	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
 	@DisplayName("게시글에 좋아요를 등록한다")
-	void testCreatePostLike() throws Exception {
+	void createPostLike() throws Exception {
 		PostLikeIdResponse postLikeIdResponse = new PostLikeIdResponse(1L);
 
 		when(postLikeService.createPostLike(anyLong(), anyLong()))
 			.thenReturn(postLikeIdResponse);
 
-		mockMvc.perform(post("/api/v1/posts/{postId}/likes", 1L)
-				.contentType(MediaType.APPLICATION_JSON)
-				.characterEncoding(StandardCharsets.UTF_8))
+		ResultActions resultActions = mockMvc.perform(post("/api/v1/posts/{postId}/likes", 1L)
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andDo(print());
+
+		resultActions.andExpectAll(
+			status().isOk(),
+			content().json(objectMapper.writeValueAsString(postLikeIdResponse))
+		).andDo(
+			document(COMMON_DOCS_NAME,
+				requestHeaders(
+					headerWithName(CONTENT_TYPE).description("컨텐츠 타입"),
+					headerWithName(HOST).description("호스트")),
+				pathParameters(
+					parameterWithName("postId").description("게시글 아이디")
+				),
+				responseFields(
+					fieldWithPath("postLikeId").type(NUMBER).description("좋아요 아이디")
+				))
+		);
 	}
 
 	@Test
 	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
 	@DisplayName("좋아요를 취소한다")
-	void testCancelPostLike() throws Exception {
+	void deletePostLike() throws Exception {
 		doNothing().when(postLikeService).cancelPostLike(anyLong(), anyLong());
 
-		mockMvc.perform(delete("/api/v1/posts/{postId}/likes", 1L))
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/posts/{postId}/likes", 1L)
+				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andDo(print());
+
+		resultActions.andExpectAll(
+			status().isOk()
+		).andDo(document(
+				COMMON_DOCS_NAME,
+				requestHeaders(
+					headerWithName(CONTENT_TYPE).description("컨텐츠 타입"),
+					headerWithName(HOST).description("호스트")),
+				pathParameters(
+					parameterWithName("postId").description("게시글 아이디")
+				)
+			)
+		);
 	}
 }

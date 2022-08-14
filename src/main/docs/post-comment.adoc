@@ -1,0 +1,21 @@
+== 게시글 댓글
+
+=== 생성
+
+operation::create-comment[snippets='http-request,request-headers,path-parameters,request-body,http-response,response-body,response-fields']
+'''
+
+=== 전체조회
+
+operation::get-comments[snippets='http-request,request-headers,request-parameters,path-parameters,http-response,response-body,response-fields']
+'''
+
+=== 댓글 단건 조회
+
+operation::get-comment[snippets='http-request,request-headers,path-parameters,http-response,response-body,response-fields']
+'''
+
+=== 수정
+
+operation::update-comment[snippets='http-request,request-headers,path-parameters,request-body,http-response,response-body,response-fields']
+'''

@@ -1,6 +1,6 @@
 create table MEMBER
 (
-    MEMBER_ID         bigint auto_increment
+    MEMBER_ID         bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT        datetime(6)  not null,
     UPDATED_AT        datetime(6)  not null,
@@ -22,7 +22,7 @@ create table MEMBER
 
 create table POST
 (
-    POST_ID    bigint auto_increment
+    POST_ID    bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT datetime(6)   not null,
     UPDATED_AT datetime(6)   not null,
@@ -36,7 +36,7 @@ create table POST
 
 create table POST_COMMENT
 (
-    POST_COMMENT_ID bigint auto_increment
+    POST_COMMENT_ID bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT      datetime(6)  not null,
     UPDATED_AT      datetime(6)  not null,
@@ -56,7 +56,7 @@ create table POST_COMMENT
 
 create table POST_IMAGE
 (
-    POST_IMAGE_ID bigint auto_increment
+    POST_IMAGE_ID bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT    datetime(6)  not null,
     UPDATED_AT    datetime(6)  not null,
@@ -72,7 +72,7 @@ create table POST_IMAGE
 
 create table POST_LIKE
 (
-    POST_LIKE_ID bigint auto_increment
+    POST_LIKE_ID bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT   datetime(6) not null,
     UPDATED_AT   datetime(6) not null,
@@ -88,7 +88,7 @@ create table POST_LIKE
 
 create table STUDY_GROUP
 (
-    STUDY_GROUP_ID       bigint auto_increment
+    STUDY_GROUP_ID       bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT           datetime(6)   not null,
     UPDATED_AT           datetime(6)   not null,
@@ -110,7 +110,7 @@ create table STUDY_GROUP
 
 create table PREFERRED_MBTI
 (
-    PREFERRED_MBTI_ID bigint auto_increment
+    PREFERRED_MBTI_ID bigint UNSIGNED auto_increment
         primary key,
     MBTI              varchar(4) not null,
     STUDY_GROUP_ID    bigint     null,
@@ -120,7 +120,7 @@ create table PREFERRED_MBTI
 
 create table STUDY_GROUP_MEMBER
 (
-    STUDY_GROUP_MEMBER_ID   bigint auto_increment
+    STUDY_GROUP_MEMBER_ID   bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT              datetime(6) not null,
     UPDATED_AT              datetime(6) not null,
@@ -137,7 +137,7 @@ create table STUDY_GROUP_MEMBER
 
 create table STUDY_GROUP_QUESTION
 (
-    STUDY_GROUP_QUESTION_ID bigint auto_increment
+    STUDY_GROUP_QUESTION_ID bigint UNSIGNED auto_increment
         primary key,
     CREATED_AT              datetime(6)  not null,
     UPDATED_AT              datetime(6)  not null,

@@ -1,7 +1,46 @@
 # MBTI기반 개발자 스터디 모집 사이트, STU-TI ! 👉 <a href ="https://stu-ti.netlify.app" > 바로가기</a>  
 
-![스크린샷 2022-08-14 오후 3 22 43](https://user-images.githubusercontent.com/50127628/184525283-17c395c8-fc90-459e-ac8b-55f9bf63be2e.png)
+![스크린샷 2022-08-14 오후 3 22 43](https://user-images.githubusercontent.com/50127628/184536067-db49eaf5-2ff3-45aa-96b7-19cd42bf9d38.png)
+## 👬 팀 소개
 
+<table align=center >
+  <tr>
+      <td>
+        <a href="https://github.com/Gosh95">
+            <img src="https://avatars.githubusercontent.com/u/78140516?v=4" width="150px" />
+        </a>
+    </td>
+    <td>
+        <a href="https://github.com/YHLEE9753">
+            <img src="https://avatars.githubusercontent.com/u/71916223?v=4" width="150px" />
+        </a>
+    </td>
+    <td>
+        <a href="https://github.com/Leeyerimearth">
+            <img src="https://avatars.githubusercontent.com/u/50127628?v=4" width="150px" />
+        </a>
+    </td>
+    <td>
+        <a href="https://github.com/ordilov">
+            <img src="https://avatars.githubusercontent.com/u/96903161?v=4" width="150px" />
+        </a>
+    </td>
+  </tr>
+  <tr>
+    <td><b> <a href="https://github.com/Gosh95">엘에이(김성현)</b></td>
+    <td><b><a href="https://github.com/YHLEE9753">치즈볼(이용훈)</b></td>
+    <td><b> <a href="https://github.com/Leeyerimearth">셀린(이예림)</b></td>
+    <td><b><a href="https://github.com/ordilov">이인후</b></td>
+  </tr>
+  <tr>
+    <td><b>Leader</b></td>
+    <td><b>Developer</b></td>
+    <td><b>Developer</b></td>
+    <td><b>Advisor</b></td>
+  </tr>
+</table>
+
+<br/>
 
 <br/>
 
@@ -77,43 +116,9 @@
 
 ![image](https://user-images.githubusercontent.com/50127628/184526830-eb9e3437-e963-435d-bacb-5b4f20f7765d.png)
 
-## 👬 팀 소개
 
-<table>
-  <tr>
-      <td>
-        <a href="https://github.com/Gosh95">
-            <img src="https://avatars.githubusercontent.com/u/78140516?v=4" width="200px" />
-        </a>
-    </td>
-    <td>
-        <a href="https://github.com/YHLEE9753">
-            <img src="https://avatars.githubusercontent.com/u/71916223?v=4" width="200px" />
-        </a>
-    </td>
-    <td>
-        <a href="https://github.com/Leeyerimearth">
-            <img src="https://avatars.githubusercontent.com/u/50127628?v=4" width="200px" />
-        </a>
-    </td>
-    <td>
-        <a href="https://github.com/ordilov">
-            <img src="https://avatars.githubusercontent.com/u/96903161?v=4" width="200px" />
-        </a>
-    </td>
-  </tr>
-  <tr>
-    <td><b>엘에이(김성현)</b></td>
-    <td><b>치즈볼(이용훈)</b></td>
-    <td><b>셀린(이예림)</b></td>
-    <td><b>이인후</b></td>
-  </tr>
-  <tr>
-    <td><b>Leader</b></td>
-    <td><b>Developer</b></td>
-    <td><b>Developer</b></td>
-    <td><b>Advisor</b></td>
-  </tr>
-</table>
+## 📐 ERD
 
-<br/>
+![image](https://user-images.githubusercontent.com/50127628/184536883-998d3265-61e9-4eac-9705-5bba5af9d054.png)
+
+

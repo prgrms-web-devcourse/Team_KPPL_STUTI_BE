@@ -1,4 +1,4 @@
-# MBTI기반 개발자 스터디 모집 사이트, STU-TI ! 
+# MBTI기반 개발자 스터디 모집 사이트, STU-TI ! 👉 <a href ="https://stu-ti.netlify.app" > 바로가기</a>  
 
 ![스크린샷 2022-08-14 오후 3 22 43](https://user-images.githubusercontent.com/50127628/184525283-17c395c8-fc90-459e-ac8b-55f9bf63be2e.png)
 
@@ -43,24 +43,17 @@
 - docker Image : 테스트용
 ```
 
-### CI/CD
+### CI/CD, Infra
 <div text-align="center">
 <img src="https://user-images.githubusercontent.com/50127628/184526576-4c260187-c721-499d-a8af-818337434204.png" alt="github action" width = "100" height = "100"> 
 <img src = "https://user-images.githubusercontent.com/50127628/184526685-ce173342-9246-4da6-a85f-705c81ed0ecf.png" alt="codedeploy" width = "100" height = "100"/>
-</div>
-
-```
-- 배포 : Github Action
-- 자동화 : AWS CodeDeploy
-```
-
-### Infra
-<div text-align="center">
 <img src = "https://user-images.githubusercontent.com/42290273/147036808-fe5ab546-9336-4edc-8524-9b9f80f22da7.png" alt="ec2" width = "100" height = "100"/>
 <img src = "https://user-images.githubusercontent.com/42290273/147037158-e280da57-8f83-4ce3-a832-5d14a4837d0f.png" alt="s3" width = "100" height = "100"/>
 </div>
 
 ```
+- 배포 : Github Action
+- 자동화 : AWS CodeDeploy
 - server : AWS EC2
 - storage : AWS S3
 ```
@@ -110,9 +103,9 @@
     </td>
   </tr>
   <tr>
-    <td><b>김성현</b></td>
-    <td><b>이용훈</b></td>
-    <td><b>이예림</b></td>
+    <td><b>엘에이(김성현)</b></td>
+    <td><b>치즈볼(이용훈)</b></td>
+    <td><b>셀린(이예림)</b></td>
     <td><b>이인후</b></td>
   </tr>
   <tr>

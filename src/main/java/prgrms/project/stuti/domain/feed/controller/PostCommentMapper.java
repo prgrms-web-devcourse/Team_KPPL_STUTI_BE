@@ -1,12 +1,12 @@
 package prgrms.project.stuti.domain.feed.controller;
 
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 
 public class PostCommentMapper {
 
-	public static PostCommentCreateDto toCommentCreateDto(PostCommentRequest postCommentRequest, Long postId,
+	public static PostCommentCreateDto toPostCommentCreateDto(PostCommentRequest postCommentRequest, Long postId,
 		Long memberId) {
 		return PostCommentCreateDto.builder()
 			.memberId(memberId)
@@ -16,9 +16,9 @@ public class PostCommentMapper {
 			.build();
 	}
 
-	public static PostCommentUpdateDto toCommentUpdateDto(PostCommentRequest postCommentRequest, Long postId,
+	public static PostCommentChangeDto toPostCommentChangeDto(PostCommentRequest postCommentRequest, Long postId,
 		Long commentId, Long memberId) {
-		return PostCommentUpdateDto.builder()
+		return PostCommentChangeDto.builder()
 			.memberId(memberId)
 			.postId(postId)
 			.postCommentId(commentId)

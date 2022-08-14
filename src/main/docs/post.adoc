@@ -1,0 +1,26 @@
+== 게시글
+
+=== 생성
+
+operation::create-post[snippets='http-request,request-headers,request-parts,request-parameters,http-response,response-body,response-fields']
+'''
+
+=== 전체조회
+
+operation::get-posts[snippets='http-request,request-headers,request-parameters,http-response,response-body,response-fields']
+'''
+
+=== 멤버 게시글 조회
+
+operation::get-members-posts[snippets='http-request,request-headers,request-parameters,path-parameters,http-response,response-body,response-fields']
+'''
+
+=== 수정
+
+operation::update-post[snippets='http-request,request-headers,request-parts,request-parameters,http-response,response-body,response-fields']
+'''
+
+=== 삭제
+
+operation::delete-post[snippets='http-request,request-headers,path-parameters,http-response']
+'''

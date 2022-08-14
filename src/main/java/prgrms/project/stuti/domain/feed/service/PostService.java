@@ -8,14 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostImage;
-import prgrms.project.stuti.domain.feed.repository.PostCommentRepository;
+import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
-import prgrms.project.stuti.domain.feed.repository.PostRepository;
+import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostListResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostListResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.MemberException;
@@ -61,7 +61,8 @@ public class PostService {
 
 	@Transactional
 	public PostResponse changePost(PostChangeDto postChangeDto) {
-		Post post = postRepository.findById(postChangeDto.postId()).orElseThrow(PostException::POST_NOT_FOUND);
+		Post post = postRepository.findById(postChangeDto.postId())
+			.orElseThrow(() -> PostException.POST_NOT_FOUND(postChangeDto.postId()));
 		post.changeContents(postChangeDto.contents());
 		if (postChangeDto.imageFile() != null) {
 			postImageRepository.deleteByPostId(post.getId());
@@ -79,7 +80,7 @@ public class PostService {
 
 	@Transactional
 	public void deletePost(Long postId) {
-		postRepository.findById(postId).orElseThrow(PostException::POST_NOT_FOUND);
+		postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 		postImageRepository.deleteByPostId(postId);
 		postCommentRepository.deleteAllByPostId(postId);
 		postLikeRepository.deleteByPostId(postId);
@@ -87,7 +88,7 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public PostListResponse getMyPosts(Long memberId, Long lastPostId, int size) {
+	public PostListResponse getMemberPosts(Long memberId, Long lastPostId, int size) {
 		List<PostResponse> myPosts = postRepository.findAllWithNoOffset(lastPostId, size, memberId);
 		if (!myPosts.isEmpty()) {
 			lastPostId = getLastPostId(myPosts);

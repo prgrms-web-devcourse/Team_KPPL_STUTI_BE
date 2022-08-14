@@ -4,22 +4,22 @@ import java.util.List;
 
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostComment;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentChildContents;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentChild;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.member.model.Member;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 public class PostCommentConverter {
 
-	public static PostComment toComment(String contents, Post post, PostComment parentPostComment,
+	public static PostComment toPostComment(String contents, Post post, PostComment parentPostComment,
 		Member commentWriteMember) {
 		return new PostComment(contents, parentPostComment, commentWriteMember, post);
 	}
 
-	public static PostCommentResponse toCommentResponse(PostComment savedPostComment) {
+	public static PostCommentResponse toPostCommentResponse(PostComment savedPostComment) {
 		Long parentId = null;
 		if (savedPostComment.getParent() != null) {
 			parentId = savedPostComment.getParent().getId();
@@ -35,20 +35,20 @@ public class PostCommentConverter {
 			.build();
 	}
 
-	public static PostCommentGetDto toCommentGetDto(Long postId, Long lastCommentId, int size) {
+	public static PostCommentGetDto toPostCommentGetDto(Long postId, Long lastCommentId, int size) {
 		return new PostCommentGetDto(postId, lastCommentId, size);
 	}
 
-	public static PageResponse<CommentParentContents> toCommentResponse(List<PostComment> postComments, boolean hasNext,
+	public static PageResponse<PostCommentParent> toCommentPageResponse(List<PostComment> postComments, boolean hasNext,
 		Long totalParentComments) {
-		List<CommentParentContents> contents = createContents(postComments);
+		List<PostCommentParent> contents = createContents(postComments);
 
 		return new PageResponse<>(contents, hasNext, totalParentComments);
 	}
 
-	private static List<CommentParentContents> createContents(List<PostComment> postComments) {
+	private static List<PostCommentParent> createContents(List<PostComment> postComments) {
 		return postComments.stream().map(
-			comment -> CommentParentContents.builder()
+			comment -> PostCommentParent.builder()
 				.postCommentId(comment.getId())
 				.parentId(null)
 				.profileImageUrl(comment.getMember().getProfileImageUrl())
@@ -57,7 +57,7 @@ public class PostCommentConverter {
 				.contents(comment.getContent())
 				.updatedAt(comment.getUpdatedAt())
 				.children(comment.getChildren().stream().map(
-					childComment -> PostCommentChildContents.builder()
+					childComment -> PostCommentChild.builder()
 						.parentId(childComment.getParent().getId())
 						.postCommentId(childComment.getId())
 						.profileImageUrl(childComment.getMember().getProfileImageUrl())
@@ -70,7 +70,7 @@ public class PostCommentConverter {
 		).toList();
 	}
 
-	public static PostCommentContentsResponse toCommentContentsResponse(PostComment postComment) {
+	public static PostCommentContentsResponse toPostCommentContentsResponse(PostComment postComment) {
 		Long parentId = null;
 		if (postComment.getParent() != null) {
 			parentId = postComment.getParent().getId();

@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.feed.repository;
+package prgrms.project.stuti.domain.feed.repository.post;
 
 import static prgrms.project.stuti.domain.feed.model.QPost.*;
 import static prgrms.project.stuti.domain.feed.model.QPostComment.*;
@@ -15,7 +15,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.feed.service.dto.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostResponse;
 
 @Repository
 @RequiredArgsConstructor

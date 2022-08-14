@@ -2,7 +2,6 @@ package prgrms.project.stuti.domain.feed.controller;
 
 import javax.validation.Valid;
 
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,13 +16,13 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentConverter;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
-import prgrms.project.stuti.domain.feed.service.dto.CommentParentContents;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentResponse;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentUpdateDto;
-import prgrms.project.stuti.global.page.offset.PageResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
+import prgrms.project.stuti.global.page.PageResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,9 +31,11 @@ public class PostCommentController {
 	private final PostCommentService postCommentService;
 
 	@PostMapping("/api/v1/posts/{postId}/comments")
-	public ResponseEntity<PostCommentResponse> createComment(@PathVariable Long postId,
-		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
-		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toCommentCreateDto(postCommentRequest, postId,
+	public ResponseEntity<PostCommentResponse> createComment(
+		@PathVariable Long postId, @Valid @RequestBody PostCommentRequest postCommentRequest,
+		@AuthenticationPrincipal Long memberId
+	) {
+		PostCommentCreateDto postCommentCreateDto = PostCommentMapper.toPostCommentCreateDto(postCommentRequest, postId,
 			memberId);
 		PostCommentResponse postCommentResponse = postCommentService.createComment(postCommentCreateDto);
 
@@ -42,29 +43,33 @@ public class PostCommentController {
 	}
 
 	@PostMapping("/api/v1/posts/{postId}/comments/{commentId}")
-	public ResponseEntity<PostCommentResponse> changeComment(@PathVariable Long postId, @PathVariable Long commentId,
-		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId) {
-		PostCommentUpdateDto postCommentUpdateDto = PostCommentMapper.toCommentUpdateDto(postCommentRequest, postId,
+	public ResponseEntity<PostCommentResponse> changeComment(
+		@PathVariable Long postId, @PathVariable Long commentId,
+		@Valid @RequestBody PostCommentRequest postCommentRequest, @AuthenticationPrincipal Long memberId
+		) {
+		PostCommentChangeDto postCommentChangeDto = PostCommentMapper.toPostCommentChangeDto(postCommentRequest, postId,
 			commentId, memberId);
-		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentUpdateDto);
+		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentChangeDto);
 
 		return ResponseEntity.ok().body(postCommentResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/comments/{commentId}")
-	public ResponseEntity<PostCommentResponse> deleteComment(@PathVariable Long postId, @PathVariable Long commentId,
-		@AuthenticationPrincipal Long memberId) {
+	public ResponseEntity<PostCommentResponse> deleteComment(
+		@PathVariable Long postId, @PathVariable Long commentId, @AuthenticationPrincipal Long memberId
+	) {
 		PostCommentResponse postCommentResponse = postCommentService.deleteComment(postId, commentId, memberId);
 
 		return ResponseEntity.ok(postCommentResponse);
 	}
 
 	@GetMapping("/api/v1/posts/{postId}/comments")
-	public ResponseEntity<PageResponse<CommentParentContents>> getPostComments(@PathVariable Long postId,
-		@RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
-		@RequestParam(defaultValue = "10") int size) {
-		PostCommentGetDto postCommentGetDto = PostCommentConverter.toCommentGetDto(postId, lastCommentId, size);
-		PageResponse<CommentParentContents> commentResponse = postCommentService.getPostComments(postCommentGetDto);
+	public ResponseEntity<PageResponse<PostCommentParent>> getPostComments(
+		@PathVariable Long postId, @RequestParam(value = "lastCommentId", required = false) Long lastCommentId,
+		@RequestParam(defaultValue = "10") int size
+	) {
+		PostCommentGetDto postCommentGetDto = PostCommentConverter.toPostCommentGetDto(postId, lastCommentId, size);
+		PageResponse<PostCommentParent> commentResponse = postCommentService.getPostComments(postCommentGetDto);
 
 		return ResponseEntity.ok().body(commentResponse);
 	}

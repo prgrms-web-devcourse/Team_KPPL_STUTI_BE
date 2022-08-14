@@ -1,0 +1,6 @@
+== 게시글 좋아요
+
+=== 삭제
+
+operation::delete-post-like[snippets='http-request,request-headers,path-parameters,http-response']
+'''

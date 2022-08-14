@@ -1,4 +1,4 @@
-package prgrms.project.stuti.domain.feed.repository;
+package prgrms.project.stuti.domain.feed.repository.postcomment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

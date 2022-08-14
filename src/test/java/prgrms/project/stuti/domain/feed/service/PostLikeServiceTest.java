@@ -14,8 +14,8 @@ import prgrms.project.stuti.config.ServiceTestConfig;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostLike;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
-import prgrms.project.stuti.domain.feed.repository.PostRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
+import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
+import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.error.exception.PostException;
 

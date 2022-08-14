@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostLike;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
-import prgrms.project.stuti.domain.feed.repository.PostRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostLikeIdResponse;
+import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
+import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.MemberException;
@@ -24,10 +24,10 @@ public class PostLikeService {
 
 	@Transactional
 	public PostLikeIdResponse createPostLike(Long postId, Long memberId) {
-		Post post = postRepository.findById(postId).orElseThrow(PostException::POST_NOT_FOUND);
+		Post post = postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 		postLikeRepository.findByPostIdAndMemberId(postId, memberId)
-			.ifPresent(l -> PostException.POST_LIKE_DUPLICATED());
+			.ifPresent(postLike -> PostException.POST_LIKE_DUPLICATED(postLike.getId()));
 
 		PostLike postLike = PostLikeConverter.toPostLike(member, post);
 		PostLike savedPostLike = postLikeRepository.save(postLike);
@@ -38,7 +38,7 @@ public class PostLikeService {
 	@Transactional
 	public void cancelPostLike(Long postId, Long memberId) {
 		PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId)
-			.orElseThrow(PostException::NOT_FOUND_POST_LIKE);
+			.orElseThrow(() -> PostException.NOT_FOUND_POST_LIKE(postId, memberId));
 		postLikeRepository.deleteById(postLike.getId());
 	}
 }

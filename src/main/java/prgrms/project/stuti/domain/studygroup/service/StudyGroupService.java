@@ -12,7 +12,7 @@ import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
-import prgrms.project.stuti.domain.studygroup.repository.StudyGroupQueryDto;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
@@ -45,12 +45,12 @@ public class StudyGroupService {
 
 	@Transactional(readOnly = true)
 	public CursorPageResponse<StudyGroupsResponse> getStudyGroups(StudyGroupDto.FindCondition conditionDto) {
-		return studyGroupRepository.dynamicFindStudyGroupsWithCursorPagination(conditionDto);
+		return studyGroupRepository.findAllWithCursorPaginationByConditions(conditionDto);
 	}
 
 	@Transactional(readOnly = true)
 	public CursorPageResponse<StudyGroupsResponse> getMemberStudyGroups(StudyGroupDto.FindCondition conditionDto) {
-		return studyGroupRepository.findMemberStudyGroupsWithCursorPagination(conditionDto);
+		return studyGroupRepository.findMembersAllWithCursorPaginationByConditions(conditionDto);
 	}
 
 	@Transactional(readOnly = true)
@@ -67,19 +67,18 @@ public class StudyGroupService {
 
 	@Transactional
 	public StudyGroupIdResponse updateStudyGroup(StudyGroupDto.UpdateDto updateDto) {
-		StudyGroup studyGroup = findStudyGroup(updateDto.studyGroupId());
+		StudyGroup studyGroup = findStudyGroupById(updateDto.studyGroupId());
+		validateStudyLeader(updateDto.memberId(), updateDto.studyGroupId());
 
-		validateLeader(updateDto.memberId(), updateDto.studyGroupId());
-
-		updateStudyGroupImage(updateDto.imageFile(), studyGroup);
-		updateTitleAndDescription(updateDto.title(), updateDto.description(), studyGroup);
+		updateStudyGroupImage(studyGroup, updateDto.imageFile());
+		updateTitleAndDescription(studyGroup, updateDto.title(), updateDto.description());
 
 		return StudyGroupConverter.toStudyGroupIdResponse(studyGroup.getId());
 	}
 
 	@Transactional
 	public void deleteStudyGroup(StudyGroupDto.DeleteDto deleteDto) {
-		validateLeader(deleteDto.memberId(), deleteDto.studyGroupId());
+		validateStudyLeader(deleteDto.memberId(), deleteDto.studyGroupId());
 		updateToDeleted(deleteDto.studyGroupId());
 	}
 
@@ -90,48 +89,43 @@ public class StudyGroupService {
 	}
 
 	private void saveStudyGroupLeader(Long memberId, StudyGroup studyGroup) {
-		Member member = findMember(memberId);
+		Member member = findMemberById(memberId);
 
 		studyGroupMemberRepository.save(new StudyGroupMember(StudyGroupMemberRole.STUDY_LEADER, member, studyGroup));
 	}
 
-	private void updateStudyGroupImage(MultipartFile imageFile, StudyGroup studyGroup) {
+	private void updateStudyGroupImage(StudyGroup studyGroup, MultipartFile imageFile) {
 		if (imageFile == null || imageFile.isEmpty()) {
 			return;
 		}
 
 		String imageUrl = imageUploader.upload(imageFile, ImageDirectory.STUDY_GROUP);
-
 		studyGroup.updateImage(imageUrl);
 	}
 
-	private void updateTitleAndDescription(String title, String description, StudyGroup studyGroup) {
-		if (title.equals(studyGroup.getTitle()) && description.equals(studyGroup.getDescription())) {
-			return;
-		}
-
+	private void updateTitleAndDescription(StudyGroup studyGroup, String title, String description) {
 		studyGroup.updateTitle(title);
 		studyGroup.updateDescription(description);
 	}
 
 	private void updateToDeleted(Long studyGroupId) {
-		StudyGroup studyGroup = findStudyGroup(studyGroupId);
+		StudyGroup studyGroup = findStudyGroupById(studyGroupId);
 		studyGroup.delete();
 	}
 
-	private void validateLeader(Long memberId, Long studyGroupId) {
-		boolean isLeader = studyGroupMemberRepository.isStudyLeader(memberId, studyGroupId);
+	private void validateStudyLeader(Long memberId, Long studyGroupId) {
+		boolean isStudyLeader = studyGroupMemberRepository.isStudyLeader(memberId, studyGroupId);
 
-		if (!isLeader) {
+		if (!isStudyLeader) {
 			throw StudyGroupException.notStudyLeader(memberId, studyGroupId);
 		}
 	}
 
-	private Member findMember(Long memberId) {
+	private Member findMemberById(Long memberId) {
 		return memberRepository.findMemberById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 	}
 
-	private StudyGroup findStudyGroup(Long studyGroupId) {
+	private StudyGroup findStudyGroupById(Long studyGroupId) {
 		return studyGroupRepository.findStudyGroupById(studyGroupId)
 			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(studyGroupId));
 	}

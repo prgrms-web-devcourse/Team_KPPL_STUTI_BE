@@ -1,12 +1,12 @@
-package prgrms.project.stuti.domain.feed.service.dto;
+package prgrms.project.stuti.domain.feed.service.response;
 
 import java.time.LocalDateTime;
 
 import lombok.Builder;
 
-public record PostCommentChildContents(
-	Long parentId,
+public record PostCommentResponse(
 	Long postCommentId,
+	Long parentId,
 	String profileImageUrl,
 	Long memberId,
 	String nickname,
@@ -14,6 +14,6 @@ public record PostCommentChildContents(
 	LocalDateTime updatedAt
 ) {
 	@Builder
-	public PostCommentChildContents {
+	public PostCommentResponse {
 	}
 }

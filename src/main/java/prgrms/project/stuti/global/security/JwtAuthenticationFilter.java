@@ -116,7 +116,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private void checkBlackList(String token) {
 		blackListTokenRepository.findById(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST))
-			.ifPresent(blackListToken -> MemberException.blacklistDetection());
+			.ifPresent(blackListToken -> {
+				throw MemberException.blacklistDetection();
+			});
 	}
 
 	private void setAuthenticationToSecurityContextHolder(Long memberId, String[] roles) {

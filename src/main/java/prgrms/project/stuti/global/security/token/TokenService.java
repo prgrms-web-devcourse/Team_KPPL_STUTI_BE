@@ -151,13 +151,13 @@ public class TokenService {
 
 	public void verifyAccessTokenWithException(String accessToken) {
 		if (!this.verifyToken(accessToken)) {
-			TokenException.accessTokenExpiration(accessToken);
+			throw TokenException.accessTokenExpiration(accessToken);
 		}
 	}
 
 	public void verifyRefreshTokenWithException(String refreshTokenValue) {
 		if (!this.verifyToken(refreshTokenValue)) {
-			TokenException.refreshTokenExpiration(refreshTokenValue);
+			throw TokenException.refreshTokenExpiration(refreshTokenValue);
 		}
 	}
 }

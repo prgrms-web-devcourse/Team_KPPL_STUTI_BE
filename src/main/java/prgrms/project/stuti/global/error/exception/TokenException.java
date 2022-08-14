@@ -18,10 +18,10 @@ public class TokenException extends RuntimeException {
 	}
 
 	public static TokenException accessTokenExpiration(String token) {
-		throw new TokenException(ErrorCode.ACCESS_TOKEN_EXPIRATION, token);
+		return new TokenException(ErrorCode.ACCESS_TOKEN_EXPIRATION, token);
 	}
 
 	public static TokenException refreshTokenExpiration(String token) {
-		throw new TokenException(ErrorCode.REFRESH_TOKEN_EXPIRATION, token);
+		return new TokenException(ErrorCode.REFRESH_TOKEN_EXPIRATION, token);
 	}
 }

@@ -76,8 +76,9 @@ public class AuthenticationService {
 	public String checkAndGetRefreshToken(String accessToken) {
 		Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
 		if(optionalRefreshToken.isEmpty()){
-			TokenException.refreshTokenExpiration(null);
+			throw TokenException.refreshTokenExpiration(null);
 		}
+
 		return optionalRefreshToken.get().getRefreshTokenValue();
 	}
 
@@ -100,7 +101,7 @@ public class AuthenticationService {
 
 	private void checkDuplicatedEmail(String email) {
 		memberRepository.findMemberByEmail(email).ifPresent(member -> {
-			throw MemberException.registeredMember(email);
+			throw MemberException.emailDuplication(email);
 		});
 	}
 }

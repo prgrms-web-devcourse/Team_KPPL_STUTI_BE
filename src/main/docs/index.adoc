@@ -9,6 +9,8 @@ endif::[]
 [[title]]
 = STUTI API v1
 
+include::member-authentication.adoc[]
+include::member.adoc[]
 include::study-group.adoc[]
 include::study-group-member.adoc[]
 include::study-group-question.adoc[]

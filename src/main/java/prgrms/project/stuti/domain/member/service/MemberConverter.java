@@ -6,7 +6,7 @@ import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.cache.model.TemporaryMember;
+import prgrms.project.stuti.global.security.cache.model.TemporaryMember;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberConverter {

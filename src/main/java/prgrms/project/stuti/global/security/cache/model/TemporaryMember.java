@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.cache.model;
+package prgrms.project.stuti.global.security.cache.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;

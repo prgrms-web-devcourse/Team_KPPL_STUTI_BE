@@ -21,15 +21,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import prgrms.project.stuti.global.cache.model.RefreshToken;
-import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
-import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.security.cache.model.RefreshToken;
+import prgrms.project.stuti.global.security.cache.repository.BlackListTokenRepository;
+import prgrms.project.stuti.global.security.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.error.dto.ErrorCode;
 import prgrms.project.stuti.global.error.dto.TokenExpirationResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
-import prgrms.project.stuti.global.token.TokenService;
-import prgrms.project.stuti.global.token.TokenType;
-import prgrms.project.stuti.global.util.CoderUtil;
+import prgrms.project.stuti.global.security.token.TokenService;
+import prgrms.project.stuti.global.security.token.TokenType;
+import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @Slf4j
 @RequiredArgsConstructor

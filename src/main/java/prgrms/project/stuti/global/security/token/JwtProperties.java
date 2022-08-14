@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.token;
+package prgrms.project.stuti.global.security.token;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

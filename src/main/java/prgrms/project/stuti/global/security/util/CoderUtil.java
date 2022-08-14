@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.util;
+package prgrms.project.stuti.global.security.util;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;

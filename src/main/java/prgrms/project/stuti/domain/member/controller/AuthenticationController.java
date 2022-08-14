@@ -20,10 +20,10 @@ import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.token.TokenService;
-import prgrms.project.stuti.global.token.TokenType;
-import prgrms.project.stuti.global.token.Tokens;
-import prgrms.project.stuti.global.util.CoderUtil;
+import prgrms.project.stuti.global.security.token.TokenService;
+import prgrms.project.stuti.global.security.token.TokenType;
+import prgrms.project.stuti.global.security.token.Tokens;
+import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @RestController
 @RequestMapping("/api/v1")

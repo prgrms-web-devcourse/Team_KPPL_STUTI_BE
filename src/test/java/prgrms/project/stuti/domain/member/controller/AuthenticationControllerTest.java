@@ -28,9 +28,9 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.token.TokenService;
-import prgrms.project.stuti.global.token.TokenType;
-import prgrms.project.stuti.global.token.Tokens;
+import prgrms.project.stuti.global.security.token.TokenService;
+import prgrms.project.stuti.global.security.token.TokenType;
+import prgrms.project.stuti.global.security.token.Tokens;
 
 @WebMvcTest(controllers = AuthenticationController.class)
 class AuthenticationControllerTest extends TestConfig {

@@ -19,19 +19,17 @@ public class OAuth2Attribute {
 	private String picture;
 
 	public static OAuth2Attribute of(String provider, String attributeKey, Map<String, Object> attributes) {
-		switch (provider) {
-			case "google":
-				return ofGoogle(attributeKey, attributes);
-			case "github":
-				return ofGithub(attributeKey, attributes);
-			default:
-				throw MemberException.notValidAuthType(provider);
-		}
+		return switch (provider) {
+			case "google" -> ofGoogle(attributeKey, attributes);
+			case "github" -> ofGithub(attributeKey, attributes);
+			default -> throw MemberException.notValidAuthType(provider);
+		};
 	}
 
 	private static OAuth2Attribute ofGithub(String attributeKey, Map<String, Object> attributes) {
 		int id = (int)attributes.get("id");
-		String email = attributes.get("email") == null ? id + "@github.com" : (String)attributes.get("email");
+		Object nullableEmail = attributes.get("email");
+		String email = nullableEmail == null ? id + "@github.com" : (String)nullableEmail;
 
 		return OAuth2Attribute.builder()
 			.name((String)attributes.get("name"))

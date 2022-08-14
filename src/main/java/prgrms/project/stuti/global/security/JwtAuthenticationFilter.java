@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String accessToken = tokenService.resolveToken((HttpServletRequest)request);
+		String accessToken = tokenService.resolveToken(request);
 		boolean isLogout = request.getServletPath().equals("/api/v1/logout");
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -116,7 +116,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private void checkBlackList(String token) {
 		blackListTokenRepository.findById(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST))
-			.ifPresent(blackListToken -> MemberException.blakclistDetection());
+			.ifPresent(blackListToken -> MemberException.blacklistDetection());
 	}
 
 	private void setAuthenticationToSecurityContextHolder(Long memberId, String[] roles) {

@@ -5,16 +5,11 @@ import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
-import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.cache.model.TemporaryMember;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberConverter {
-
-	public static MemberIdResponse toMemberIdResponse(Long memberId) {
-		return new MemberIdResponse(memberId);
-	}
 
 	public static MemberResponse toMemberResponse(Member member){
 		return MemberResponse.builder()

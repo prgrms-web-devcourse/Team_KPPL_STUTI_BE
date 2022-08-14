@@ -12,10 +12,10 @@ import lombok.Getter;
 public class TemporaryMember {
 
 	@Id
-	String email;
+	private String email;
 
-	String imageUrl;
-	String nickname;
+	private String imageUrl;
+	private String nickname;
 
 	@TimeToLive
 	private Long expiration;

@@ -9,8 +9,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,7 +27,6 @@ import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.AuthenticationService;
-import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 import prgrms.project.stuti.global.token.TokenService;
 import prgrms.project.stuti.global.token.TokenType;

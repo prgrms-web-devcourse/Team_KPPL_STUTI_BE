@@ -9,3 +9,8 @@ operation::post-member-signup[snippets='http-request,request-headers,request-bod
 
 operation::post-login[snippets='http-request,request-headers,request-body,http-response,response-headers,response-body,response-fields']
 '''
+
+=== 유저정보
+
+operation::get-member-info[snippets='http-request,request-headers,request-body,http-response,response-headers,response-body,response-fields']
+'''

@@ -16,6 +16,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import prgrms.project.stuti.global.error.exception.TokenException;
 import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @Service
@@ -146,5 +147,17 @@ public class TokenService {
 		String token = tokenHeader.map(this::changeToToken).orElse(null);
 
 		return token != null ? CoderUtil.decode(token) : null;
+	}
+
+	public void verifyAccessTokenWithException(String accessToken) {
+		if (!this.verifyToken(accessToken)) {
+			TokenException.accessTokenExpiration(accessToken);
+		}
+	}
+
+	public void verifyRefreshTokenWithException(String refreshTokenValue) {
+		if (!this.verifyToken(refreshTokenValue)) {
+			TokenException.refreshTokenExpiration(refreshTokenValue);
+		}
 	}
 }

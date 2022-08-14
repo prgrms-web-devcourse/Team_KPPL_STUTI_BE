@@ -175,6 +175,51 @@ class AuthenticationControllerTest extends TestConfig {
 			.andDo(print());
 	}
 
+	@Test
+	@DisplayName("/api/v1/auth 에서 프론트는 필요한 유저 정보를 가져온다.")
+	void getMemberInfo() throws Exception {
+		// given
+		String accessToken = "accessToken";
+		String refreshToken = "refreshToken";
+		String memberId = "1";
+		MemberResponse memberResponse = makeMemberResponse();
+
+		given(tokenService.resolveToken(any())).willReturn(accessToken);
+		given(authenticationService.checkAndGetRefreshToken(any())).willReturn(refreshToken);
+		given(tokenService.getUid(any())).willReturn(memberId);
+		given(authenticationService.getMemberResponse(Long.parseLong(memberId))).willReturn(memberResponse);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(
+			get("/api/v1/auth")
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.contentType(MediaType.APPLICATION_JSON));
+
+		// then
+		resultActions
+			.andExpectAll(status().isOk(),
+				content().json(objectMapper.writeValueAsString(memberResponse)))
+			.andDo(print())
+			.andDo(document(COMMON_DOCS_NAME,
+				requestHeaders(
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("json 으로 전달")
+				),
+				responseHeaders(
+					headerWithName(HttpHeaders.CONTENT_TYPE).description("json 으로 전달")
+				),
+				responseFields(
+					fieldWithPath("id").type(NUMBER).description("아이디"),
+					fieldWithPath("email").type(STRING).description("이메일"),
+					fieldWithPath("profileImageUrl").type(STRING).description("프로필 이미지 url"),
+					fieldWithPath("nickname").type(STRING).description("닉네임"),
+					fieldWithPath("field").type(STRING).description("분야"),
+					fieldWithPath("career").type(STRING).description("경력"),
+					fieldWithPath("MBTI").type(STRING).description("MBTI"),
+					fieldWithPath("githubUrl").type(STRING).description("깃허브 주소"),
+					fieldWithPath("blogUrl").type(STRING).description("블로그 주소")
+				)));
+	}
+
 	private MemberResponse makeMemberResponse() {
 		MemberResponse memberResponse = MemberResponse.builder()
 			.id(1L)

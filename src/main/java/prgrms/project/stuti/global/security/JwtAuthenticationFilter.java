@@ -21,15 +21,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import prgrms.project.stuti.global.cache.model.RefreshToken;
-import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
-import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.security.cache.model.RefreshToken;
+import prgrms.project.stuti.global.security.cache.repository.BlackListTokenRepository;
+import prgrms.project.stuti.global.security.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.error.dto.ErrorCode;
 import prgrms.project.stuti.global.error.dto.TokenExpirationResponse;
 import prgrms.project.stuti.global.error.exception.MemberException;
-import prgrms.project.stuti.global.token.TokenService;
-import prgrms.project.stuti.global.token.TokenType;
-import prgrms.project.stuti.global.util.CoderUtil;
+import prgrms.project.stuti.global.security.token.TokenService;
+import prgrms.project.stuti.global.security.token.TokenType;
+import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -43,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		String accessToken = tokenService.resolveToken((HttpServletRequest)request);
+		String accessToken = tokenService.resolveToken(request);
 		boolean isLogout = request.getServletPath().equals("/api/v1/logout");
 		ObjectMapper objectMapper = new ObjectMapper();
 
@@ -116,7 +116,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private void checkBlackList(String token) {
 		blackListTokenRepository.findById(tokenService.tokenWithType(token, TokenType.JWT_BLACKLIST))
-			.ifPresent(blackListToken -> MemberException.blakclistDetection());
+			.ifPresent(blackListToken -> {
+				throw MemberException.blacklistDetection();
+			});
 	}
 
 	private void setAuthenticationToSecurityContextHolder(Long memberId, String[] roles) {

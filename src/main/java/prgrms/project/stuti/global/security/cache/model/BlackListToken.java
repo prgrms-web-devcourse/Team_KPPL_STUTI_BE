@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.cache.model;
+package prgrms.project.stuti.global.security.cache.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -11,13 +11,13 @@ import lombok.Getter;
 public class BlackListToken {
 
 	@Id
-	private String blackListToken;
+	private String tokenInBlackList;
 
 	@TimeToLive
 	private Long expiration;
 
-	public BlackListToken(String blackListToken, Long expiration) {
-		this.blackListToken = blackListToken;
+	public BlackListToken(String tokenInBlackList, Long expiration) {
+		this.tokenInBlackList = tokenInBlackList;
 		this.expiration = expiration;
 	}
 }

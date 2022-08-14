@@ -20,9 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import prgrms.project.stuti.domain.member.model.Email;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.service.MemberService;
-import prgrms.project.stuti.global.cache.model.TemporaryMember;
-import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
-import prgrms.project.stuti.global.util.CoderUtil;
+import prgrms.project.stuti.global.security.cache.model.TemporaryMember;
+import prgrms.project.stuti.global.security.cache.repository.TemporaryMemberRepository;
+import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @Slf4j
 @RequiredArgsConstructor

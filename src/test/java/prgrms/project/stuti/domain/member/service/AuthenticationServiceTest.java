@@ -16,11 +16,10 @@ import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
-import prgrms.project.stuti.domain.member.service.dto.MemberIdResponse;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.cache.model.TemporaryMember;
-import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
-import prgrms.project.stuti.global.token.Tokens;
+import prgrms.project.stuti.global.security.cache.model.TemporaryMember;
+import prgrms.project.stuti.global.security.cache.repository.TemporaryMemberRepository;
+import prgrms.project.stuti.global.security.token.Tokens;
 
 @SpringBootTest
 class AuthenticationServiceTest {
@@ -71,7 +70,7 @@ class AuthenticationServiceTest {
 		// given
 		Long memberId = 1L;
 		Tokens tokens = new Tokens("accessToken", "refreshToken");
-		Long refreshPeriod = 500L;
+		long refreshPeriod = 500L;
 
 		// when
 		Tokens madeTokens = authenticationService.saveRefreshToken(memberId, tokens, refreshPeriod);

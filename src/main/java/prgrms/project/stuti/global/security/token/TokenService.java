@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.token;
+package prgrms.project.stuti.global.security.token;
 
 import static org.springframework.http.HttpHeaders.*;
 
@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -17,7 +16,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import prgrms.project.stuti.global.util.CoderUtil;
+import prgrms.project.stuti.global.error.exception.TokenException;
+import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @Service
 public class TokenService {
@@ -32,7 +32,6 @@ public class TokenService {
 	private final byte[] keyBytes;
 	private final Key key;
 
-
 	public TokenService(JwtProperties jwtProperties) {
 		this.refreshTokenPeriod = jwtProperties.getRefreshTokenExpiry();
 		this.accessTokenPeriod = jwtProperties.getTokenExpiry();
@@ -43,7 +42,6 @@ public class TokenService {
 		this.keyBytes = secretKey.getBytes();
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
-
 
 	public Tokens generateTokens(String uid, String roles) {
 		Claims claims = Jwts.claims().setSubject(uid);
@@ -145,19 +143,21 @@ public class TokenService {
 	}
 
 	public String resolveToken(HttpServletRequest request) {
-		Optional<String> tokenHeader = Optional.ofNullable(((HttpServletRequest)request).getHeader(AUTHORIZATION));
+		Optional<String> tokenHeader = Optional.ofNullable((request).getHeader(AUTHORIZATION));
 		String token = tokenHeader.map(this::changeToToken).orElse(null);
 
 		return token != null ? CoderUtil.decode(token) : null;
 	}
 
-	public ResponseCookie addAccessTokenToCookie(String accessToken, TokenType tokenType) {
-		return ResponseCookie.from(AUTHORIZATION, "1234")
-			.path("/")
-			.httpOnly(true)
-			.secure(true)
-			.sameSite("none")
-			.maxAge(60)
-			.build();
+	public void verifyAccessTokenWithException(String accessToken) {
+		if (!this.verifyToken(accessToken)) {
+			throw TokenException.accessTokenExpiration(accessToken);
+		}
+	}
+
+	public void verifyRefreshTokenWithException(String refreshTokenValue) {
+		if (!this.verifyToken(refreshTokenValue)) {
+			throw TokenException.refreshTokenExpiration(refreshTokenValue);
+		}
 	}
 }

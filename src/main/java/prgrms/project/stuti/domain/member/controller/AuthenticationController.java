@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +21,10 @@ import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.domain.member.service.AuthenticationService;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.token.TokenService;
-import prgrms.project.stuti.global.token.TokenType;
-import prgrms.project.stuti.global.token.Tokens;
-import prgrms.project.stuti.global.util.CoderUtil;
+import prgrms.project.stuti.global.security.token.TokenService;
+import prgrms.project.stuti.global.security.token.TokenType;
+import prgrms.project.stuti.global.security.token.Tokens;
+import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -76,5 +77,17 @@ public class AuthenticationController {
 		return ResponseEntity.ok()
 			.contentType(MediaType.APPLICATION_JSON)
 			.build();
+	}
+
+	@GetMapping("/auth")
+	public ResponseEntity<MemberResponse> memberInfo(HttpServletRequest request) {
+		String accessToken = tokenService.resolveToken(request);
+		String refreshTokenValue = authenticationService.checkAndGetRefreshToken(accessToken);
+		tokenService.verifyRefreshTokenWithException(refreshTokenValue);
+		tokenService.verifyAccessTokenWithException(accessToken);
+		String memberId = tokenService.getUid(accessToken);
+		MemberResponse memberResponse = authenticationService.getMemberResponse(Long.parseLong(memberId));
+
+		return ResponseEntity.ok(memberResponse);
 	}
 }

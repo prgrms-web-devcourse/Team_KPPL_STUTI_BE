@@ -49,10 +49,10 @@ public class Member extends BaseTimeEntity {
 	@Column(name = "mbti", length = 5, nullable = false)
 	private Mbti mbti;
 
-	@Column(name = "github_url", length = 100)
+	@Column(name = "github_url", length = 2000)
 	private String githubUrl;
 
-	@Column(name = "blog_url", length = 100)
+	@Column(name = "blog_url", length = 2000)
 	private String blogUrl;
 
 	@Enumerated(value = EnumType.STRING)

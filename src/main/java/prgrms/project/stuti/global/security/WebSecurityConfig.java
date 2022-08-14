@@ -20,9 +20,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.member.model.MemberRole;
-import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
-import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
-import prgrms.project.stuti.global.token.TokenService;
+import prgrms.project.stuti.global.security.cache.repository.BlackListTokenRepository;
+import prgrms.project.stuti.global.security.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.security.token.TokenService;
 
 @Configuration
 @EnableWebSecurity

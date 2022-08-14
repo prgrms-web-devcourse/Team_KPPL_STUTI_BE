@@ -21,15 +21,15 @@ public class JpaAuditConfig {
 
 			if (authentication == null || !authentication.isAuthenticated() || isAnonymous(
 				authentication)) {
-				return Optional.of(-1L);
+				return Optional.of(0L);
 			}
 
 			Long memberId = (Long)authentication.getPrincipal();
 			if (memberId == null) {
-				memberId = -1L;
+				memberId = 0L;
 			}
 
-			return Optional.ofNullable(memberId);
+			return Optional.of(memberId);
 		};
 	}
 

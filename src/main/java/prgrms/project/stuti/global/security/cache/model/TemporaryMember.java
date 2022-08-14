@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.cache.model;
+package prgrms.project.stuti.global.security.cache.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -12,10 +12,10 @@ import lombok.Getter;
 public class TemporaryMember {
 
 	@Id
-	String email;
+	private String email;
 
-	String imageUrl;
-	String nickname;
+	private String imageUrl;
+	private String nickname;
 
 	@TimeToLive
 	private Long expiration;

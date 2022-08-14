@@ -1,0 +1,11 @@
+== 멤버 상세페이지
+
+=== 조회
+
+operation::get-member[snippets='http-request,request-body,http-response,response-headers,response-body,response-fields']
+'''
+
+=== 수정
+
+operation::patch-member[snippets='http-request,request-headers,request-body,http-response,response-headers,response-body,response-fields']
+'''

@@ -11,15 +11,15 @@ import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
-import prgrms.project.stuti.global.cache.model.BlackListToken;
-import prgrms.project.stuti.global.cache.model.RefreshToken;
-import prgrms.project.stuti.global.cache.model.TemporaryMember;
-import prgrms.project.stuti.global.cache.repository.BlackListTokenRepository;
-import prgrms.project.stuti.global.cache.repository.RefreshTokenRepository;
-import prgrms.project.stuti.global.cache.repository.TemporaryMemberRepository;
-import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.TokenException;
-import prgrms.project.stuti.global.token.Tokens;
+import prgrms.project.stuti.global.security.cache.model.BlackListToken;
+import prgrms.project.stuti.global.security.cache.model.RefreshToken;
+import prgrms.project.stuti.global.security.cache.model.TemporaryMember;
+import prgrms.project.stuti.global.security.cache.repository.BlackListTokenRepository;
+import prgrms.project.stuti.global.security.cache.repository.RefreshTokenRepository;
+import prgrms.project.stuti.global.security.cache.repository.TemporaryMemberRepository;
+import prgrms.project.stuti.global.error.exception.MemberException;
+import prgrms.project.stuti.global.security.token.Tokens;
 
 @Service
 @RequiredArgsConstructor
@@ -75,8 +75,9 @@ public class AuthenticationService {
 	public String checkAndGetRefreshToken(String accessToken) {
 		Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findById(accessToken);
 		if(optionalRefreshToken.isEmpty()){
-			TokenException.refreshTokenExpiration(null);
+			throw TokenException.refreshTokenExpiration(null);
 		}
+
 		return optionalRefreshToken.get().getRefreshTokenValue();
 	}
 
@@ -99,7 +100,7 @@ public class AuthenticationService {
 
 	private void checkDuplicatedEmail(String email) {
 		memberRepository.findMemberByEmail(email).ifPresent(member -> {
-			throw MemberException.registeredMember(email);
+			throw MemberException.emailDuplication(email);
 		});
 	}
 }

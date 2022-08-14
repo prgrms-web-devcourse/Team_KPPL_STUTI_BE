@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.token;
+package prgrms.project.stuti.global.security.token;
 
 public enum TokenType {
 	JWT_TYPE("Bearer "),

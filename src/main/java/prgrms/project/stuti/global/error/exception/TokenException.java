@@ -17,11 +17,11 @@ public class TokenException extends RuntimeException {
 		this.errorCode = errorCode;
 	}
 
-	public static final TokenException accessTokenExpiration(String token) {
-		throw new TokenException(ErrorCode.ACCESS_TOKEN_EXPIRATION, token);
+	public static TokenException accessTokenExpiration(String token) {
+		return new TokenException(ErrorCode.ACCESS_TOKEN_EXPIRATION, token);
 	}
 
-	public static final TokenException refreshTokenExpiration(String token) {
-		throw new TokenException(ErrorCode.REFRESH_TOKEN_EXPIRATION, token);
+	public static TokenException refreshTokenExpiration(String token) {
+		return new TokenException(ErrorCode.REFRESH_TOKEN_EXPIRATION, token);
 	}
 }

@@ -1,4 +1,4 @@
-package prgrms.project.stuti.global.token;
+package prgrms.project.stuti.global.security.token;
 
 import static org.springframework.http.HttpHeaders.*;
 
@@ -17,7 +17,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import prgrms.project.stuti.global.error.exception.TokenException;
-import prgrms.project.stuti.global.util.CoderUtil;
+import prgrms.project.stuti.global.security.util.CoderUtil;
 
 @Service
 public class TokenService {
@@ -143,7 +143,7 @@ public class TokenService {
 	}
 
 	public String resolveToken(HttpServletRequest request) {
-		Optional<String> tokenHeader = Optional.ofNullable(((HttpServletRequest)request).getHeader(AUTHORIZATION));
+		Optional<String> tokenHeader = Optional.ofNullable(request.getHeader(AUTHORIZATION));
 		String token = tokenHeader.map(this::changeToToken).orElse(null);
 
 		return token != null ? CoderUtil.decode(token) : null;
@@ -151,13 +151,13 @@ public class TokenService {
 
 	public void verifyAccessTokenWithException(String accessToken) {
 		if (!this.verifyToken(accessToken)) {
-			TokenException.accessTokenExpiration(accessToken);
+			throw TokenException.accessTokenExpiration(accessToken);
 		}
 	}
 
 	public void verifyRefreshTokenWithException(String refreshTokenValue) {
 		if (!this.verifyToken(refreshTokenValue)) {
-			TokenException.refreshTokenExpiration(refreshTokenValue);
+			throw TokenException.refreshTokenExpiration(refreshTokenValue);
 		}
 	}
 }

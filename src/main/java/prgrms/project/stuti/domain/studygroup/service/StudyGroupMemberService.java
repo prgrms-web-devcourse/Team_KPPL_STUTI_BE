@@ -47,11 +47,12 @@ public class StudyGroupMemberService {
 			.keySet()
 			.stream()
 			.findFirst()
-			.orElseThrow(() ->  StudyGroupException.notFoundStudyGroup(readDto.studyGroupId()));
+			.orElseThrow(() -> StudyGroupException.notFoundStudyGroup(readDto.studyGroupId()));
 
 		validateStudyLeader(readDto.memberId(), readDto.studyGroupId());
 
-		return StudyGroupMemberConverter.toStudyGroupMembersResponse(studyGroup, studyGroupMemberDtoMap.get(studyGroup));
+		return StudyGroupMemberConverter
+			.toStudyGroupMembersResponse(studyGroup, studyGroupMemberDtoMap.get(studyGroup));
 	}
 
 	@Transactional

@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import prgrms.project.stuti.global.uploader.common.ImageDirectory;
 
-//TODO: 2022/07/27 배포 환경에서 사용
+//TODO: PROD 브랜치 구현 완료
 public class AwsS3ImageUploader implements ImageUploader {
 
 	@Override

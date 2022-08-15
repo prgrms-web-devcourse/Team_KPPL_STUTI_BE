@@ -26,20 +26,17 @@ public class TokenService {
 	private final long tokenPeriod;
 	private final long refreshPeriod;
 	private final long refreshTokenPeriod;
-	private final long accessTokenPeriod;
 
-	private final String secretKey;
-	private final byte[] keyBytes;
 	private final Key key;
+	String role = "roles";
 
 	public TokenService(JwtProperties jwtProperties) {
 		this.refreshTokenPeriod = jwtProperties.getRefreshTokenExpiry();
-		this.accessTokenPeriod = jwtProperties.getTokenExpiry();
 		this.issuer = jwtProperties.getIssuer();
 		this.tokenPeriod = jwtProperties.getTokenExpiry();
 		this.refreshPeriod = jwtProperties.getRefreshTokenExpiry();
-		this.secretKey = Base64.getEncoder().encodeToString(jwtProperties.getTokenSecret().getBytes());
-		this.keyBytes = secretKey.getBytes();
+		String secretKey = Base64.getEncoder().encodeToString(jwtProperties.getTokenSecret().getBytes());
+		byte[] keyBytes = secretKey.getBytes();
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
@@ -63,7 +60,7 @@ public class TokenService {
 
 	public String generateAccessToken(String uid, String[] roles) {
 		Claims claims = Jwts.claims().setSubject(uid);
-		claims.put("roles", roles);
+		claims.put(role, roles);
 		Date now = new Date();
 
 		return this.generateAccessToken(claims, now);
@@ -101,7 +98,7 @@ public class TokenService {
 				.build()
 				.parseClaimsJws(token)
 				.getBody()
-				.get("roles")
+				.get(role)
 		};
 	}
 
@@ -121,7 +118,7 @@ public class TokenService {
 			.parseClaimsJws(token)
 			.getBody()
 			.getExpiration();
-		Long now = new Date().getTime();
+		long now = new Date().getTime();
 
 		return (expiration.getTime() - now);
 	}
@@ -130,12 +127,8 @@ public class TokenService {
 		return header.substring("Bearer ".length());
 	}
 
-	public long getRefreshPeriod() {
+	public long getRefreshTokenPeriod() {
 		return refreshTokenPeriod;
-	}
-
-	public long getAccessTokenPeriod() {
-		return accessTokenPeriod;
 	}
 
 	public String tokenWithType(String accessToken, TokenType tokenType) {

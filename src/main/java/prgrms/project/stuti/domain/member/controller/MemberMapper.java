@@ -2,7 +2,7 @@ package prgrms.project.stuti.domain.member.controller;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPatchRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberUpdateRequest;
 import prgrms.project.stuti.domain.member.controller.dto.MemberSaveRequest;
 import prgrms.project.stuti.domain.member.service.dto.MemberDto;
 import prgrms.project.stuti.domain.member.service.dto.MemberPatchDto;
@@ -21,15 +21,15 @@ public class MemberMapper {
 			.build();
 	}
 
-	public static MemberPatchDto toMemberPutDto(MemberPatchRequest memberPatchRequest) {
+	public static MemberPatchDto toMemberPutDto(MemberUpdateRequest memberUpdateRequest) {
 		return MemberPatchDto.builder()
-			.nickname(memberPatchRequest.nickname())
-			.career(memberPatchRequest.career())
-			.field(memberPatchRequest.field())
-			.career(memberPatchRequest.career())
-			.MBTI(memberPatchRequest.MBTI())
-			.githubUrl(memberPatchRequest.githubUrl())
-			.blogUrl(memberPatchRequest.blogUrl())
+			.nickname(memberUpdateRequest.nickname())
+			.career(memberUpdateRequest.career())
+			.field(memberUpdateRequest.field())
+			.career(memberUpdateRequest.career())
+			.MBTI(memberUpdateRequest.MBTI())
+			.githubUrl(memberUpdateRequest.githubUrl())
+			.blogUrl(memberUpdateRequest.blogUrl())
 			.build();
 	}
 }

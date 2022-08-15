@@ -7,13 +7,8 @@ import prgrms.project.stuti.global.error.dto.ErrorCode;
 public class TokenException extends RuntimeException {
 	private final ErrorCode errorCode;
 
-	protected TokenException(ErrorCode errorCode, String message) {
-		super(message);
-		this.errorCode = errorCode;
-	}
-
-	protected TokenException(ErrorCode errorCode, String message, Throwable cause) {
-		super(message, cause);
+	protected TokenException(ErrorCode errorCode, String tokenValue) {
+		super(tokenValue);
 		this.errorCode = errorCode;
 	}
 

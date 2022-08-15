@@ -20,15 +20,15 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.ResultActions;
 
 import prgrms.project.stuti.config.TestConfig;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPatchRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberUpdateRequest;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.service.MemberService;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 
-@WebMvcTest(controllers = MemberController.class)
-class MemberControllerTest extends TestConfig {
+@WebMvcTest(controllers = MemberRestController.class)
+class MemberRestControllerTest extends TestConfig {
 	@MockBean
 	MemberService memberService;
 
@@ -57,15 +57,15 @@ class MemberControllerTest extends TestConfig {
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("json 으로 전달")
 				),
 				responseFields(
-					fieldWithPath("id").type(NUMBER).description("멤버 id"),
-					fieldWithPath("email").type(STRING).description("멤버 이메일"),
-					fieldWithPath("profileImageUrl").type(STRING).description("멤버 프로필 url"),
-					fieldWithPath("nickname").type(STRING).description("멤버 닉네임"),
-					fieldWithPath("field").type(STRING).description("멤버 분야"),
-					fieldWithPath("career").type(STRING).description("멤버 경력"),
-					fieldWithPath("MBTI").type(STRING).description("멤버 MBTI"),
-					fieldWithPath("githubUrl").type(STRING).description("멤버 깃허브"),
-					fieldWithPath("blogUrl").type(STRING).description("멤버 블로그")
+					fieldWithPath("id").type(NUMBER).description("아이디"),
+					fieldWithPath("email").type(STRING).description("이메일"),
+					fieldWithPath("profileImageUrl").type(STRING).description("프로필 이미지 url"),
+					fieldWithPath("nickname").type(STRING).description("닉네임"),
+					fieldWithPath("field").type(STRING).description("분야"),
+					fieldWithPath("career").type(STRING).description("경력"),
+					fieldWithPath("MBTI").type(STRING).description("MBTI"),
+					fieldWithPath("githubUrl").type(STRING).description("깃허브 주소"),
+					fieldWithPath("blogUrl").type(STRING).description("블로그 주소")
 				)));
 	}
 
@@ -76,7 +76,7 @@ class MemberControllerTest extends TestConfig {
 		// given
 		Long memberId = 1L;
 
-		MemberPatchRequest memberPatchRequest = MemberPatchRequest.builder()
+		MemberUpdateRequest memberUpdateRequest = MemberUpdateRequest.builder()
 			.nickname("edit")
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -88,13 +88,13 @@ class MemberControllerTest extends TestConfig {
 		MemberResponse memberResponse = getMemberResponse("edit@test.com", "s3.edit.com", "edit", "edit.github",
 			"edit.blog");
 
-		given(memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPatchRequest))).willReturn(
+		given(memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberUpdateRequest))).willReturn(
 			memberResponse);
 
 		// when
 		ResultActions resultActions = mockMvc.perform(patch("/api/v1/members/{memberId}", 1)
 			.with(SecurityMockMvcRequestPostProcessors.csrf())
-			.content(objectMapper.writeValueAsString(memberPatchRequest))
+			.content(objectMapper.writeValueAsString(memberUpdateRequest))
 			.contentType(MediaType.APPLICATION_JSON));
 
 		// then
@@ -111,22 +111,22 @@ class MemberControllerTest extends TestConfig {
 					fieldWithPath("field").type(STRING).description("분야"),
 					fieldWithPath("career").type(STRING).description("경력"),
 					fieldWithPath("MBTI").type(STRING).description("MBTI"),
-					fieldWithPath("githubUrl").type(STRING).description("깃허브"),
-					fieldWithPath("blogUrl").type(STRING).description("블로그")
+					fieldWithPath("githubUrl").type(STRING).description("깃허브 주소"),
+					fieldWithPath("blogUrl").type(STRING).description("블로그 주소")
 				),
 				responseHeaders(
 					headerWithName(HttpHeaders.CONTENT_TYPE).description("json 으로 전달")
 				),
 				responseFields(
-					fieldWithPath("id").type(NUMBER).description("수정된 멤버 id"),
+					fieldWithPath("id").type(NUMBER).description("수정된 아이디"),
 					fieldWithPath("email").type(STRING).description("수정된 이메일"),
-					fieldWithPath("profileImageUrl").type(STRING).description("수정된 프로필 url"),
+					fieldWithPath("profileImageUrl").type(STRING).description("수정된 프로필 이미지 url"),
 					fieldWithPath("nickname").type(STRING).description("수정된 닉네임"),
 					fieldWithPath("field").type(STRING).description("수정된 분야"),
 					fieldWithPath("career").type(STRING).description("수정된 경력"),
 					fieldWithPath("MBTI").type(STRING).description("수정된 MBTI"),
-					fieldWithPath("githubUrl").type(STRING).description("수정된 깃허브"),
-					fieldWithPath("blogUrl").type(STRING).description("수정된 블로그")
+					fieldWithPath("githubUrl").type(STRING).description("수정된 깃허브 주소"),
+					fieldWithPath("blogUrl").type(STRING).description("수정된 블로그 주소")
 				)));
 	}
 

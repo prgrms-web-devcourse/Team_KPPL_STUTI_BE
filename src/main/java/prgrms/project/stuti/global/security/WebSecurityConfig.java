@@ -1,7 +1,5 @@
 package prgrms.project.stuti.global.security;
 
-import static org.springframework.http.HttpMethod.*;
-
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +17,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.member.model.MemberRole;
 import prgrms.project.stuti.global.security.cache.repository.BlackListTokenRepository;
 import prgrms.project.stuti.global.security.cache.repository.RefreshTokenRepository;
 import prgrms.project.stuti.global.security.token.TokenService;
@@ -56,12 +53,8 @@ public class WebSecurityConfig {
 			)
 			.authorizeRequests(
 				authorizeRequests -> authorizeRequests
-					.antMatchers("/**") // 개발 서버용
+					.antMatchers("/**")
 					.permitAll()
-
-					.antMatchers(GET, "/redis/**")
-					.hasAnyAuthority(MemberRole.ROLE_MEMBER.name())
-
 					.anyRequest().authenticated()
 			)
 			.oauth2Login(

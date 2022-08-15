@@ -32,16 +32,12 @@ public class AuthenticationService {
 	@Transactional
 	public MemberResponse signupMember(MemberDto memberDto) {
 		Optional<TemporaryMember> optionalMember = temporaryMemberRepository.findById(memberDto.email());
-
 		if (optionalMember.isEmpty()) {
 			throw MemberException.invalidSignup();
 		}
 		TemporaryMember temporaryMember = optionalMember.get();
-
-
 		checkDuplicatedEmail(memberDto.email());
 		checkDuplicatedNickname(memberDto.nickname());
-
 		Member member = memberRepository.save(MemberConverter.toMember(memberDto, temporaryMember));
 
 		return MemberConverter.toMemberResponse(member);
@@ -52,6 +48,7 @@ public class AuthenticationService {
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> {
 			throw MemberException.notFoundMember(memberId);
 		});
+
 		return MemberConverter.toMemberResponse(member);
 	}
 

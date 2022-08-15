@@ -8,7 +8,7 @@ import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record MemberPatchRequest(
+public record MemberUpdateRequest(
 	@NotBlank
 	String nickname,
 
@@ -25,6 +25,6 @@ public record MemberPatchRequest(
 	String blogUrl
 ) {
 	@Builder
-	public MemberPatchRequest {
+	public MemberUpdateRequest {
 	}
 }

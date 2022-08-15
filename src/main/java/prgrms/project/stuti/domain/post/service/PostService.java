@@ -125,7 +125,7 @@ public class PostService {
 	private void softDeletePost(Post post) {
 		postImageRepository.deleteByPostId(post.getId());
 		postCommentRepository.deleteAllByPostId(post.getId());
-		postLikeRepository.deleteByPostId(post.getId());
+		postLikeRepository.deleteAllByPostId(post.getId());
 		post.softDelete();
 	}
 }

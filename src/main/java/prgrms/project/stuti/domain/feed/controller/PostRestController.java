@@ -23,7 +23,7 @@ import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 
 @RestController
 @RequiredArgsConstructor
-public class PostController {
+public class PostRestController {
 
 	private final PostService postService;
 
@@ -44,7 +44,7 @@ public class PostController {
 	) {
 		PostsResponse postsResponse = postService.getAllPosts(lastPostId, size);
 
-		return ResponseEntity.ok().body(postsResponse);
+		return ResponseEntity.ok(postsResponse);
 	}
 
 	@PostMapping("/api/v1/posts/{postId}")
@@ -54,7 +54,7 @@ public class PostController {
 		PostChangeDto postChangeDto = PostMapper.toPostChangeDto(registerPostRequest, postId);
 		PostDetailResponse postDetailResponse = postService.changePost(postChangeDto);
 
-		return ResponseEntity.ok().body(postDetailResponse);
+		return ResponseEntity.ok(postDetailResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}")
@@ -73,6 +73,6 @@ public class PostController {
 	) {
 		PostsResponse postsResponse = postService.getMemberPosts(memberId, lastPostId, size);
 
-		return ResponseEntity.ok().body(postsResponse);
+		return ResponseEntity.ok(postsResponse);
 	}
 }

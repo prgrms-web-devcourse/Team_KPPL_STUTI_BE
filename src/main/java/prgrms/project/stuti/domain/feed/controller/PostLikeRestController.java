@@ -14,7 +14,7 @@ import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 
 @RestController
 @RequiredArgsConstructor
-public class PostLikeController {
+public class PostLikeRestController {
 
 	private final PostLikeService postLikeService;
 

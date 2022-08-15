@@ -33,8 +33,8 @@ import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResp
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.global.page.PageResponse;
 
-@WebMvcTest(PostCommentController.class)
-class PostCommentControllerTest extends TestConfig {
+@WebMvcTest(PostCommentRestController.class)
+class PostCommentRestControllerTest extends TestConfig {
 
 	@MockBean
 	private PostCommentService postCommentService;

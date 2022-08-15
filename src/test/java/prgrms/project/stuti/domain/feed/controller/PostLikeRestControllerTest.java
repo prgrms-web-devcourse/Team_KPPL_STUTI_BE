@@ -11,8 +11,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,8 +23,8 @@ import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.PostLikeService;
 import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 
-@WebMvcTest(PostLikeController.class)
-class PostLikeControllerTest extends TestConfig {
+@WebMvcTest(PostLikeRestController.class)
+class PostLikeRestControllerTest extends TestConfig {
 
 	@MockBean
 	private PostLikeService postLikeService;

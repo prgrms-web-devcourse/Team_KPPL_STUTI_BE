@@ -16,17 +16,17 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentConverter;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.global.page.PageResponse;
 
 @RestController
 @RequiredArgsConstructor
-public class PostCommentController {
+public class PostCommentRestController {
 
 	private final PostCommentService postCommentService;
 
@@ -51,7 +51,7 @@ public class PostCommentController {
 			commentId, memberId);
 		PostCommentResponse postCommentResponse = postCommentService.changeComment(postCommentChangeDto);
 
-		return ResponseEntity.ok().body(postCommentResponse);
+		return ResponseEntity.ok(postCommentResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/comments/{commentId}")
@@ -71,7 +71,7 @@ public class PostCommentController {
 		PostCommentGetDto postCommentGetDto = PostCommentConverter.toPostCommentGetDto(postId, lastCommentId, size);
 		PageResponse<PostCommentParent> commentResponse = postCommentService.getPostComments(postCommentGetDto);
 
-		return ResponseEntity.ok().body(commentResponse);
+		return ResponseEntity.ok(commentResponse);
 	}
 
 	@GetMapping("/api/v1/posts/{postId}/comments/{commentId}")
@@ -80,6 +80,6 @@ public class PostCommentController {
 	) {
 		PostCommentContentsResponse commentContents = postCommentService.getCommentContents(postId, commentId);
 
-		return ResponseEntity.ok().body(commentContents);
+		return ResponseEntity.ok(commentContents);
 	}
 }

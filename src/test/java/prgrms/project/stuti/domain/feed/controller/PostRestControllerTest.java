@@ -31,8 +31,8 @@ import prgrms.project.stuti.domain.feed.service.response.PostsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-@WebMvcTest(PostController.class)
-class PostControllerTest extends TestConfig {
+@WebMvcTest(PostRestController.class)
+class PostRestControllerTest extends TestConfig {
 
 	@MockBean
 	private PostService postService;

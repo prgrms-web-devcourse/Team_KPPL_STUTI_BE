@@ -24,10 +24,9 @@ public enum ErrorCode {
 	RECRUITMENT_IS_CLOSED("SG009", "Recruitment is closed", HttpStatus.BAD_REQUEST),
 
 	//file
-	UNSUPPORTED_EXTENSION("F001", "Unsupported file extension", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
-	OVER_MAX_SIZE("F002", "Over max size", HttpStatus.PAYLOAD_TOO_LARGE),
-	FAILED_UPLOAD("F003", "Failed to upload image file", HttpStatus.SERVICE_UNAVAILABLE),
-	FAILED_DELETE("F004", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
+	OVER_MAX_SIZE("F001", "Over max size", HttpStatus.BAD_REQUEST),
+	FAILED_UPLOAD("F002", "Failed to upload image file", HttpStatus.SERVICE_UNAVAILABLE),
+	FAILED_DELETE("F003", "Failed to delete image file", HttpStatus.SERVICE_UNAVAILABLE),
 
 	//member
 	INVALID_EMAIL("M001", "Email is invalid", HttpStatus.BAD_REQUEST),

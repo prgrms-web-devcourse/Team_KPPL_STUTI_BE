@@ -1,6 +1,7 @@
 package prgrms.project.stuti.domain.studygroup.repository.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
@@ -36,6 +37,13 @@ public record StudyGroupQueryDto() {
 	}
 
 	public static record StudyGroupsDto(
+		List<StudyGroupDto> studyGroupDtos,
+		boolean hasNext
+	) {
+
+	}
+
+	public static record StudyGroupDto(
 		StudyGroup studyGroup,
 		Long memberId
 	) {

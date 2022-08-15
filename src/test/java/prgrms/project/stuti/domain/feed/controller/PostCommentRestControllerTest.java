@@ -27,8 +27,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.controller.dto.PostCommentRequest;
 import prgrms.project.stuti.domain.feed.service.PostCommentService;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentChild;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentChildDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParentDto;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.global.page.PageResponse;
@@ -199,17 +199,17 @@ class PostCommentRestControllerTest extends TestConfig {
 	@Test
 	@DisplayName("게시글의 댓글을 페이징하여 조회한다")
 	void getComments() throws Exception {
-		List<PostCommentParent> contents = new ArrayList<>();
-		List<PostCommentChild> childContents = new ArrayList<>();
-		PostCommentChild childContent = new PostCommentChild(
+		List<PostCommentParentDto> contents = new ArrayList<>();
+		List<PostCommentChildDto> childContents = new ArrayList<>();
+		PostCommentChildDto childContent = new PostCommentChildDto(
 			1L, 2L, "testurl.com", 1L,
 			"testnickname", "대댓글", LocalDateTime.now());
 		childContents.add(childContent);
-		PostCommentParent commentParentContents = new PostCommentParent(
+		PostCommentParentDto commentParentContents = new PostCommentParentDto(
 			1L, null, "testurl.com", 1L, "testnickname",
 			"댓글입니다.", LocalDateTime.now(), childContents);
 		contents.add(commentParentContents);
-		PageResponse<PostCommentParent> pageResponse = new PageResponse<>(contents, true, 3L);
+		PageResponse<PostCommentParentDto> pageResponse = new PageResponse<>(contents, true, 3L);
 
 		when(postCommentService.getPostComments(any())).thenReturn(pageResponse);
 

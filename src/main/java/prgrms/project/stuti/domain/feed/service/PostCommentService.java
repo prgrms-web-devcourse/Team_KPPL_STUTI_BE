@@ -11,7 +11,7 @@ import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentReposi
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParentDto;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.member.model.Member;
@@ -67,7 +67,7 @@ public class PostCommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public PageResponse<PostCommentParent> getPostComments(PostCommentGetDto postCommentGetDto) {
+	public PageResponse<PostCommentParentDto> getPostComments(PostCommentGetDto postCommentGetDto) {
 		getPostById(postCommentGetDto.postId());
 
 		return postCommentRepository.findAllByPostIdAndParentIdIsNUllWithNoOffset(postCommentGetDto.postId(),

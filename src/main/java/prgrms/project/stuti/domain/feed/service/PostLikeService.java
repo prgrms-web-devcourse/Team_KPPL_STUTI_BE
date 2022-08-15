@@ -28,7 +28,9 @@ public class PostLikeService {
 			.orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 		postLikeRepository.findByPostIdAndMemberId(postId, memberId)
-			.ifPresent(postLike -> PostException.POST_LIKE_DUPLICATED(postLike.getId()));
+			.ifPresent(postLike -> {
+				throw PostException.POST_LIKE_DUPLICATED(postLike.getId());
+			});
 
 		PostLike postLike = PostLikeConverter.toPostLike(member, post);
 		PostLike savedPostLike = postLikeRepository.save(postLike);

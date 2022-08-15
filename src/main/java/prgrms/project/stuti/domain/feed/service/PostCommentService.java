@@ -8,10 +8,10 @@ import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
-import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentCreateDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCommentGetDto;
+import prgrms.project.stuti.domain.feed.service.dto.PostCommentParent;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentContentsResponse;
 import prgrms.project.stuti.domain.feed.service.response.PostCommentResponse;
 import prgrms.project.stuti.domain.member.model.Member;
@@ -47,8 +47,8 @@ public class PostCommentService {
 	public PostCommentResponse changeComment(PostCommentChangeDto postCommentChangeDto) {
 		PostComment postComment = getCommentById(postCommentChangeDto.postCommentId());
 		validateEditMember(postComment, postCommentChangeDto.memberId());
-		if (postComment.getPost() == null) { //추후 isdelete로 변경시 로직확인 필요, 대댓글인 경우 댓글 있는지 확인 필요
-			PostException.POST_NOT_FOUND(postCommentChangeDto.postId());
+		if (postComment.getPost() == null) {
+			throw PostException.POST_NOT_FOUND(postCommentChangeDto.postId());
 		}
 		postComment.changeContents(postCommentChangeDto.contents());
 
@@ -115,7 +115,7 @@ public class PostCommentService {
 		Member commentCreator = comment.getMember();
 		Member commentEditor = getMemberById(editMemberId);
 		if (!commentEditor.getId().equals(commentCreator.getId())) {
-			PostException.INVALID_EDITOR(commentCreator.getId(), commentEditor.getId());
+			throw PostException.INVALID_EDITOR(commentCreator.getId(), commentEditor.getId());
 		}
 	}
 }

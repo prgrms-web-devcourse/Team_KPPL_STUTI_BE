@@ -4,7 +4,7 @@ import java.util.List;
 
 import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 
-public interface PostCustomRepository {
+public interface CustomPostRepository {
 
 	List<PostDetailResponse> findAllWithNoOffset(Long lastPostId, int size, Long memberId);
 

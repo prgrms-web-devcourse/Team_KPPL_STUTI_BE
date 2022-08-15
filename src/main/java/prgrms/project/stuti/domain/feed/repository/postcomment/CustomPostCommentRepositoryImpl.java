@@ -17,7 +17,7 @@ import prgrms.project.stuti.global.page.PageResponse;
 
 @Repository
 @RequiredArgsConstructor
-public class PostCommentCustomRepositoryImpl implements PostCommentCustomRepository {
+public class CustomPostCommentRepositoryImpl implements CustomPostCommentRepository {
 
 	private final JPAQueryFactory jpaQueryFactory;
 

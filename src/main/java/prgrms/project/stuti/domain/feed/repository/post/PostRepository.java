@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import prgrms.project.stuti.domain.feed.model.Post;
 
-public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
+public interface PostRepository extends JpaRepository<Post, Long>, CustomPostRepository {
 
 	boolean existsByIdLessThanAndDeletedFalse(Long lastPostId);
 

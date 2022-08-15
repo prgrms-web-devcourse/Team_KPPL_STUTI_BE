@@ -19,7 +19,7 @@ import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 
 @Repository
 @RequiredArgsConstructor
-public class PostCustomRepositoryImpl implements PostCustomRepository {
+public class CustomPostRepositoryImpl implements CustomPostRepository {
 
 	private final JPAQueryFactory jpaQueryFactory;
 

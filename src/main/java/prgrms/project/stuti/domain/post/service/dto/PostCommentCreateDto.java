@@ -1,0 +1,14 @@
+package prgrms.project.stuti.domain.post.service.dto;
+
+import lombok.Builder;
+
+public record PostCommentCreateDto(
+	Long memberId,
+	Long postId,
+	Long parentId,
+	String contents
+) {
+	@Builder
+	public PostCommentCreateDto {
+	}
+}

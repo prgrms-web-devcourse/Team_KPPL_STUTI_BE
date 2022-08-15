@@ -41,7 +41,6 @@ import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.PostException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest
 class PostServiceTest extends ServiceTestConfig {
 
 	@Autowired
@@ -186,7 +185,7 @@ class PostServiceTest extends ServiceTestConfig {
 
 	@Test
 	@DisplayName("게시글과 게시글 이미지를 삭제한다")
-	void TestDeletePost() throws IOException {
+	void testDeletePost() throws IOException {
 		PostDetailResponse postDetailResponse = savePost();
 
 		postService.deletePost(postDetailResponse.postId());
@@ -197,7 +196,7 @@ class PostServiceTest extends ServiceTestConfig {
 
 	@Test
 	@DisplayName("없는게시글을 삭제하려고하면 에러를 리턴한다")
-	void TestDeletePostWithUnknownPostId() {
+	void testDeletePostWithUnknownPostId() {
 		assertThrows(PostException.class, () -> postService.deletePost(1L));
 	}
 

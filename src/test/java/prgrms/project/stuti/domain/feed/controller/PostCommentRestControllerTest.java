@@ -262,7 +262,7 @@ class PostCommentRestControllerTest extends TestConfig {
 
 	@Test
 	@DisplayName("댓글 id로 댓글의 내용을 반환한다")
-	void GetComment() throws Exception {
+	void getComment() throws Exception {
 		PostCommentContentsResponse postCommentContentsResponse = new PostCommentContentsResponse(1L, 1L, "테스트 댓글입니다.");
 
 		when(postCommentService.getCommentContents(anyLong(), anyLong())).thenReturn(postCommentContentsResponse);

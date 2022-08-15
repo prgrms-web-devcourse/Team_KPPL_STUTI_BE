@@ -19,7 +19,6 @@ import prgrms.project.stuti.domain.feed.service.response.PostLikeIdResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.global.error.exception.PostException;
 
-@SpringBootTest
 class PostLikeServiceTest extends ServiceTestConfig {
 
 	@Autowired

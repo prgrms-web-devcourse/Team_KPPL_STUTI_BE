@@ -21,6 +21,7 @@ import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
+import prgrms.project.stuti.global.aop.ExecutionTimeLogger;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @RestController
@@ -41,6 +42,7 @@ public class StudyGroupRestController {
 		return ResponseEntity.ok(idResponse);
 	}
 
+	@ExecutionTimeLogger
 	@GetMapping
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getStudyGroups(
 		@RequestParam(defaultValue = DEFAULT_SIZE) Long size, StudyGroupRequest.FindCondition condition
@@ -52,6 +54,7 @@ public class StudyGroupRestController {
 		return ResponseEntity.ok(studyGroupsResponse);
 	}
 
+	@ExecutionTimeLogger
 	@GetMapping("/members/{memberId}")
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getMemberStudyGroups(
 		@PathVariable Long memberId, @RequestParam(defaultValue = DEFAULT_SIZE) Long size,

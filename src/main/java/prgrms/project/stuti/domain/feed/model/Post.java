@@ -35,13 +35,21 @@ public class Post extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
+	@Column(nullable = false)
+	private boolean deleted;
+
 	public Post(String content, Member member) {
 		this.content = content;
 		this.member = member;
+		this.deleted = false;
 	}
 
 	public void changeContents(String content) {
 		this.content = content;
+	}
+
+	public void softDelete() {
+		this.deleted = true;
 	}
 
 	@Override

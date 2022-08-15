@@ -100,7 +100,7 @@ public class PostCommentService {
 	}
 
 	private Post getPostById(Long postId) {
-		return postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
+		return postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 	}
 
 	private Member getMemberById(Long memberId) {
@@ -108,7 +108,7 @@ public class PostCommentService {
 	}
 
 	private void validatePostById(Long postId) {
-		postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
+		postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
 	}
 
 	private void validateEditMember(PostComment comment, Long editMemberId) {

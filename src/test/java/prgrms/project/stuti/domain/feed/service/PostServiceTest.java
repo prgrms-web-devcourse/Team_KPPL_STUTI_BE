@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -20,14 +19,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import prgrms.project.stuti.config.ServiceTestConfig;
 import prgrms.project.stuti.domain.feed.model.Post;
 import prgrms.project.stuti.domain.feed.model.PostComment;
 import prgrms.project.stuti.domain.feed.model.PostImage;
 import prgrms.project.stuti.domain.feed.model.PostLike;
-import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.repository.PostImageRepository;
 import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
+import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
 import prgrms.project.stuti.domain.feed.service.response.PostListResponse;
@@ -37,19 +37,15 @@ import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.model.MemberRole;
-import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.MemberException;
 import prgrms.project.stuti.global.error.exception.PostException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-class PostServiceTest {
+class PostServiceTest extends ServiceTestConfig {
 
 	@Autowired
 	private PostRepository postRepository;
-
-	@Autowired
-	private MemberRepository memberRepository;
 
 	@Autowired
 	private PostImageRepository postImageRepository;
@@ -62,24 +58,6 @@ class PostServiceTest {
 
 	@Autowired
 	private PostService postService;
-
-	private static Member savedMember;
-
-	@BeforeAll
-	void memberSetup() {
-		Member testMember = Member.builder()
-			.email("testMember@gmail.com")
-			.nickName("테스트멤버")
-			.career(Career.JUNIOR)
-			.profileImageUrl("www.test.com")
-			.githubUrl("www.test.com")
-			.blogUrl("www.blog.com")
-			.memberRole(MemberRole.ROLE_MEMBER)
-			.field(Field.BACKEND)
-			.mbti(Mbti.ENFJ)
-			.build();
-		savedMember = memberRepository.save(testMember);
-	}
 
 	@AfterEach
 	void deleteAllPost() {
@@ -98,7 +76,7 @@ class PostServiceTest {
 		MultipartFile testMultipartFile = getMockMultipartFile(testImageFile);
 
 		PostCreateDto postDto = PostCreateDto.builder()
-			.memberId(savedMember.getId())
+			.memberId(member.getId())
 			.contents("새로운 게시글의 내용입니다.")
 			.imageFile(testMultipartFile)
 			.build();
@@ -127,7 +105,7 @@ class PostServiceTest {
 		Long lastPostId = null;
 		Post likedAndCommentPost = null;
 		for (int i = 0; i < 10; i++) {
-			Post post = new Post("게시글" + i, savedMember);
+			Post post = new Post("게시글" + i, member);
 			PostImage postImage = new PostImage(i + "test.jpg", post);
 			Post savedPost = postRepository.save(post);
 			postImageRepository.save(postImage);
@@ -137,8 +115,8 @@ class PostServiceTest {
 				likedAndCommentPost = post;
 			}
 		}
-		PostLike postLike = new PostLike(savedMember, likedAndCommentPost);
-		PostComment postComment = new PostComment("게시글 8에 대한 댓글입니다.", null, savedMember, likedAndCommentPost);
+		PostLike postLike = new PostLike(member, likedAndCommentPost);
+		PostComment postComment = new PostComment("게시글 8에 대한 댓글입니다.", null, member, likedAndCommentPost);
 		postCommentRepository.save(postComment);
 		postLikeRepository.save(postLike);
 
@@ -148,15 +126,15 @@ class PostServiceTest {
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글8");
 		assertThat(allPosts.hasNext()).isTrue();
 		assertThat(allPosts.posts().get(0).totalPostComments()).isEqualTo(1L);
-		assertThat(allPosts.posts().get(0).likedMembers().size()).isEqualTo(1);
-		assertThat(allPosts.posts().get(0).likedMembers().get(0)).isEqualTo(savedMember.getId());
+		assertThat(allPosts.posts().get(0).likedMembers()).hasSize(1);
+		assertThat(allPosts.posts().get(0).likedMembers().get(0)).isEqualTo(member.getId());
 	}
 
 	@Test
 	@DisplayName("전체 포스트리스트 첫 조회시(lastPostId가 null일 때) 페이징 조회한다- 이미지 조회 추가")
 	void testGetAllPostsWhenLastPostIdIsNull() {
 		for (int i = 0; i < 10; i++) {
-			Post post = new Post("게시글" + i, savedMember);
+			Post post = new Post("게시글" + i, member);
 			PostImage postImage = new PostImage(i + "test.jpg", post);
 			postRepository.save(post);
 			postImageRepository.save(postImage);
@@ -212,9 +190,9 @@ class PostServiceTest {
 		PostResponse postResponse = savePost();
 
 		postService.deletePost(postResponse.postId());
-		List<Post> allPosts = postRepository.findAll();
+		Optional<Post> foundPost = postRepository.findByIdAndDeletedFalse(postResponse.postId());
 
-		assertThat(allPosts).isEmpty();
+		assertThat(foundPost).isEmpty();
 	}
 
 	@Test
@@ -229,7 +207,7 @@ class PostServiceTest {
 		MultipartFile testOriginalMultipartFile = getMockMultipartFile(originalImageFile);
 
 		PostCreateDto postDto = PostCreateDto.builder()
-			.memberId(savedMember.getId())
+			.memberId(member.getId())
 			.contents("새로운 게시글의 내용입니다.")
 			.imageFile(testOriginalMultipartFile)
 			.build();
@@ -240,9 +218,9 @@ class PostServiceTest {
 	@Test
 	@DisplayName("게시글 삭제시 게시글에 붙은 댓글도 전부 삭제처리한다.")
 	void testDeletePostWithComments() {
-		Post post = new Post("울랄라 테스트 게시글", savedMember);
+		Post post = new Post("울랄라 테스트 게시글", member);
 		postRepository.save(post);
-		PostComment postComment = new PostComment("댓글", null, savedMember, post);
+		PostComment postComment = new PostComment("댓글", null, member, post);
 		postCommentRepository.save(postComment);
 
 		postService.deletePost(post.getId());
@@ -254,9 +232,9 @@ class PostServiceTest {
 	@Test
 	@DisplayName("게시글 삭제시 게시글에 붙은 댓글도 전부 삭제처리한다.")
 	void testDeletePostWithLikes() {
-		Post post = new Post("울랄라 테스트 게시글", savedMember);
+		Post post = new Post("울랄라 테스트 게시글", member);
 		postRepository.save(post);
-		PostLike postLike = new PostLike(savedMember, post);
+		PostLike postLike = new PostLike(member, post);
 		postLikeRepository.save(postLike);
 
 		postService.deletePost(post.getId());
@@ -286,17 +264,45 @@ class PostServiceTest {
 			if (i % 2 == 0) {
 				post = new Post("게시글" + i, differentMember);
 			} else {
-				post = new Post("게시글" + i, savedMember);
+				post = new Post("게시글" + i, member);
 			}
 			PostImage postImage = new PostImage(i + "test.jpg", post);
 			savedPost = postRepository.save(post);
 			postImageRepository.save(postImage);
 		}
 
-		PostListResponse myPosts = postService.getMemberPosts(savedMember.getId(), savedPost.getId(), 3);
+		PostListResponse myPosts = postService.getMemberPosts(member.getId(), savedPost.getId(), 3);
 
 		assertThat(myPosts.hasNext()).isTrue();
 		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");
+	}
+
+	@Test
+	@DisplayName("삭제된 게시글은 수정 할 수 없다.")
+	void testChangeSoftDeletedPost() {
+		Post post = new Post("울랄라 테스트 게시글", member);
+		postRepository.save(post);
+
+		postService.deletePost(post.getId());
+		PostChangeDto changeDto = PostChangeDto.builder()
+			.postId(post.getId())
+			.contents("변경된 테스트 게시글")
+			.build();
+
+		assertThrows(PostException.class, () -> postService.changePost(changeDto));
+	}
+
+	@Test
+	@DisplayName("게시글 조회시 삭제된 데이터는 가져오지 않는다")
+	void testGetAllPostsWithOutDeletedPost() {
+		Post post = new Post("울랄라 테스트 게시글", member);
+		postRepository.save(post);
+		postService.deletePost(post.getId());
+
+		PostListResponse response = postService.getAllPosts(null, 10);
+
+		assertThat(response.posts()).isEmpty();
+		assertThat(response.hasNext()).isFalse();
 	}
 
 	private MultipartFile getMockMultipartFile(File testFile) throws IOException {

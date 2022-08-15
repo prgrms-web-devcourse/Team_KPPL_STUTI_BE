@@ -41,7 +41,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 				post.content, post.updatedAt, postImage.imageUrl)
 			.from(post)
 			.leftJoin(postImage).on(post.id.eq(postImage.post.id))
-			.where(dynamicLtId)
+			.where(dynamicLtId, post.deleted.isFalse())
 			.orderBy(post.id.desc())
 			.limit(size)
 			.fetch();

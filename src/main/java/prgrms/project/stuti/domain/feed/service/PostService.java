@@ -51,18 +51,20 @@ public class PostService {
 	@Transactional(readOnly = true)
 	public PostListResponse getAllPosts(Long lastPostId, int size) {
 		List<PostResponse> postsDtos = postRepository.findAllWithNoOffset(lastPostId, size, null);
-		if (!postsDtos.isEmpty()) {
+		boolean hasNext = false;
+		if (postsDtos.size() == size) {
 			lastPostId = getLastPostId(postsDtos);
+			hasNext = hasNext(lastPostId);
 		}
-		boolean hasNext = hasNext(lastPostId);
 
 		return PostConverter.toPostListResponse(postsDtos, hasNext);
 	}
 
 	@Transactional
 	public PostResponse changePost(PostChangeDto postChangeDto) {
-		Post post = postRepository.findById(postChangeDto.postId())
+		Post post = postRepository.findByIdAndDeletedFalse(postChangeDto.postId())
 			.orElseThrow(() -> PostException.POST_NOT_FOUND(postChangeDto.postId()));
+
 		post.changeContents(postChangeDto.contents());
 		if (postChangeDto.imageFile() != null) {
 			postImageRepository.deleteByPostId(post.getId());
@@ -80,20 +82,20 @@ public class PostService {
 
 	@Transactional
 	public void deletePost(Long postId) {
-		postRepository.findById(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
-		postImageRepository.deleteByPostId(postId);
-		postCommentRepository.deleteAllByPostId(postId);
-		postLikeRepository.deleteByPostId(postId);
-		postRepository.deleteById(postId);
+		Post post = postRepository.findByIdAndDeletedFalse(postId)
+			.orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
+
+		softDeletePost(post);
 	}
 
 	@Transactional(readOnly = true)
 	public PostListResponse getMemberPosts(Long memberId, Long lastPostId, int size) {
 		List<PostResponse> myPosts = postRepository.findAllWithNoOffset(lastPostId, size, memberId);
-		if (!myPosts.isEmpty()) {
+		boolean hasNext = false;
+		if (myPosts.size() == size) {
 			lastPostId = getLastPostId(myPosts);
+			hasNext = hasNextMyPost(lastPostId, memberId);
 		}
-		boolean hasNext = hasNextMyPost(lastPostId, memberId);
 
 		return PostConverter.toPostListResponse(myPosts, hasNext);
 	}
@@ -103,7 +105,7 @@ public class PostService {
 			return false;
 		}
 
-		return postRepository.existsByIdLessThanAndMemberId(lastPostId, memberId);
+		return postRepository.existsByIdLessThanAndMemberIdAndDeletedFalse(lastPostId, memberId);
 	}
 
 	private boolean hasNext(Long lastPostId) {
@@ -111,11 +113,18 @@ public class PostService {
 			return false;
 		}
 
-		return postRepository.existsByIdLessThan(lastPostId);
+		return postRepository.existsByIdLessThanAndDeletedFalse(lastPostId);
 	}
 
 	private Long getLastPostId(List<PostResponse> postResponses) {
 		int lastIndex = postResponses.size() - 1;
 		return postResponses.get(lastIndex).postId();
+	}
+
+	private void softDeletePost(Post post) {
+		postImageRepository.deleteByPostId(post.getId());
+		postCommentRepository.deleteAllByPostId(post.getId());
+		postLikeRepository.deleteByPostId(post.getId());
+		post.softDelete();
 	}
 }

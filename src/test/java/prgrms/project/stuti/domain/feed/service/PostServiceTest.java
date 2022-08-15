@@ -30,8 +30,8 @@ import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
 import prgrms.project.stuti.domain.feed.repository.postcomment.PostCommentRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.response.PostListResponse;
-import prgrms.project.stuti.domain.feed.service.response.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostsResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Field;
 import prgrms.project.stuti.domain.member.model.Mbti;
@@ -81,8 +81,8 @@ class PostServiceTest extends ServiceTestConfig {
 			.imageFile(testMultipartFile)
 			.build();
 
-		PostResponse postResponse = postService.registerPost(postDto);
-		Optional<Post> foundFeed = postRepository.findById(postResponse.postId());
+		PostDetailResponse postDetailResponse = postService.registerPost(postDto);
+		Optional<Post> foundFeed = postRepository.findById(postDetailResponse.postId());
 
 		assertThat(foundFeed).isNotEmpty();
 		assertThat(foundFeed.get().getContent()).isEqualTo(postDto.contents());
@@ -120,7 +120,7 @@ class PostServiceTest extends ServiceTestConfig {
 		postCommentRepository.save(postComment);
 		postLikeRepository.save(postLike);
 
-		PostListResponse allPosts = postService.getAllPosts(lastPostId, 2);
+		PostsResponse allPosts = postService.getAllPosts(lastPostId, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글8");
@@ -140,7 +140,7 @@ class PostServiceTest extends ServiceTestConfig {
 			postImageRepository.save(postImage);
 		}
 
-		PostListResponse allPosts = postService.getAllPosts(null, 2);
+		PostsResponse allPosts = postService.getAllPosts(null, 2);
 
 		assertThat(allPosts.posts()).hasSize(2);
 		assertThat(allPosts.posts().get(0).contents()).isEqualTo("게시글9");
@@ -151,18 +151,18 @@ class PostServiceTest extends ServiceTestConfig {
 	@Test
 	@DisplayName("게시글 내용과 업로드 이미지가 둘다 정상 변경된다.")
 	void testChangePost() throws IOException {
-		PostResponse postResponse = savePost();
-		List<PostImage> originImages = postImageRepository.findByPostId(postResponse.postId());
+		PostDetailResponse postDetailResponse = savePost();
+		List<PostImage> originImages = postImageRepository.findByPostId(postDetailResponse.postId());
 
 		File changeImageFile = new File(Paths.get("src", "test", "resources")
 			+ File.separator + "change.jpg");
 		MultipartFile testChangeMultipartFile = getMockMultipartFile(changeImageFile);
-		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.",
+		PostChangeDto postChangeDto = new PostChangeDto(postDetailResponse.postId(), "게시글 내용이 변경되었습니다.",
 			testChangeMultipartFile);
-		PostResponse changedPostResponse = postService.changePost(postChangeDto);
+		PostDetailResponse changedPostDetailResponse = postService.changePost(postChangeDto);
 
-		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostResponse.postId());
-		Post changedPost = postRepository.findById(changedPostResponse.postId()).get();
+		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostDetailResponse.postId());
+		Post changedPost = postRepository.findById(changedPostDetailResponse.postId()).get();
 
 		assertThat(changedPost.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages).hasSize(1);
@@ -172,13 +172,13 @@ class PostServiceTest extends ServiceTestConfig {
 	@Test
 	@DisplayName("업로드 이미지를 보내주지않으면 삭제하지 않는다. - 원래 이미지를 가지고있는다")
 	void testChangePostWithOutImages() throws IOException {
-		PostResponse postResponse = savePost();
-		List<PostImage> originImages = postImageRepository.findByPostId(postResponse.postId());
-		PostChangeDto postChangeDto = new PostChangeDto(postResponse.postId(), "게시글 내용이 변경되었습니다.", null);
-		PostResponse changedPostResponse = postService.changePost(postChangeDto);
+		PostDetailResponse postDetailResponse = savePost();
+		List<PostImage> originImages = postImageRepository.findByPostId(postDetailResponse.postId());
+		PostChangeDto postChangeDto = new PostChangeDto(postDetailResponse.postId(), "게시글 내용이 변경되었습니다.", null);
+		PostDetailResponse changedPostDetailResponse = postService.changePost(postChangeDto);
 
-		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostResponse.postId());
-		Post changedPost = postRepository.findById(changedPostResponse.postId()).get();
+		List<PostImage> changedImages = postImageRepository.findByPostId(changedPostDetailResponse.postId());
+		Post changedPost = postRepository.findById(changedPostDetailResponse.postId()).get();
 
 		assertThat(changedPost.getContent()).isEqualTo("게시글 내용이 변경되었습니다.");
 		assertThat(changedImages.get(0).getImageUrl()).isEqualTo(originImages.get(0).getImageUrl());
@@ -187,10 +187,10 @@ class PostServiceTest extends ServiceTestConfig {
 	@Test
 	@DisplayName("게시글과 게시글 이미지를 삭제한다")
 	void TestDeletePost() throws IOException {
-		PostResponse postResponse = savePost();
+		PostDetailResponse postDetailResponse = savePost();
 
-		postService.deletePost(postResponse.postId());
-		Optional<Post> foundPost = postRepository.findByIdAndDeletedFalse(postResponse.postId());
+		postService.deletePost(postDetailResponse.postId());
+		Optional<Post> foundPost = postRepository.findByIdAndDeletedFalse(postDetailResponse.postId());
 
 		assertThat(foundPost).isEmpty();
 	}
@@ -201,7 +201,7 @@ class PostServiceTest extends ServiceTestConfig {
 		assertThrows(PostException.class, () -> postService.deletePost(1L));
 	}
 
-	private PostResponse savePost() throws IOException {
+	private PostDetailResponse savePost() throws IOException {
 		String testFilePath = Paths.get("src", "test", "resources").toString();
 		File originalImageFile = new File(testFilePath + File.separator + "test.png");
 		MultipartFile testOriginalMultipartFile = getMockMultipartFile(originalImageFile);
@@ -271,7 +271,7 @@ class PostServiceTest extends ServiceTestConfig {
 			postImageRepository.save(postImage);
 		}
 
-		PostListResponse myPosts = postService.getMemberPosts(member.getId(), savedPost.getId(), 3);
+		PostsResponse myPosts = postService.getMemberPosts(member.getId(), savedPost.getId(), 3);
 
 		assertThat(myPosts.hasNext()).isTrue();
 		assertThat(myPosts.posts().get(0).contents()).isEqualTo("게시글7");
@@ -299,7 +299,7 @@ class PostServiceTest extends ServiceTestConfig {
 		postRepository.save(post);
 		postService.deletePost(post.getId());
 
-		PostListResponse response = postService.getAllPosts(null, 10);
+		PostsResponse response = postService.getAllPosts(null, 10);
 
 		assertThat(response.posts()).isEmpty();
 		assertThat(response.hasNext()).isFalse();

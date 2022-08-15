@@ -27,8 +27,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import prgrms.project.stuti.config.TestConfig;
 import prgrms.project.stuti.domain.feed.service.PostService;
-import prgrms.project.stuti.domain.feed.service.response.PostListResponse;
-import prgrms.project.stuti.domain.feed.service.response.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostsResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
 @WebMvcTest(PostController.class)
@@ -43,7 +43,7 @@ class PostControllerTest extends TestConfig {
 	void createPost() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
-		PostResponse postResponse = PostResponse.builder()
+		PostDetailResponse postDetailResponse = PostDetailResponse.builder()
 			.postId(1L)
 			.memberId(1L)
 			.nickname("테스트닉네임")
@@ -56,7 +56,7 @@ class PostControllerTest extends TestConfig {
 			.likedMembers(List.of(1L))
 			.build();
 
-		when(postService.registerPost(any())).thenReturn(postResponse);
+		when(postService.registerPost(any())).thenReturn(postDetailResponse);
 
 		ResultActions resultActions = mockMvc.perform(
 				multipart("/api/v1/posts")
@@ -67,7 +67,7 @@ class PostControllerTest extends TestConfig {
 
 		resultActions.andExpectAll(
 			status().isOk(),
-			content().json(objectMapper.writeValueAsString(postResponse))
+			content().json(objectMapper.writeValueAsString(postDetailResponse))
 		).andDo(
 			document(
 				COMMON_DOCS_NAME,
@@ -100,8 +100,8 @@ class PostControllerTest extends TestConfig {
 	@Test
 	@DisplayName("전체 페이지를 조회한다")
 	void getPosts() throws Exception {
-		List<PostResponse> posts = new ArrayList<>();
-		PostResponse postResponse = PostResponse.builder()
+		List<PostDetailResponse> posts = new ArrayList<>();
+		PostDetailResponse postDetailResponse = PostDetailResponse.builder()
 			.postId(1L)
 			.memberId(1L)
 			.nickname("testUser")
@@ -113,8 +113,8 @@ class PostControllerTest extends TestConfig {
 			.totalPostComments(1L)
 			.likedMembers(List.of(1L, 2L))
 			.build();
-		posts.add(postResponse);
-		PostListResponse postsResponse = new PostListResponse(posts, true);
+		posts.add(postDetailResponse);
+		PostsResponse postsResponse = new PostsResponse(posts, true);
 
 		when(postService.getAllPosts(any(), anyInt())).thenReturn(postsResponse);
 
@@ -160,7 +160,7 @@ class PostControllerTest extends TestConfig {
 	void updatePost() throws Exception {
 		MockMultipartFile file = new MockMultipartFile("mockImage", "mockImage.jpg",
 			MediaType.TEXT_PLAIN_VALUE, "mockImage.jpg".getBytes());
-		PostResponse postResponse = PostResponse.builder()
+		PostDetailResponse postDetailResponse = PostDetailResponse.builder()
 			.postId(1L)
 			.memberId(1L)
 			.nickname("테스트닉네임")
@@ -173,7 +173,7 @@ class PostControllerTest extends TestConfig {
 			.likedMembers(List.of(1L))
 			.build();
 
-		when(postService.changePost(any())).thenReturn(postResponse);
+		when(postService.changePost(any())).thenReturn(postDetailResponse);
 
 		ResultActions resultActions = mockMvc.perform(
 				multipart("/api/v1/posts/{postId}", 1L)
@@ -240,8 +240,8 @@ class PostControllerTest extends TestConfig {
 	@DisplayName("내 게시글을 조회한다")
 	@WithMockUser(username = "1", roles = {"ADMIN", "MEMBER"})
 	void getMembersPosts() throws Exception {
-		List<PostResponse> posts = new ArrayList<>();
-		PostResponse postResponse = PostResponse.builder()
+		List<PostDetailResponse> posts = new ArrayList<>();
+		PostDetailResponse postDetailResponse = PostDetailResponse.builder()
 			.postId(1L)
 			.memberId(1L)
 			.nickname("testUser")
@@ -253,8 +253,8 @@ class PostControllerTest extends TestConfig {
 			.totalPostComments(1L)
 			.likedMembers(List.of(1L, 2L))
 			.build();
-		posts.add(postResponse);
-		PostListResponse postsResponse = new PostListResponse(posts, true);
+		posts.add(postDetailResponse);
+		PostsResponse postsResponse = new PostsResponse(posts, true);
 
 		when(postService.getMemberPosts(any(), any(), anyInt())).thenReturn(postsResponse);
 

@@ -15,7 +15,7 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.feed.service.response.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<PostResponse> findAllWithNoOffset(Long lastPostId, int size, Long memberId) {
+	public List<PostDetailResponse> findAllWithNoOffset(Long lastPostId, int size, Long memberId) {
 
 		BooleanBuilder dynamicLtId = new BooleanBuilder();
 
@@ -46,9 +46,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 			.limit(size)
 			.fetch();
 
-		List<PostResponse> postsDtos = new ArrayList<>();
+		List<PostDetailResponse> postsDtos = new ArrayList<>();
 		for (Tuple tuple : fetch) {
-			PostResponse postsDto = PostResponse.builder()
+			PostDetailResponse postsDto = PostDetailResponse.builder()
 				.postId(tuple.get(post.id))
 				.memberId(tuple.get(post.member.id))
 				.nickname(tuple.get(post.member.nickName))

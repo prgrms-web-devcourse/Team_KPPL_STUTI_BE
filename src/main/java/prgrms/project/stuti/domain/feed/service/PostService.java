@@ -14,8 +14,8 @@ import prgrms.project.stuti.domain.feed.repository.PostLikeRepository;
 import prgrms.project.stuti.domain.feed.repository.post.PostRepository;
 import prgrms.project.stuti.domain.feed.service.dto.PostChangeDto;
 import prgrms.project.stuti.domain.feed.service.dto.PostCreateDto;
-import prgrms.project.stuti.domain.feed.service.response.PostListResponse;
-import prgrms.project.stuti.domain.feed.service.response.PostResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostsResponse;
+import prgrms.project.stuti.domain.feed.service.response.PostDetailResponse;
 import prgrms.project.stuti.domain.member.model.Member;
 import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.global.error.exception.MemberException;
@@ -35,7 +35,7 @@ public class PostService {
 	private final PostLikeRepository postLikeRepository;
 
 	@Transactional
-	public PostResponse registerPost(PostCreateDto postDto) {
+	public PostDetailResponse registerPost(PostCreateDto postDto) {
 		Member findMember = memberRepository.findById(postDto.memberId())
 			.orElseThrow(() -> MemberException.notFoundMember(postDto.memberId()));
 		Post post = PostConverter.toPost(postDto, findMember);
@@ -45,23 +45,23 @@ public class PostService {
 		PostImage postImage = new PostImage(uploadUrl, savedPost);
 		PostImage savedPostImage = postImageRepository.save(postImage);
 
-		return PostConverter.toPostResponse(savedPost, findMember, savedPostImage, 0L, List.of());
+		return PostConverter.toPostDetailResponse(savedPost, findMember, savedPostImage, 0L, List.of());
 	}
 
 	@Transactional(readOnly = true)
-	public PostListResponse getAllPosts(Long lastPostId, int size) {
-		List<PostResponse> postsDtos = postRepository.findAllWithNoOffset(lastPostId, size, null);
+	public PostsResponse getAllPosts(Long lastPostId, int size) {
+		List<PostDetailResponse> postsDtos = postRepository.findAllWithNoOffset(lastPostId, size, null);
 		boolean hasNext = false;
 		if (postsDtos.size() == size) {
 			lastPostId = getLastPostId(postsDtos);
 			hasNext = hasNext(lastPostId);
 		}
 
-		return PostConverter.toPostListResponse(postsDtos, hasNext);
+		return PostConverter.toPostsResponse(postsDtos, hasNext);
 	}
 
 	@Transactional
-	public PostResponse changePost(PostChangeDto postChangeDto) {
+	public PostDetailResponse changePost(PostChangeDto postChangeDto) {
 		Post post = postRepository.findByIdAndDeletedFalse(postChangeDto.postId())
 			.orElseThrow(() -> PostException.POST_NOT_FOUND(postChangeDto.postId()));
 
@@ -77,7 +77,7 @@ public class PostService {
 		Long totalParentComments = postCommentRepository.totalParentComments(post.getId());
 		List<Long> allLikedMembers = postRepository.findAllLikedMembers(post.getId());
 
-		return PostConverter.toPostResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
+		return PostConverter.toPostDetailResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
 	}
 
 	@Transactional
@@ -89,15 +89,15 @@ public class PostService {
 	}
 
 	@Transactional(readOnly = true)
-	public PostListResponse getMemberPosts(Long memberId, Long lastPostId, int size) {
-		List<PostResponse> myPosts = postRepository.findAllWithNoOffset(lastPostId, size, memberId);
+	public PostsResponse getMemberPosts(Long memberId, Long lastPostId, int size) {
+		List<PostDetailResponse> myPosts = postRepository.findAllWithNoOffset(lastPostId, size, memberId);
 		boolean hasNext = false;
 		if (myPosts.size() == size) {
 			lastPostId = getLastPostId(myPosts);
 			hasNext = hasNextMyPost(lastPostId, memberId);
 		}
 
-		return PostConverter.toPostListResponse(myPosts, hasNext);
+		return PostConverter.toPostsResponse(myPosts, hasNext);
 	}
 
 	private boolean hasNextMyPost(Long lastPostId, Long memberId) {
@@ -116,9 +116,9 @@ public class PostService {
 		return postRepository.existsByIdLessThanAndDeletedFalse(lastPostId);
 	}
 
-	private Long getLastPostId(List<PostResponse> postResponses) {
-		int lastIndex = postResponses.size() - 1;
-		return postResponses.get(lastIndex).postId();
+	private Long getLastPostId(List<PostDetailResponse> postDetailRespons) {
+		int lastIndex = postDetailRespons.size() - 1;
+		return postDetailRespons.get(lastIndex).postId();
 	}
 
 	private void softDeletePost(Post post) {

@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Builder;
 import prgrms.project.stuti.domain.member.model.Mbti;
 
-public record PostResponse(
+public record PostDetailResponse(
 	Long postId,
 	Long memberId,
 	String nickname,
@@ -19,6 +19,6 @@ public record PostResponse(
 	List<Long> likedMembers
 ) {
 	@Builder
-	public PostResponse {
+	public PostDetailResponse {
 	}
 }

@@ -25,11 +25,11 @@ public class PostLikeService {
 	@Transactional
 	public PostLikeIdResponse createPostLike(Long postId, Long memberId) {
 		Post post = postRepository.findByIdAndDeletedFalse(postId)
-			.orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
+			.orElseThrow(() -> PostException.notFoundPost(postId));
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 		postLikeRepository.findByPostIdAndMemberId(postId, memberId)
 			.ifPresent(postLike -> {
-				throw PostException.POST_LIKE_DUPLICATED(postLike.getId());
+				throw PostException.duplicatePostLike(postLike.getId());
 			});
 
 		PostLike postLike = PostLikeConverter.toPostLike(member, post);
@@ -41,7 +41,7 @@ public class PostLikeService {
 	@Transactional
 	public void cancelPostLike(Long postId, Long memberId) {
 		PostLike postLike = postLikeRepository.findByPostIdAndMemberId(postId, memberId)
-			.orElseThrow(() -> PostException.NOT_FOUND_POST_LIKE(postId, memberId));
+			.orElseThrow(() -> PostException.notFoundPostLike(postId, memberId));
 		postLikeRepository.deleteById(postLike.getId());
 	}
 }

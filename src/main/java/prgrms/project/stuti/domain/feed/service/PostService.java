@@ -63,7 +63,7 @@ public class PostService {
 	@Transactional
 	public PostDetailResponse changePost(PostChangeDto postChangeDto) {
 		Post post = postRepository.findByIdAndDeletedFalse(postChangeDto.postId())
-			.orElseThrow(() -> PostException.POST_NOT_FOUND(postChangeDto.postId()));
+			.orElseThrow(() -> PostException.notFoundPost(postChangeDto.postId()));
 
 		post.changeContents(postChangeDto.contents());
 		if (postChangeDto.imageFile() != null) {
@@ -77,13 +77,14 @@ public class PostService {
 		Long totalParentComments = postCommentRepository.totalParentComments(post.getId());
 		List<Long> allLikedMembers = postRepository.findAllLikedMembers(post.getId());
 
-		return PostConverter.toPostDetailResponse(post, post.getMember(), postImage, totalParentComments, allLikedMembers);
+		return PostConverter.toPostDetailResponse(post, post.getMember(), postImage, totalParentComments,
+			allLikedMembers);
 	}
 
 	@Transactional
 	public void deletePost(Long postId) {
 		Post post = postRepository.findByIdAndDeletedFalse(postId)
-			.orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
+			.orElseThrow(() -> PostException.notFoundPost(postId));
 
 		softDeletePost(post);
 	}
@@ -116,9 +117,9 @@ public class PostService {
 		return postRepository.existsByIdLessThanAndDeletedFalse(lastPostId);
 	}
 
-	private Long getLastPostId(List<PostDetailResponse> postDetailRespons) {
-		int lastIndex = postDetailRespons.size() - 1;
-		return postDetailRespons.get(lastIndex).postId();
+	private Long getLastPostId(List<PostDetailResponse> postDetailResponses) {
+		int lastIndex = postDetailResponses.size() - 1;
+		return postDetailResponses.get(lastIndex).postId();
 	}
 
 	private void softDeletePost(Post post) {

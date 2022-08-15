@@ -48,7 +48,7 @@ public class PostCommentService {
 		PostComment postComment = getCommentById(postCommentChangeDto.postCommentId());
 		validateEditMember(postComment, postCommentChangeDto.memberId());
 		if (postComment.getPost() == null) {
-			throw PostException.POST_NOT_FOUND(postCommentChangeDto.postId());
+			throw PostException.notFoundPost(postCommentChangeDto.postId());
 		}
 		postComment.changeContents(postCommentChangeDto.contents());
 
@@ -91,16 +91,16 @@ public class PostCommentService {
 
 	private PostComment getCommentById(Long postCommentId) {
 		return postCommentRepository.findById(postCommentId)
-			.orElseThrow(() -> PostException.COMMENT_NOT_FOUND(postCommentId));
+			.orElseThrow(() -> PostException.notFoundComment(postCommentId));
 	}
 
 	private PostComment getParentCommentById(Long parentPostCommentId) {
 		return postCommentRepository.findById(parentPostCommentId)
-			.orElseThrow(() -> PostException.PARENT_COMMENT_NOT_FOUND(parentPostCommentId));
+			.orElseThrow(() -> PostException.notFoundParentComment(parentPostCommentId));
 	}
 
 	private Post getPostById(Long postId) {
-		return postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
+		return postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> PostException.notFoundPost(postId));
 	}
 
 	private Member getMemberById(Long memberId) {
@@ -108,14 +108,14 @@ public class PostCommentService {
 	}
 
 	private void validatePostById(Long postId) {
-		postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> PostException.POST_NOT_FOUND(postId));
+		postRepository.findByIdAndDeletedFalse(postId).orElseThrow(() -> PostException.notFoundPost(postId));
 	}
 
 	private void validateEditMember(PostComment comment, Long editMemberId) {
 		Member commentCreator = comment.getMember();
 		Member commentEditor = getMemberById(editMemberId);
 		if (!commentEditor.getId().equals(commentCreator.getId())) {
-			throw PostException.INVALID_EDITOR(commentCreator.getId(), commentEditor.getId());
+			throw PostException.invalidEditor(commentCreator.getId(), commentEditor.getId());
 		}
 	}
 }

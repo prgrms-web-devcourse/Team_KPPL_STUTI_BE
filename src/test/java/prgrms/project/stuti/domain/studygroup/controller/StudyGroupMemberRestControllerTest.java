@@ -148,7 +148,7 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 		StudyGroupMemberResponse studyMember = StudyGroupMemberResponse
 			.builder()
 			.studyGroupMemberId(2L)
-			.profileImageUrl("test profile image url")
+			.profileImageUrl("https://www.s3.com/profile-images")
 			.nickname("test nickname")
 			.field(Field.ANDROID.getFieldValue())
 			.career(Career.JUNIOR.getCareerValue())
@@ -159,13 +159,14 @@ class StudyGroupMemberRestControllerTest extends TestConfig {
 		StudyGroupMemberResponse studyApplicant = StudyGroupMemberResponse
 			.builder()
 			.studyGroupMemberId(3L)
-			.profileImageUrl("test profile image url2")
+			.profileImageUrl("https://www.s3.com/profile-images")
 			.nickname("test nickname2")
 			.field(Field.IOS.getFieldValue())
 			.career(Career.MASTER.getCareerValue())
 			.mbti(Mbti.INFJ)
 			.studyGroupMemberRole(StudyGroupMemberRole.STUDY_APPLICANT.getValue())
 			.build();
+
 		return StudyGroupMembersResponse
 			.builder()
 			.studyGroupId(studyGroupId)

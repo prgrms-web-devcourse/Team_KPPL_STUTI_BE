@@ -2,7 +2,6 @@ package prgrms.project.stuti.domain.studygroup.controller;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -27,7 +26,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.restdocs.headers.HeaderDescriptor;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.request.RequestPartDescriptor;
@@ -42,9 +40,9 @@ import prgrms.project.stuti.domain.member.model.Mbti;
 import prgrms.project.stuti.domain.studygroup.model.Region;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse.StudyLeaderResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
@@ -81,14 +79,14 @@ class StudyGroupRestControllerTest extends TestConfig {
 		//then
 		resultActions
 			.andExpectAll(
-				status().isCreated(),
+				status().isOk(),
 				content().json(objectMapper.writeValueAsString(idResponse)))
 			.andDo(
 				document(COMMON_DOCS_NAME,
 					requestHeaders(contentType(), host()),
 					requestParts(imageFilePart()),
 					requestParameters(studyGroupCreateParams()),
-					responseHeaders(contentType(), location()),
+					responseHeaders(contentType(), contentLength()),
 					responseFields(studyGroupIdField())));
 	}
 
@@ -336,10 +334,6 @@ class StudyGroupRestControllerTest extends TestConfig {
 		map.add(DESCRIPTION.field(), "update description");
 
 		return map;
-	}
-
-	private HeaderDescriptor location() {
-		return headerWithName(LOCATION).description("생성된 리소스 주소");
 	}
 
 	private RequestPartDescriptor imageFilePart() {

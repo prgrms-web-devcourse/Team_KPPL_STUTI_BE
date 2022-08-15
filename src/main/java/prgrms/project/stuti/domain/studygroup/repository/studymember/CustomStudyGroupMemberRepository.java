@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
-import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupMemberQueryDto;
 
 public interface CustomStudyGroupMemberRepository {
 
@@ -14,5 +14,5 @@ public interface CustomStudyGroupMemberRepository {
 
 	Optional<StudyGroupMember> findStudyGroupMemberById(Long studyGroupMemberId);
 
-	Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> findStudyGroupMembersByStudyGroupId(Long studyGroupId);
+	Map<StudyGroup, List<StudyGroupMemberQueryDto>> findStudyGroupMembersByStudyGroupId(Long studyGroupId);
 }

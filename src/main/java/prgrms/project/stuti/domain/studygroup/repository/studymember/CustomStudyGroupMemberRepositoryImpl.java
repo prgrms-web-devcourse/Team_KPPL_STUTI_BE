@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
-import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupMemberQueryDto;
 
 @RequiredArgsConstructor
 public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMemberRepository {
@@ -53,7 +53,7 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 	}
 
 	@Override
-	public Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> findStudyGroupMembersByStudyGroupId(
+	public Map<StudyGroup, List<StudyGroupMemberQueryDto>> findStudyGroupMembersByStudyGroupId(
 		Long studyGroupId
 	) {
 		return jpaQueryFactory
@@ -64,7 +64,7 @@ public class CustomStudyGroupMemberRepositoryImpl implements CustomStudyGroupMem
 			.orderBy(studyGroupMember.createdAt.asc())
 			.transform(groupBy(studyGroup).as(
 				list(Projections.constructor(
-					StudyGroupQueryDto.StudyGroupMemberDto.class, studyGroupMember.id, member.profileImageUrl,
+					StudyGroupMemberQueryDto.class, studyGroupMember.id, member.profileImageUrl,
 					member.nickName, member.field, member.career, member.mbti,
 					studyGroupMember.studyGroupMemberRole))));
 	}

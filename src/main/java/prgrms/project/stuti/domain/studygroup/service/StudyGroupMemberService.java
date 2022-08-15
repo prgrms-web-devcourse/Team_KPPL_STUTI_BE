@@ -14,7 +14,7 @@ import prgrms.project.stuti.domain.member.repository.MemberRepository;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
-import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupMemberQueryDto;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupMemberDto;
@@ -41,7 +41,7 @@ public class StudyGroupMemberService {
 
 	@Transactional(readOnly = true)
 	public StudyGroupMembersResponse getStudyGroupMembers(StudyGroupMemberDto.ReadDto readDto) {
-		Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> studyGroupMemberDtoMap =
+		Map<StudyGroup, List<StudyGroupMemberQueryDto>> studyGroupMemberDtoMap =
 			studyGroupMemberRepository.findStudyGroupMembersByStudyGroupId(readDto.studyGroupId());
 		StudyGroup studyGroup = studyGroupMemberDtoMap
 			.keySet()

@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		// 1. accessToken 이 유효한경우
-		if (!isLogout && accessToken != null && tokenService.verifyToken(accessToken)) {
+		if (isAccessTokenValid(accessToken, isLogout)) {
 			checkBlackList(accessToken);
 
 			String memberId = tokenService.getUid(accessToken);
@@ -79,12 +79,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				accessTokenExpirationException(response, objectMapper, CoderUtil.encode(newAccessToken));
 				return;
 			}
-			// 4. refreshtoken 이 존재하는데 유효하지 않은경우 : T002
+			// 4. refreshToken 이 존재하는데 유효하지 않은경우 : T002
 			refreshTokenExpirationException(response, objectMapper);
 			return;
 		}
 		// 토큰이 유효하지 않은경우 다음 필터로 이동한다.
 		filterChain.doFilter(request, response);
+	}
+
+	private boolean isAccessTokenValid(String accessToken, boolean isLogout) {
+		return !isLogout && accessToken != null && tokenService.verifyToken(accessToken);
 	}
 
 	private void accessTokenExpirationException(HttpServletResponse response, ObjectMapper objectMapper,

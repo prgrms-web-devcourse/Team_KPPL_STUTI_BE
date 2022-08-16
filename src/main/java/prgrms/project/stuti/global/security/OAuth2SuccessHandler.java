@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,8 +37,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws IOException, ServletException {
-		// 인증 된 principal 를 가지고 온다.
+		Authentication authentication) throws IOException {
 		OAuth2User oAuth2User = (OAuth2User)authentication.getPrincipal();
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 		String email = (String)attributes.get("email");
@@ -48,21 +46,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		String picture = (String)attributes.get("picture");
 
 		Optional<Member> optionalMember = memberService.getMember(new Email(email));
-		// 최초 로그인이라면 추가 회원가입 처리를 한다.
+
 		if (optionalMember.isEmpty()) {
 			Optional<TemporaryMember> optionalTemporaryMember = temporaryMemberRepository.findById(email);
-			TemporaryMember temporaryMember = TemporaryMember.builder()
-				.email(email)
-				.nickname(name)
-				.imageUrl(picture)
-				.expiration(signupTime)
-				.build();
+			TemporaryMember temporaryMember = makeTemporaryMember(email, name, picture);
 
-			// temporary member 가 없으면 생성
 			if (optionalTemporaryMember.isEmpty()) {
 				temporaryMemberRepository.save(temporaryMember);
 			} else {
-				// 있으면 기존의 회원가입시도가 있었으므로 그냥 가지고 온다.
 				temporaryMember = optionalTemporaryMember.get();
 			}
 
@@ -75,11 +66,19 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			response.sendRedirect(targetUri);
 			return;
 		}
-		// 이미 회원가입을 한 유저의 경우
 		Long memberId = optionalMember.get().getId();
 
 		String targetUri = domain + "/login" + "?id=" + memberId;
 		response.sendRedirect(targetUri);
 
+	}
+
+	private TemporaryMember makeTemporaryMember(String email, String name, String picture) {
+		return TemporaryMember.builder()
+			.email(email)
+			.nickname(name)
+			.imageUrl(picture)
+			.expiration(signupTime)
+			.build();
 	}
 }

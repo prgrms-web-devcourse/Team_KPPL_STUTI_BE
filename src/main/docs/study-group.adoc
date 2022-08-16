@@ -10,7 +10,7 @@ operation::create-study-group[snippets='http-request,request-headers,request-par
 operation::get-study-groups[snippets='http-request,request-headers,request-parameters,http-response,response-headers,response-body,response-fields']
 '''
 
-=== 마이 페이지 조회
+=== 멤버의 스터디 그룹 전체조회
 
 operation::get-member-study-groups[snippets='http-request,request-headers,request-parameters,http-response,response-headers,response-body,response-fields']
 '''

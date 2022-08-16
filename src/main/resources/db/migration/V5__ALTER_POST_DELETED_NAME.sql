@@ -1,0 +1,1 @@
+ALTER TABLE post CHANGE deleted isDeleted bit

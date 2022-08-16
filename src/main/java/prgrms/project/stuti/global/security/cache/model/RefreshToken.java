@@ -14,15 +14,15 @@ import lombok.Getter;
 public class RefreshToken {
 
 	@Id
-	private String accessTokenValue;
+	private final String accessTokenValue;
 
-	private String refreshTokenValue;
-	private Long memberId;
-	private Date createdTime;
-	private Date expirationTime;
+	private final String refreshTokenValue;
+	private final Long memberId;
+	private final Date createdTime;
+	private final Date expirationTime;
 
 	@TimeToLive
-	private Long expiration;
+	private final Long expiration;
 
 	@Builder
 	public RefreshToken(String accessTokenValue, String refreshTokenValue, Long memberId, Date createdTime,

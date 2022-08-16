@@ -45,12 +45,18 @@ public class StudyGroupService {
 
 	@Transactional(readOnly = true)
 	public CursorPageResponse<StudyGroupsResponse> getStudyGroups(StudyGroupDto.FindCondition conditionDto) {
-		return studyGroupRepository.findAllWithCursorPaginationByConditions(conditionDto);
+		StudyGroupQueryDto.StudyGroupsDto studyGroupsDto =
+			studyGroupRepository.findAllWithCursorPaginationByConditions(conditionDto);
+
+		return StudyGroupConverter.toStudyGroupsCursorPageResponse(studyGroupsDto);
 	}
 
 	@Transactional(readOnly = true)
 	public CursorPageResponse<StudyGroupsResponse> getMemberStudyGroups(StudyGroupDto.FindCondition conditionDto) {
-		return studyGroupRepository.findMembersAllWithCursorPaginationByConditions(conditionDto);
+		StudyGroupQueryDto.StudyGroupsDto studyGroupsDto =
+			studyGroupRepository.findMembersAllWithCursorPaginationByConditions(conditionDto);
+
+		return StudyGroupConverter.toStudyGroupsCursorPageResponse(studyGroupsDto);
 	}
 
 	@Transactional(readOnly = true)

@@ -1,7 +1,5 @@
 package prgrms.project.stuti.domain.studygroup.controller;
 
-import java.net.URI;
-
 import javax.validation.Valid;
 
 import org.springframework.http.MediaType;
@@ -20,9 +18,10 @@ import lombok.RequiredArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.controller.dto.StudyGroupRequest;
 import prgrms.project.stuti.domain.studygroup.service.StudyGroupService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupDetailResponse;
+import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
+import prgrms.project.stuti.global.aop.ExecutionTimeLogger;
 import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @RestController
@@ -39,11 +38,11 @@ public class StudyGroupRestController {
 	) {
 		StudyGroupDto.CreateDto createDto = StudyGroupMapper.toStudyGroupCreateDto(memberId, createRequest);
 		StudyGroupIdResponse idResponse = studyGroupService.createStudyGroup(createDto);
-		URI uri = URI.create("/api/v1/study-groups/" + idResponse.studyGroupId());
 
-		return ResponseEntity.created(uri).body(idResponse);
+		return ResponseEntity.ok(idResponse);
 	}
 
+	@ExecutionTimeLogger
 	@GetMapping
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getStudyGroups(
 		@RequestParam(defaultValue = DEFAULT_SIZE) Long size, StudyGroupRequest.FindCondition condition
@@ -55,6 +54,7 @@ public class StudyGroupRestController {
 		return ResponseEntity.ok(studyGroupsResponse);
 	}
 
+	@ExecutionTimeLogger
 	@GetMapping("/members/{memberId}")
 	public ResponseEntity<CursorPageResponse<StudyGroupsResponse>> getMemberStudyGroups(
 		@PathVariable Long memberId, @RequestParam(defaultValue = DEFAULT_SIZE) Long size,

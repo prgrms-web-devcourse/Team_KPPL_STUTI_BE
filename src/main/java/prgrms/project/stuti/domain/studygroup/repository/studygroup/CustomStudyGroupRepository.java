@@ -6,8 +6,6 @@ import java.util.Optional;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
-import prgrms.project.stuti.global.page.CursorPageResponse;
 
 public interface CustomStudyGroupRepository {
 
@@ -15,9 +13,9 @@ public interface CustomStudyGroupRepository {
 
 	List<StudyGroupQueryDto.StudyGroupDetailDto> findStudyGroupDetailById(Long studyGroupId);
 
-	CursorPageResponse<StudyGroupsResponse> findAllWithCursorPaginationByConditions(
+	StudyGroupQueryDto.StudyGroupsDto findAllWithCursorPaginationByConditions(
 		StudyGroupDto.FindCondition conditionDto);
 
-	CursorPageResponse<StudyGroupsResponse> findMembersAllWithCursorPaginationByConditions(
+	StudyGroupQueryDto.StudyGroupsDto findMembersAllWithCursorPaginationByConditions(
 		StudyGroupDto.FindCondition conditionDto);
 }

@@ -1,5 +1,6 @@
 package prgrms.project.stuti.domain.studygroup.repository.studygroup;
 
+import static com.querydsl.core.group.GroupBy.*;
 import static prgrms.project.stuti.domain.member.model.QMember.*;
 import static prgrms.project.stuti.domain.studygroup.model.QPreferredMbti.*;
 import static prgrms.project.stuti.domain.studygroup.model.QStudyGroup.*;
@@ -8,6 +9,7 @@ import static prgrms.project.stuti.domain.studygroup.repository.CommonStudyGroup
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -25,10 +27,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
-import prgrms.project.stuti.domain.studygroup.service.StudyGroupConverter;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
-import prgrms.project.stuti.global.page.CursorPageResponse;
 
 @RequiredArgsConstructor
 public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepository {
@@ -63,16 +62,10 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 	}
 
 	@Override
-	public CursorPageResponse<StudyGroupsResponse> findAllWithCursorPaginationByConditions(
+	public StudyGroupQueryDto.StudyGroupsDto findAllWithCursorPaginationByConditions(
 		StudyGroupDto.FindCondition conditionDto
 	) {
-		jpaQueryFactory
-			.selectFrom(studyGroup)
-			.join(studyGroup.preferredMBTIs, preferredMbti).fetchJoin()
-			.fetch();
-
-		List<StudyGroupQueryDto.StudyGroupsDto> contents = jpaQueryFactory
-			.select(Projections.constructor(StudyGroupQueryDto.StudyGroupsDto.class, studyGroup, member.id))
+		Map<Long, Long> idMap = jpaQueryFactory
 			.from(studyGroup)
 			.join(studyGroupMember).on(studyGroupMember.studyGroup.id.eq(studyGroup.id))
 			.join(studyGroupMember.member, member)
@@ -87,27 +80,16 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 				notDeletedMember())
 			.orderBy(studyGroupIdDesc())
 			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
-			.fetch();
+			.transform(groupBy(studyGroup.id).as(member.id));
 
-		boolean hasNext = contents.size() > conditionDto.size();
-
-		if (hasNext) {
-			contents.remove(contents.size() - 1);
-		}
-
-		return StudyGroupConverter.toStudyGroupsCursorPageResponse(contents, hasNext);
+		return toStudyGroupDtos(conditionDto, idMap);
 	}
 
 	@Override
-	public CursorPageResponse<StudyGroupsResponse> findMembersAllWithCursorPaginationByConditions(
+	public StudyGroupQueryDto.StudyGroupsDto findMembersAllWithCursorPaginationByConditions(
 		StudyGroupDto.FindCondition conditionDto
 	) {
-		jpaQueryFactory.selectFrom(studyGroup)
-			.join(studyGroup.preferredMBTIs).fetchJoin()
-			.fetch();
-
-		List<StudyGroupQueryDto.StudyGroupsDto> contents = jpaQueryFactory
-			.select(Projections.constructor(StudyGroupQueryDto.StudyGroupsDto.class, studyGroup, member.id))
+		Map<Long, Long> idMap = jpaQueryFactory
 			.from(studyGroup)
 			.join(studyGroupMember).on(studyGroupMember.studyGroup.id.eq(studyGroup.id))
 			.join(studyGroupMember.member, member)
@@ -116,17 +98,41 @@ public class CustomStudyGroupRepositoryImpl implements CustomStudyGroupRepositor
 				eqStudyGroupMemberRole(conditionDto.studyGroupMemberRole()),
 				eqMemberId(conditionDto.memberId()),
 				notDeletedStudyGroup())
-			.orderBy(studyGroupIdDesc())
 			.limit(conditionDto.size() + NumberUtils.LONG_ONE)
-			.fetch();
+			.orderBy(studyGroupIdDesc())
+			.transform(groupBy(studyGroup.id).as(member.id));
 
-		boolean hasNext = contents.size() > conditionDto.size();
+		return toStudyGroupDtos(conditionDto, idMap);
+	}
+
+	private StudyGroupQueryDto.StudyGroupsDto toStudyGroupDtos(
+		StudyGroupDto.FindCondition conditionDto, Map<Long, Long> idMap
+	) {
+		List<Long> studyGroupIds = idMap.keySet().stream().toList();
+		List<StudyGroup> studyGroups = findFetchStudyGroupsInIdsOrderByIdDesc(studyGroupIds);
+
+		boolean hasNext = studyGroups.size() > conditionDto.size();
 
 		if (hasNext) {
-			contents.remove(contents.size() - 1);
+			studyGroups.remove(studyGroups.size() - 1);
 		}
 
-		return StudyGroupConverter.toStudyGroupsCursorPageResponse(contents, hasNext);
+		List<StudyGroupQueryDto.StudyGroupDto> studyGroupDtos = studyGroups
+			.stream()
+			.map(studyGroup -> new StudyGroupQueryDto.StudyGroupDto(studyGroup, idMap.get(studyGroup.getId())))
+			.toList();
+
+		return new StudyGroupQueryDto.StudyGroupsDto(studyGroupDtos, hasNext);
+	}
+
+	private List<StudyGroup> findFetchStudyGroupsInIdsOrderByIdDesc(List<Long> studyGroupIds) {
+		return jpaQueryFactory
+			.selectDistinct(studyGroup)
+			.from(studyGroup)
+			.join(studyGroup.preferredMBTIs, preferredMbti).fetchJoin()
+			.where(studyGroup.id.in(studyGroupIds))
+			.orderBy(studyGroupIdDesc())
+			.fetch();
 	}
 
 	private BooleanExpression ltLastStudyGroupId(Long studyGroupId) {

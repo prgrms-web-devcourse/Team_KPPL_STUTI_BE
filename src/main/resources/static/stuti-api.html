@@ -459,7 +459,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_생성">생성</a></li>
 <li><a href="#_전체조회">전체조회</a></li>
-<li><a href="#_마이_페이지_조회">마이 페이지 조회</a></li>
+<li><a href="#_멤버의_스터디_그룹_전체조회">멤버의 스터디 그룹 전체조회</a></li>
 <li><a href="#_상세조회">상세조회</a></li>
 <li><a href="#_수정_2">수정</a></li>
 <li><a href="#_삭제">삭제</a></li>
@@ -518,7 +518,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h4 id="_회원가입_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">POST /api/v1/signup?_csrf=eee2eea6-bfb8-4212-9526-1a2bdb6402c3 HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">POST /api/v1/signup?_csrf=3fb67ef7-3e94-4d3d-b6ed-fd0fd2500164 HTTP/1.1
 Content-Type: application/json
 Content-Length: 119
 Host: stuti.com
@@ -722,7 +722,7 @@ Content-Length: 289
 <h4 id="_로그인_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">POST /api/v1/login?_csrf=ff217351-193a-424d-8443-25115bae7ad0 HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">POST /api/v1/login?_csrf=3ddb4c1b-3873-4a82-b418-ea6b05803fd3 HTTP/1.1
 Content-Type: application/json
 Content-Length: 14
 Host: stuti.com
@@ -913,7 +913,7 @@ Content-Length: 289
 <h4 id="_유저정보_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/v1/auth?_csrf=27334357-9dd6-4354-84f6-2a68950ef4d3 HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/v1/auth?_csrf=abdec10e-a585-44bb-a43b-6afa7efe86ad HTTP/1.1
 Content-Type: application/json
 Host: stuti.com</code></pre>
 </div>
@@ -1179,47 +1179,47 @@ Content-Length: 226
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 이메일</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">이메일</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>profileImageUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 프로필 url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">프로필 이미지 url</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>nickname</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 닉네임</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">닉네임</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>field</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 분야</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">분야</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>career</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 경력</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">경력</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>MBTI</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 MBTI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MBTI</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>githubUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 깃허브</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">깃허브 주소</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>blogUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">멤버 블로그</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">블로그 주소</p></td>
 </tr>
 </tbody>
 </table>
@@ -1232,7 +1232,7 @@ Content-Length: 226
 <h4 id="_수정_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">PATCH /api/v1/members/1?_csrf=14bb068e-f96d-4569-9e28-08ebe82161be HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">PATCH /api/v1/members/1?_csrf=dac25d4e-38c6-450f-95dc-e8abe28b62c7 HTTP/1.1
 Content-Type: application/json
 Content-Length: 148
 Host: stuti.com
@@ -1364,7 +1364,7 @@ Content-Length: 226
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 멤버 id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 아이디</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>email</code></p></td>
@@ -1374,7 +1374,7 @@ Content-Length: 226
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>profileImageUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 프로필 url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 프로필 이미지 url</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>nickname</code></p></td>
@@ -1399,12 +1399,12 @@ Content-Length: 226
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>githubUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 깃허브</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 깃허브 주소</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>blogUrl</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 블로그</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">수정된 블로그 주소</p></td>
 </tr>
 </tbody>
 </table>
@@ -1453,11 +1453,11 @@ Content-Disposition: form-data; name=numberOfRecruits
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
 Content-Disposition: form-data; name=startDateTime
 
-2022-08-26 15:15:14
+2022-08-26 15:54:54
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
 Content-Disposition: form-data; name=endDateTime
 
-2023-06-16 15:15:14
+2023-06-16 15:54:54
 --6o2knFse3p53ty9dmcQvWAIx1zInP11uCfbm
 Content-Disposition: form-data; name=description
 
@@ -1573,8 +1573,7 @@ test
 <h4 id="_생성_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 201 Created
-Location: /api/v1/study-groups/1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
 Content-Length: 24
 
@@ -1603,8 +1602,8 @@ Content-Length: 24
 <td class="tableblock halign-left valign-top"><p class="tableblock">컨텐츠 타입</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Location</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">생성된 리소스 주소</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Content-Length</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨텐츠 길이</p></td>
 </tr>
 </tbody>
 </table>
@@ -1729,31 +1728,31 @@ Host: stuti.com</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 823
+Content-Length: 840
 
 {
   &quot;contents&quot; : [ {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
     &quot;title&quot; : &quot;test title&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.735329&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.735342&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.990512&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.990525&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   }, {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
-    &quot;title&quot; : &quot;test title&quot;,
+    &quot;title&quot; : &quot;test title2&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.735351&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.735352&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.990535&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.990536&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   } ],
@@ -1795,25 +1794,25 @@ Content-Length: 823
   &quot;contents&quot; : [ {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
     &quot;title&quot; : &quot;test title&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.735329&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.735342&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.990512&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.990525&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   }, {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
-    &quot;title&quot; : &quot;test title&quot;,
+    &quot;title&quot; : &quot;test title2&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.735351&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.735352&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.990535&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.990536&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   } ],
@@ -1854,9 +1853,9 @@ Content-Length: 823
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_마이_페이지_조회">마이 페이지 조회</h3>
+<h3 id="_멤버의_스터디_그룹_전체조회">멤버의 스터디 그룹 전체조회</h3>
 <div class="sect3">
-<h4 id="_마이_페이지_조회_http_request">HTTP request</h4>
+<h4 id="_멤버의_스터디_그룹_전체조회_http_request">HTTP request</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/v1/study-groups/members/1?mbti&amp;topic&amp;region&amp;studyGroupMemberRole=STUDY_LEADER&amp;lastStudyGroupId&amp;size=10&amp;mbti=&amp;topic=&amp;region=&amp;lastStudyGroupId= HTTP/1.1
@@ -1866,7 +1865,7 @@ Host: stuti.com</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_마이_페이지_조회_request_headers">Request headers</h4>
+<h4 id="_멤버의_스터디_그룹_전체조회_request_headers">Request headers</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1891,7 +1890,7 @@ Host: stuti.com</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_마이_페이지_조회_request_parameters">Request parameters</h4>
+<h4 id="_멤버의_스터디_그룹_전체조회_request_parameters">Request parameters</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1932,36 +1931,36 @@ Host: stuti.com</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_마이_페이지_조회_http_response">HTTP response</h4>
+<h4 id="_멤버의_스터디_그룹_전체조회_http_response">HTTP response</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 823
+Content-Length: 839
 
 {
   &quot;contents&quot; : [ {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
     &quot;title&quot; : &quot;test title&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.639747&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.639766&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.901669&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.901689&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   }, {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
-    &quot;title&quot; : &quot;test title&quot;,
+    &quot;title&quot; : &quot;test title2&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.639989&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.640062&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.902031&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.90212&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   } ],
@@ -1971,7 +1970,7 @@ Content-Length: 823
 </div>
 </div>
 <div class="sect3">
-<h4 id="_마이_페이지_조회_response_headers">Response headers</h4>
+<h4 id="_멤버의_스터디_그룹_전체조회_response_headers">Response headers</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -1996,32 +1995,32 @@ Content-Length: 823
 </table>
 </div>
 <div class="sect3">
-<h4 id="_마이_페이지_조회_response_body">Response body</h4>
+<h4 id="_멤버의_스터디_그룹_전체조회_response_body">Response body</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code>{
   &quot;contents&quot; : [ {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
     &quot;title&quot; : &quot;test title&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.639747&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.639766&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.901669&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.901689&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   }, {
     &quot;studyGroupId&quot; : 1,
     &quot;memberId&quot; : 1,
-    &quot;imageUrl&quot; : &quot;www.s3.com/image/study-groups&quot;,
+    &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
     &quot;topic&quot; : &quot;데브옵스&quot;,
-    &quot;title&quot; : &quot;test title&quot;,
+    &quot;title&quot; : &quot;test title2&quot;,
     &quot;preferredMBTIs&quot; : [ &quot;ENTJ&quot;, &quot;ENFJ&quot;, &quot;ESFJ&quot; ],
     &quot;region&quot; : &quot;서울&quot;,
-    &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.639989&quot;,
-    &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.640062&quot;,
+    &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.902031&quot;,
+    &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.90212&quot;,
     &quot;numberOfMembers&quot; : 3,
     &quot;numberOfRecruits&quot; : 5
   } ],
@@ -2031,7 +2030,7 @@ Content-Length: 823
 </div>
 </div>
 <div class="sect3">
-<h4 id="_마이_페이지_조회_response_fields">Response fields</h4>
+<h4 id="_멤버의_스터디_그룹_전체조회_response_fields">Response fields</h4>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2126,16 +2125,16 @@ Host: stuti.com</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 584
+Content-Length: 618
 
 {
   &quot;studyGroupId&quot; : 1,
   &quot;topic&quot; : &quot;데브옵스&quot;,
   &quot;title&quot; : &quot;test title&quot;,
-  &quot;imageUrl&quot; : &quot;test image url&quot;,
+  &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
   &quot;leader&quot; : {
     &quot;memberId&quot; : 1,
-    &quot;profileImageUrl&quot; : &quot;test profile image url&quot;,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
     &quot;nickname&quot; : &quot;nickname&quot;,
     &quot;field&quot; : &quot;백엔드&quot;,
     &quot;career&quot; : &quot;0년차~3년차&quot;,
@@ -2144,8 +2143,8 @@ Content-Length: 584
   &quot;preferredMBTIs&quot; : [ &quot;INFJ&quot;, &quot;ENFJ&quot; ],
   &quot;isOnline&quot; : false,
   &quot;region&quot; : &quot;대전&quot;,
-  &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.688887&quot;,
-  &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.688958&quot;,
+  &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.948934&quot;,
+  &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.948948&quot;,
   &quot;numberOfMembers&quot; : 5,
   &quot;numberOfRecruits&quot; : 5,
   &quot;description&quot; : &quot;test description&quot;
@@ -2186,10 +2185,10 @@ Content-Length: 584
   &quot;studyGroupId&quot; : 1,
   &quot;topic&quot; : &quot;데브옵스&quot;,
   &quot;title&quot; : &quot;test title&quot;,
-  &quot;imageUrl&quot; : &quot;test image url&quot;,
+  &quot;imageUrl&quot; : &quot;https://www.s3.com/study-group-images&quot;,
   &quot;leader&quot; : {
     &quot;memberId&quot; : 1,
-    &quot;profileImageUrl&quot; : &quot;test profile image url&quot;,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
     &quot;nickname&quot; : &quot;nickname&quot;,
     &quot;field&quot; : &quot;백엔드&quot;,
     &quot;career&quot; : &quot;0년차~3년차&quot;,
@@ -2198,8 +2197,8 @@ Content-Length: 584
   &quot;preferredMBTIs&quot; : [ &quot;INFJ&quot;, &quot;ENFJ&quot; ],
   &quot;isOnline&quot; : false,
   &quot;region&quot; : &quot;대전&quot;,
-  &quot;startDateTime&quot; : &quot;2022-08-26T15:15:14.688887&quot;,
-  &quot;endDateTime&quot; : &quot;2023-06-16T15:15:14.688958&quot;,
+  &quot;startDateTime&quot; : &quot;2022-08-26T15:54:53.948934&quot;,
+  &quot;endDateTime&quot; : &quot;2023-06-16T15:54:53.948948&quot;,
   &quot;numberOfMembers&quot; : 5,
   &quot;numberOfRecruits&quot; : 5,
   &quot;description&quot; : &quot;test description&quot;
@@ -2728,6 +2727,273 @@ Host: stuti.com</code></pre>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_관리_페이지_멤버_조회_request_headers">Request headers</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Content-Type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨텐츠 타입</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Host</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">호스트</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_관리_페이지_멤버_조회_path_parameters">Path parameters</h4>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/v1/study-groups/{studyGroupId}/members</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyGroupId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 아이디</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_관리_페이지_멤버_조회_http_response">HTTP response</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 705
+
+{
+  &quot;studyGroupId&quot; : 1,
+  &quot;topic&quot; : &quot;백엔드&quot;,
+  &quot;title&quot; : &quot;test title&quot;,
+  &quot;numberOfMembers&quot; : 2,
+  &quot;numberOfRecruits&quot; : 5,
+  &quot;studyMembers&quot; : [ {
+    &quot;studyGroupMemberId&quot; : 2,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
+    &quot;nickname&quot; : &quot;test nickname&quot;,
+    &quot;field&quot; : &quot;안드로이드&quot;,
+    &quot;career&quot; : &quot;0년차~3년차&quot;,
+    &quot;mbti&quot; : &quot;ENFJ&quot;,
+    &quot;studyGroupMemberRole&quot; : &quot;멤버&quot;
+  } ],
+  &quot;numberOfApplicants&quot; : 1,
+  &quot;studyApplicants&quot; : [ {
+    &quot;studyGroupMemberId&quot; : 3,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
+    &quot;nickname&quot; : &quot;test nickname2&quot;,
+    &quot;field&quot; : &quot;IOS&quot;,
+    &quot;career&quot; : &quot;10년차~&quot;,
+    &quot;mbti&quot; : &quot;INFJ&quot;,
+    &quot;studyGroupMemberRole&quot; : &quot;신청자&quot;
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_관리_페이지_멤버_조회_response_headers">Response headers</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Content-Type</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">컨텐츠 타입</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_관리_페이지_멤버_조회_response_body">Response body</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code>{
+  &quot;studyGroupId&quot; : 1,
+  &quot;topic&quot; : &quot;백엔드&quot;,
+  &quot;title&quot; : &quot;test title&quot;,
+  &quot;numberOfMembers&quot; : 2,
+  &quot;numberOfRecruits&quot; : 5,
+  &quot;studyMembers&quot; : [ {
+    &quot;studyGroupMemberId&quot; : 2,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
+    &quot;nickname&quot; : &quot;test nickname&quot;,
+    &quot;field&quot; : &quot;안드로이드&quot;,
+    &quot;career&quot; : &quot;0년차~3년차&quot;,
+    &quot;mbti&quot; : &quot;ENFJ&quot;,
+    &quot;studyGroupMemberRole&quot; : &quot;멤버&quot;
+  } ],
+  &quot;numberOfApplicants&quot; : 1,
+  &quot;studyApplicants&quot; : [ {
+    &quot;studyGroupMemberId&quot; : 3,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
+    &quot;nickname&quot; : &quot;test nickname2&quot;,
+    &quot;field&quot; : &quot;IOS&quot;,
+    &quot;career&quot; : &quot;10년차~&quot;,
+    &quot;mbti&quot; : &quot;INFJ&quot;,
+    &quot;studyGroupMemberRole&quot; : &quot;신청자&quot;
+  } ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_관리_페이지_멤버_조회_response_fields">Response fields</h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyGroupId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>topic</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 주제</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>title</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 제목</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>numberOfMembers</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 현재 인원수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>numberOfRecruits</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 모집 인원수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 멤버 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>numberOfApplicants</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 지원자 수</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Array</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 신청자 목록</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]studyGroupMemberId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 멤버 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]profileImageUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">프로필 이미지 url</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]field</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">개발분야</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]career</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">개발경력</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]mbti</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MBTI</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyMembers[*]studyGroupMemberRole</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 멤버 역할</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]studyGroupMemberId</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Number</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 멤버 아이디</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]profileImageUrl</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">프로필 이미지 url</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]nickname</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">닉네임</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]field</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">개발분야</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]career</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">개발경력</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]mbti</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MBTI</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>studyApplicants[*]studyGroupMemberRole</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">스터디 그룹 멤버 역할</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 <div class="sect2">
@@ -3079,16 +3345,16 @@ Host: stuti.com
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 215
+Content-Length: 231
 
 {
   &quot;studyGroupQuestionId&quot; : 1,
   &quot;parentId&quot; : null,
-  &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+  &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;test nickname&quot;,
   &quot;contents&quot; : &quot;test&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.722633&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.698915&quot;
 }</code></pre>
 </div>
 </div>
@@ -3125,11 +3391,11 @@ Content-Length: 215
 <pre class="CodeRay highlight nowrap"><code>{
   &quot;studyGroupQuestionId&quot; : 1,
   &quot;parentId&quot; : null,
-  &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+  &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;test nickname&quot;,
   &quot;contents&quot; : &quot;test&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.722633&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.698915&quot;
 }</code></pre>
 </div>
 </div>
@@ -3280,41 +3546,41 @@ Host: stuti.com</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 1078
+Content-Length: 1137
 
 {
   &quot;contents&quot; : [ {
     &quot;studyGroupQuestionId&quot; : 1,
     &quot;parentId&quot; : 1,
-    &quot;profileImageUrl&quot; : &quot;test profile image url&quot;,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
     &quot;memberId&quot; : 1,
     &quot;nickname&quot; : &quot;test nickname&quot;,
     &quot;contents&quot; : &quot;test contents&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-06T15:15:13.790232&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-06T15:54:52.854998&quot;,
     &quot;children&quot; : [ {
       &quot;studyGroupQuestionId&quot; : 1,
       &quot;parentId&quot; : null,
-      &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+      &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;test nickname&quot;,
       &quot;contents&quot; : &quot;test&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.790252&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.855084&quot;
     }, {
       &quot;studyGroupQuestionId&quot; : 1,
       &quot;parentId&quot; : null,
-      &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+      &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;test nickname&quot;,
       &quot;contents&quot; : &quot;test&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.790254&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.855088&quot;
     }, {
       &quot;studyGroupQuestionId&quot; : 1,
       &quot;parentId&quot; : null,
-      &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+      &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;test nickname&quot;,
       &quot;contents&quot; : &quot;test&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.790255&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.855089&quot;
     } ]
   } ],
   &quot;hasNext&quot; : false,
@@ -3356,35 +3622,35 @@ Content-Length: 1078
   &quot;contents&quot; : [ {
     &quot;studyGroupQuestionId&quot; : 1,
     &quot;parentId&quot; : 1,
-    &quot;profileImageUrl&quot; : &quot;test profile image url&quot;,
+    &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
     &quot;memberId&quot; : 1,
     &quot;nickname&quot; : &quot;test nickname&quot;,
     &quot;contents&quot; : &quot;test contents&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-06T15:15:13.790232&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-06T15:54:52.854998&quot;,
     &quot;children&quot; : [ {
       &quot;studyGroupQuestionId&quot; : 1,
       &quot;parentId&quot; : null,
-      &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+      &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;test nickname&quot;,
       &quot;contents&quot; : &quot;test&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.790252&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.855084&quot;
     }, {
       &quot;studyGroupQuestionId&quot; : 1,
       &quot;parentId&quot; : null,
-      &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+      &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;test nickname&quot;,
       &quot;contents&quot; : &quot;test&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.790254&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.855088&quot;
     }, {
       &quot;studyGroupQuestionId&quot; : 1,
       &quot;parentId&quot; : null,
-      &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+      &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;test nickname&quot;,
       &quot;contents&quot; : &quot;test&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.790255&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.855089&quot;
     } ]
   } ],
   &quot;hasNext&quot; : false,
@@ -3537,16 +3803,16 @@ Host: stuti.com
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 215
+Content-Length: 230
 
 {
   &quot;studyGroupQuestionId&quot; : 1,
   &quot;parentId&quot; : null,
-  &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+  &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;test nickname&quot;,
   &quot;contents&quot; : &quot;test&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.663067&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.58555&quot;
 }</code></pre>
 </div>
 </div>
@@ -3583,11 +3849,11 @@ Content-Length: 215
 <pre class="CodeRay highlight nowrap"><code>{
   &quot;studyGroupQuestionId&quot; : 1,
   &quot;parentId&quot; : null,
-  &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+  &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;test nickname&quot;,
   &quot;contents&quot; : &quot;test&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.663067&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.58555&quot;
 }</code></pre>
 </div>
 </div>
@@ -3717,16 +3983,16 @@ Host: stuti.com</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 215
+Content-Length: 231
 
 {
   &quot;studyGroupQuestionId&quot; : 1,
   &quot;parentId&quot; : null,
-  &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+  &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;test nickname&quot;,
   &quot;contents&quot; : &quot;test&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.761791&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.812215&quot;
 }</code></pre>
 </div>
 </div>
@@ -3759,11 +4025,11 @@ Content-Length: 215
 <pre class="CodeRay highlight nowrap"><code>{
   &quot;studyGroupQuestionId&quot; : 1,
   &quot;parentId&quot; : null,
-  &quot;profileImageUrl&quot; : &quot;profile image url&quot;,
+  &quot;profileImageUrl&quot; : &quot;https://www.s3.com/profile-images&quot;,
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;test nickname&quot;,
   &quot;contents&quot; : &quot;test&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:13.761791&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:52.812215&quot;
 }</code></pre>
 </div>
 </div>
@@ -3934,7 +4200,7 @@ Content-Length: 303
   &quot;profileImageUrl&quot; : &quot;testUrl&quot;,
   &quot;contents&quot; : &quot;테스트게시글 내용&quot;,
   &quot;postImageUrl&quot; : &quot;testUrl.com&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.621328&quot;,
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.384844&quot;,
   &quot;totalPostComments&quot; : 30,
   &quot;likedMembers&quot; : [ 1 ]
 }</code></pre>
@@ -3953,7 +4219,7 @@ Content-Length: 303
   &quot;profileImageUrl&quot; : &quot;testUrl&quot;,
   &quot;contents&quot; : &quot;테스트게시글 내용&quot;,
   &quot;postImageUrl&quot; : &quot;testUrl.com&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.621328&quot;,
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.384844&quot;,
   &quot;totalPostComments&quot; : 30,
   &quot;likedMembers&quot; : [ 1 ]
 }</code></pre>
@@ -4110,7 +4376,7 @@ Content-Length: 364
     &quot;profileImageUrl&quot; : &quot;testProfileImage.jpg&quot;,
     &quot;contents&quot; : &quot;테스트게시글&quot;,
     &quot;postImageUrl&quot; : &quot;testPost.jpg&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.692564&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.484717&quot;,
     &quot;totalPostComments&quot; : 1,
     &quot;likedMembers&quot; : [ 1, 2 ]
   } ],
@@ -4132,7 +4398,7 @@ Content-Length: 364
     &quot;profileImageUrl&quot; : &quot;testProfileImage.jpg&quot;,
     &quot;contents&quot; : &quot;테스트게시글&quot;,
     &quot;postImageUrl&quot; : &quot;testPost.jpg&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.692564&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.484717&quot;,
     &quot;totalPostComments&quot; : 1,
     &quot;likedMembers&quot; : [ 1, 2 ]
   } ],
@@ -4323,7 +4589,7 @@ Content-Length: 364
     &quot;profileImageUrl&quot; : &quot;testProfileImage.jpg&quot;,
     &quot;contents&quot; : &quot;테스트게시글&quot;,
     &quot;postImageUrl&quot; : &quot;testPost.jpg&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.733605&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.572548&quot;,
     &quot;totalPostComments&quot; : 1,
     &quot;likedMembers&quot; : [ 1, 2 ]
   } ],
@@ -4345,7 +4611,7 @@ Content-Length: 364
     &quot;profileImageUrl&quot; : &quot;testProfileImage.jpg&quot;,
     &quot;contents&quot; : &quot;테스트게시글&quot;,
     &quot;postImageUrl&quot; : &quot;testPost.jpg&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.733605&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.572548&quot;,
     &quot;totalPostComments&quot; : 1,
     &quot;likedMembers&quot; : [ 1, 2 ]
   } ],
@@ -4530,7 +4796,7 @@ mockImage.jpg
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 302
+Content-Length: 303
 
 {
   &quot;postId&quot; : 1,
@@ -4540,7 +4806,7 @@ Content-Length: 302
   &quot;profileImageUrl&quot; : &quot;testUrl&quot;,
   &quot;contents&quot; : &quot;테스트게시글 내용&quot;,
   &quot;postImageUrl&quot; : &quot;testUrl.com&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.52689&quot;,
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.221644&quot;,
   &quot;totalPostComments&quot; : 30,
   &quot;likedMembers&quot; : [ 1 ]
 }</code></pre>
@@ -4559,7 +4825,7 @@ Content-Length: 302
   &quot;profileImageUrl&quot; : &quot;testUrl&quot;,
   &quot;contents&quot; : &quot;테스트게시글 내용&quot;,
   &quot;postImageUrl&quot; : &quot;testUrl.com&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:08.52689&quot;,
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:47.221644&quot;,
   &quot;totalPostComments&quot; : 30,
   &quot;likedMembers&quot; : [ 1 ]
 }</code></pre>
@@ -4803,7 +5069,7 @@ Content-Length: 236
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;testNickname&quot;,
   &quot;contents&quot; : &quot;새로운 댓글입니다.&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.411496&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.560881&quot;
 }</code></pre>
 </div>
 </div>
@@ -4819,7 +5085,7 @@ Content-Length: 236
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;testNickname&quot;,
   &quot;contents&quot; : &quot;새로운 댓글입니다.&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.411496&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.560881&quot;
 }</code></pre>
 </div>
 </div>
@@ -4970,7 +5236,7 @@ Host: stuti.com</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 552
+Content-Length: 553
 
 {
   &quot;contents&quot; : [ {
@@ -4980,7 +5246,7 @@ Content-Length: 552
     &quot;memberId&quot; : 1,
     &quot;nickname&quot; : &quot;testnickname&quot;,
     &quot;contents&quot; : &quot;댓글입니다.&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.62593&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.863192&quot;,
     &quot;children&quot; : [ {
       &quot;parentId&quot; : 1,
       &quot;postCommentId&quot; : 2,
@@ -4988,7 +5254,7 @@ Content-Length: 552
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;testnickname&quot;,
       &quot;contents&quot; : &quot;대댓글&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.625854&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.863028&quot;
     } ]
   } ],
   &quot;hasNext&quot; : true,
@@ -5009,7 +5275,7 @@ Content-Length: 552
     &quot;memberId&quot; : 1,
     &quot;nickname&quot; : &quot;testnickname&quot;,
     &quot;contents&quot; : &quot;댓글입니다.&quot;,
-    &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.62593&quot;,
+    &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.863192&quot;,
     &quot;children&quot; : [ {
       &quot;parentId&quot; : 1,
       &quot;postCommentId&quot; : 2,
@@ -5017,7 +5283,7 @@ Content-Length: 552
       &quot;memberId&quot; : 1,
       &quot;nickname&quot; : &quot;testnickname&quot;,
       &quot;contents&quot; : &quot;대댓글&quot;,
-      &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.625854&quot;
+      &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.863028&quot;
     } ]
   } ],
   &quot;hasNext&quot; : true,
@@ -5359,7 +5625,7 @@ Content-Length: 236
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;testNickname&quot;,
   &quot;contents&quot; : &quot;새로운 댓글입니다.&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.527697&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.677713&quot;
 }</code></pre>
 </div>
 </div>
@@ -5375,7 +5641,7 @@ Content-Length: 236
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;testNickname&quot;,
   &quot;contents&quot; : &quot;새로운 댓글입니다.&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:15:06.527697&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.677713&quot;
 }</code></pre>
 </div>
 </div>
@@ -5514,7 +5780,7 @@ Content-Length: 236
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;testNickname&quot;,
   &quot;contents&quot; : &quot;새로운 댓글입니다.&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:18:34.958955&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.738363&quot;
 }</code></pre>
 </div>
 </div>
@@ -5530,7 +5796,7 @@ Content-Length: 236
   &quot;memberId&quot; : 1,
   &quot;nickname&quot; : &quot;testNickname&quot;,
   &quot;contents&quot; : &quot;새로운 댓글입니다.&quot;,
-  &quot;updatedAt&quot; : &quot;2022-08-16T15:18:34.958955&quot;
+  &quot;updatedAt&quot; : &quot;2022-08-16T15:54:44.738363&quot;
 }</code></pre>
 </div>
 </div>

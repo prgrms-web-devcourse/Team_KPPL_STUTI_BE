@@ -1,4 +1,4 @@
-# MBTI기반 개발자 스터디 모집 사이트, STU-TI ! 👉 <a href ="https://stu-ti.netlify.app" > 바로가기</a>  
+# MBTI기반 개발자 스터디 모집 사이트, STU-TI ! 👉 <a href ="https://stu-ti.netlify.app" >링크</a>  
 
 ![스크린샷 2022-08-14 오후 3 22 43](https://user-images.githubusercontent.com/50127628/184536067-db49eaf5-2ff3-45aa-96b7-19cd42bf9d38.png)
 ## 👬 팀 소개
@@ -32,11 +32,21 @@
     <td><b> <a href="https://github.com/Leeyerimearth">셀린(이예림)</b></td>
     <td><b><a href="https://github.com/ordilov">이인후</b></td>
   </tr>
-  <tr>
+   <tr>
     <td><b>Leader</b></td>
     <td><b>Developer</b></td>
     <td><b>Developer</b></td>
     <td><b>Advisor</b></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>
+      멤버 도메인<br/>
+      JWT 기반의 인증 인가<br/>
+      AWS CICD 구축<br/>
+    </td>
+    <td></td>
+    <td></td>
   </tr>
 </table>
 

@@ -35,7 +35,7 @@ public class Post extends BaseEntity {
 	@JoinColumn(name = "member_id")
 	private Member member;
 
-	@Column(nullable = false)
+	@Column(name = "is_deleted", nullable = false)
 	private boolean isDeleted;
 
 	public Post(String content, Member member) {

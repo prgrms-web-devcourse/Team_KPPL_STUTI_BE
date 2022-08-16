@@ -36,12 +36,12 @@ public class Post extends BaseEntity {
 	private Member member;
 
 	@Column(nullable = false)
-	private boolean deleted;
+	private boolean isDeleted;
 
 	public Post(String content, Member member) {
 		this.content = content;
 		this.member = member;
-		this.deleted = false;
+		this.isDeleted = false;
 	}
 
 	public void changeContents(String content) {
@@ -49,7 +49,7 @@ public class Post extends BaseEntity {
 	}
 
 	public void softDelete() {
-		this.deleted = true;
+		this.isDeleted = true;
 	}
 
 	@Override

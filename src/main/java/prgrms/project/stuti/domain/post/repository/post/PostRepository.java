@@ -8,9 +8,9 @@ import prgrms.project.stuti.domain.post.model.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long>, CustomPostRepository {
 
-	boolean existsByIdLessThanAndDeletedFalse(Long lastPostId);
+	boolean existsByIdLessThanAndIsDeletedFalse(Long lastPostId);
 
-	boolean existsByIdLessThanAndMemberIdAndDeletedFalse(Long lastPostId, Long memberId);
+	boolean existsByIdLessThanAndMemberIdAndIsDeletedFalse(Long lastPostId, Long memberId);
 
-	Optional<Post> findByIdAndDeletedFalse(Long postId);
+	Optional<Post> findByIdAndIsDeletedFalse(Long postId);
 }

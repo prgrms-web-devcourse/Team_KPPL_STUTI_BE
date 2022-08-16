@@ -188,7 +188,7 @@ class PostServiceTest extends ServiceTestConfig {
 		PostDetailResponse postDetailResponse = savePost();
 
 		postService.deletePost(postDetailResponse.postId());
-		Optional<Post> foundPost = postRepository.findByIdAndDeletedFalse(postDetailResponse.postId());
+		Optional<Post> foundPost = postRepository.findByIdAndIsDeletedFalse(postDetailResponse.postId());
 
 		assertThat(foundPost).isEmpty();
 	}

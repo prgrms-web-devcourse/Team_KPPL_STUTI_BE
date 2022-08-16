@@ -62,7 +62,7 @@ public class PostService {
 
 	@Transactional
 	public PostDetailResponse changePost(PostChangeDto postChangeDto) {
-		Post post = postRepository.findByIdAndDeletedFalse(postChangeDto.postId())
+		Post post = postRepository.findByIdAndIsDeletedFalse(postChangeDto.postId())
 			.orElseThrow(() -> PostException.notFoundPost(postChangeDto.postId()));
 
 		post.changeContents(postChangeDto.contents());
@@ -83,7 +83,7 @@ public class PostService {
 
 	@Transactional
 	public void deletePost(Long postId) {
-		Post post = postRepository.findByIdAndDeletedFalse(postId)
+		Post post = postRepository.findByIdAndIsDeletedFalse(postId)
 			.orElseThrow(() -> PostException.notFoundPost(postId));
 
 		softDeletePost(post);
@@ -106,7 +106,7 @@ public class PostService {
 			return false;
 		}
 
-		return postRepository.existsByIdLessThanAndMemberIdAndDeletedFalse(lastPostId, memberId);
+		return postRepository.existsByIdLessThanAndMemberIdAndIsDeletedFalse(lastPostId, memberId);
 	}
 
 	private boolean hasNext(Long lastPostId) {
@@ -114,7 +114,7 @@ public class PostService {
 			return false;
 		}
 
-		return postRepository.existsByIdLessThanAndDeletedFalse(lastPostId);
+		return postRepository.existsByIdLessThanAndIsDeletedFalse(lastPostId);
 	}
 
 	private Long getLastPostId(List<PostDetailResponse> postDetailResponses) {

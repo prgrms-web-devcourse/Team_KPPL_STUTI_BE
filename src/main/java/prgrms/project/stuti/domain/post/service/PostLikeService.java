@@ -24,7 +24,7 @@ public class PostLikeService {
 
 	@Transactional
 	public PostLikeIdResponse createPostLike(Long postId, Long memberId) {
-		Post post = postRepository.findByIdAndDeletedFalse(postId)
+		Post post = postRepository.findByIdAndIsDeletedFalse(postId)
 			.orElseThrow(() -> PostException.notFoundPost(postId));
 		Member member = memberRepository.findById(memberId).orElseThrow(() -> MemberException.notFoundMember(memberId));
 		postLikeRepository.findByPostIdAndMemberId(postId, memberId)

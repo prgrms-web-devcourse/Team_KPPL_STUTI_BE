@@ -1,5 +1,10 @@
 == 게시글 좋아요
 
+=== 생성
+
+operation::create-post-like[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+'''
+
 === 삭제
 
 operation::delete-post-like[snippets='http-request,request-headers,path-parameters,http-response']

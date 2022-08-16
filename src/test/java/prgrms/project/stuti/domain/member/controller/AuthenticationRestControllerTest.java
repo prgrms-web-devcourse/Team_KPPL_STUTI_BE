@@ -32,8 +32,8 @@ import prgrms.project.stuti.global.security.token.TokenService;
 import prgrms.project.stuti.global.security.token.TokenType;
 import prgrms.project.stuti.global.security.token.Tokens;
 
-@WebMvcTest(controllers = AuthenticationController.class)
-class AuthenticationControllerTest extends TestConfig {
+@WebMvcTest(controllers = AuthenticationRestController.class)
+class AuthenticationRestControllerTest extends TestConfig {
 	@MockBean
 	TokenService tokenService;
 

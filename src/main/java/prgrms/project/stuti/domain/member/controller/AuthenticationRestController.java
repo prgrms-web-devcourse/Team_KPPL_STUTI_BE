@@ -29,20 +29,20 @@ import prgrms.project.stuti.global.security.util.CoderUtil;
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
-public class AuthenticationController {
+public class AuthenticationRestController {
 
 	private final TokenService tokenService;
 	private final AuthenticationService authenticationService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<MemberSignupResponse> singup(
+	public ResponseEntity<MemberSignupResponse> singUp(
 		HttpServletRequest request, @Valid @RequestBody MemberSaveRequest memberSaveRequest
 	) {
 		MemberResponse memberResponse = authenticationService.signupMember(MemberMapper.toMemberDto(memberSaveRequest));
 		Long memberId = memberResponse.id();
 
 		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
-		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
+		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshTokenPeriod());
 		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,
 			CoderUtil.encode(tokens.accessToken()));
 
@@ -57,7 +57,7 @@ public class AuthenticationController {
 	public ResponseEntity<MemberSignupResponse> login(@Valid @RequestBody MemberIdRequest memberIdRequest) {
 		Long memberId = memberIdRequest.id();
 		Tokens tokens = tokenService.generateTokens(memberId.toString(), MemberRole.ROLE_MEMBER.name());
-		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshPeriod());
+		authenticationService.saveRefreshToken(memberId, tokens, tokenService.getRefreshTokenPeriod());
 
 		MemberResponse memberResponse = authenticationService.getMemberResponse(memberId);
 		MemberSignupResponse memberSignupResponse = new MemberSignupResponse(memberResponse,

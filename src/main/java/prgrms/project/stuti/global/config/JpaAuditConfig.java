@@ -19,16 +19,11 @@ public class JpaAuditConfig {
 		return () -> {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-			if (authentication == null || !authentication.isAuthenticated() || isAnonymous(
-				authentication)) {
+			if (authentication == null || !authentication.isAuthenticated() || isAnonymous(authentication)) {
 				return Optional.of(0L);
 			}
 
-			Long memberId = (Long)authentication.getPrincipal();
-			if (memberId == null) {
-				memberId = 0L;
-			}
-
+			Long memberId = Optional.ofNullable((Long)authentication.getPrincipal()).orElse(0L);
 			return Optional.of(memberId);
 		};
 	}

@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(TokenException.class)
 	protected ResponseEntity<TokenExpirationResponse> handleTokenExpiration(TokenException ex) {
-		log.info("Got TokenExpirationException: {}", ex.getMessage(), ex);
+		log.info("Got TokenExpirationException. tokenValue : {}", ex.getMessage(), ex);
 
 		return ErrorResponseMapper.toTokenExpirationResponse(ex.getErrorCode());
 	}

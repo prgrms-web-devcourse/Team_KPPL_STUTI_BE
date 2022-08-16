@@ -11,10 +11,10 @@ import lombok.Getter;
 public class BlackListToken {
 
 	@Id
-	private String tokenInBlackList;
+	private final String tokenInBlackList;
 
 	@TimeToLive
-	private Long expiration;
+	private final Long expiration;
 
 	public BlackListToken(String tokenInBlackList, Long expiration) {
 		this.tokenInBlackList = tokenInBlackList;

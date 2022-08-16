@@ -40,7 +40,6 @@ class AuthenticationServiceTest {
 			.MBTI(Mbti.ENFJ)
 			.build();
 
-
 		TemporaryMember temporaryMember = TemporaryMember.builder()
 			.email("test@test.com")
 			.imageUrl("test.s3.com")

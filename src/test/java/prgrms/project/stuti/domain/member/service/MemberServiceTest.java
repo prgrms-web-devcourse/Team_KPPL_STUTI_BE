@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import prgrms.project.stuti.config.ServiceTestConfig;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPatchRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberUpdateRequest;
 import prgrms.project.stuti.domain.member.controller.MemberMapper;
 import prgrms.project.stuti.domain.member.model.Career;
 import prgrms.project.stuti.domain.member.model.Email;
@@ -50,7 +50,7 @@ class MemberServiceTest extends ServiceTestConfig {
 		// given
 		Long memberId = member.getId();
 
-		MemberPatchRequest memberPatchRequest = MemberPatchRequest.builder()
+		MemberUpdateRequest memberUpdateRequest = MemberUpdateRequest.builder()
 			.nickname("test6")
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -61,7 +61,7 @@ class MemberServiceTest extends ServiceTestConfig {
 
 		// when
 		MemberResponse memberResponse = memberService.editMember(memberId,
-			MemberMapper.toMemberPutDto(memberPatchRequest));
+			MemberMapper.toMemberPutDto(memberUpdateRequest));
 
 		// then
 		assertAll(
@@ -83,7 +83,7 @@ class MemberServiceTest extends ServiceTestConfig {
 		Long memberId = member.getId();
 		String duplicatedNickname = otherMember.getNickName();
 
-		MemberPatchRequest memberPatchRequest = MemberPatchRequest.builder()
+		MemberUpdateRequest memberUpdateRequest = MemberUpdateRequest.builder()
 			.nickname(duplicatedNickname)
 			.field(Field.ANDROID)
 			.career(Career.JUNIOR)
@@ -94,7 +94,7 @@ class MemberServiceTest extends ServiceTestConfig {
 
 		// when // then
 		assertThrows(MemberException.class, () -> {
-			memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPatchRequest));
+			memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberUpdateRequest));
 		});
 	}
 }

@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import prgrms.project.stuti.domain.member.controller.dto.MemberPatchRequest;
+import prgrms.project.stuti.domain.member.controller.dto.MemberUpdateRequest;
 import prgrms.project.stuti.domain.member.service.MemberService;
 import prgrms.project.stuti.domain.member.service.dto.MemberResponse;
 
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberRestController {
 	private final MemberService memberService;
 
 	@GetMapping("/{memberId}")
-	public ResponseEntity<MemberResponse> member(@PathVariable Long memberId) {
+	public ResponseEntity<MemberResponse> getMember(@PathVariable Long memberId) {
 		return ResponseEntity
 			.ok()
 			.body(memberService.getMember(memberId));
@@ -30,9 +30,10 @@ public class MemberController {
 
 	@PatchMapping("/{memberId}")
 	public ResponseEntity<MemberResponse> updateMember(
-		@PathVariable Long memberId, @Valid @RequestBody MemberPatchRequest memberPatchRequest
+		@Valid @RequestBody MemberUpdateRequest memberUpdateRequest, @PathVariable Long memberId
 	) {
-		MemberResponse memberResponse = memberService.editMember(memberId, MemberMapper.toMemberPutDto(memberPatchRequest));
+		MemberResponse memberResponse = memberService.editMember(memberId, MemberMapper.toMemberPutDto(
+			memberUpdateRequest));
 
 		return ResponseEntity
 			.ok()

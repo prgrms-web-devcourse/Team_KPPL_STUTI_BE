@@ -19,3 +19,8 @@ operation::get-comment[snippets='http-request,request-headers,path-parameters,ht
 
 operation::update-comment[snippets='http-request,request-headers,path-parameters,request-body,http-response,response-body,response-fields']
 '''
+
+=== 삭제
+
+operation::delete-comment[snippets='http-request,request-headers,path-parameters,http-response,response-body,response-fields']
+'''

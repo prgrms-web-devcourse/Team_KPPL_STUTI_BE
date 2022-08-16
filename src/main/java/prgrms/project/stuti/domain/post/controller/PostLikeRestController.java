@@ -24,7 +24,7 @@ public class PostLikeRestController {
 	) {
 		PostLikeIdResponse postLikeIdResponse = postLikeService.createPostLike(postId, memberId);
 
-		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(postLikeIdResponse);
+		return ResponseEntity.ok(postLikeIdResponse);
 	}
 
 	@DeleteMapping("/api/v1/posts/{postId}/likes")

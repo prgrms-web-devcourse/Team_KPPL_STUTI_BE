@@ -1,6 +1,6 @@
 package prgrms.project.stuti.domain.post.controller;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
@@ -35,22 +35,20 @@ class PostLikeRestControllerTest extends TestConfig {
 	void createPostLike() throws Exception {
 		PostLikeIdResponse postLikeIdResponse = new PostLikeIdResponse(1L);
 
-		when(postLikeService.createPostLike(anyLong(), anyLong()))
-			.thenReturn(postLikeIdResponse);
+		when(postLikeService.createPostLike(any(), any())).thenReturn(postLikeIdResponse);
 
 		ResultActions resultActions = mockMvc.perform(post("/api/v1/posts/{postId}/likes", 1L)
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andDo(print());
+				.contentType(MediaType.APPLICATION_JSON));
 
 		resultActions.andExpectAll(
 			status().isOk(),
+			content().contentType(MediaType.APPLICATION_JSON),
 			content().json(objectMapper.writeValueAsString(postLikeIdResponse))
 		).andDo(
 			document(COMMON_DOCS_NAME,
 				requestHeaders(
-					headerWithName(CONTENT_TYPE).description("컨텐츠 타입"),
-					headerWithName(HOST).description("호스트")),
+					headerWithName(CONTENT_TYPE).description("컨텐츠 타입")
+				),
 				pathParameters(
 					parameterWithName("postId").description("게시글 아이디")
 				),

@@ -159,13 +159,10 @@ class PostCommentRestControllerTest extends TestConfig {
 			.updatedAt(LocalDateTime.now())
 			.build();
 
-		when(postCommentService.deleteComment(anyLong(), anyLong(), anyLong()))
-			.thenReturn(postCommentResponse);
+		when(postCommentService.deleteComment(any(), any(), any())).thenReturn(postCommentResponse);
 
-		ResultActions resultActions = mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", "1", "3")
-				.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andDo(print());
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/posts/{postId}/comments/{commentId}", 1L, 3L)
+				.contentType(MediaType.APPLICATION_JSON_VALUE));
 
 		resultActions
 			.andExpectAll(

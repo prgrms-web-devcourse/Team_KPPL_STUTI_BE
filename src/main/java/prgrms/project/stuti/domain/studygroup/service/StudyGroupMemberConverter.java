@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroup;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
-import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupMemberQueryDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMemberIdResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupMembersResponse.StudyGroupMemberResponse;
@@ -22,10 +22,10 @@ public class StudyGroupMemberConverter {
 	}
 
 	public static StudyGroupMembersResponse toStudyGroupMembersResponse(
-		StudyGroup studyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto> studyGroupMemberQueryDtos
+		StudyGroup studyGroup, List<StudyGroupMemberQueryDto> studyGroupMemberQueryDtos
 	) {
 
-		Map<Boolean, List<StudyGroupQueryDto.StudyGroupMemberDto>> studyGroupMembersDtoMap = studyGroupMemberQueryDtos
+		Map<Boolean, List<StudyGroupMemberQueryDto>> studyGroupMembersDtoMap = studyGroupMemberQueryDtos
 			.stream()
 			.collect(Collectors.partitioningBy(
 				dto -> dto.studyGroupMemberRole().equals(StudyGroupMemberRole.STUDY_APPLICANT)));
@@ -44,7 +44,7 @@ public class StudyGroupMemberConverter {
 	}
 
 	private static List<StudyGroupMemberResponse> toStudyGroupMemberResponse(
-		List<StudyGroupQueryDto.StudyGroupMemberDto> studyGroupMemberDtos
+		List<StudyGroupMemberQueryDto> studyGroupMemberDtos
 	) {
 		return studyGroupMemberDtos.isEmpty()
 			? Collections.emptyList()

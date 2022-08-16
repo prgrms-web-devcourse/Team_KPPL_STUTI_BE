@@ -24,8 +24,6 @@ import prgrms.project.stuti.domain.studygroup.model.Topic;
 import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
 import prgrms.project.stuti.domain.studygroup.repository.studymember.StudyGroupMemberRepository;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupDto;
-import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupsResponse;
-import prgrms.project.stuti.global.page.CursorPageResponse;
 
 class StudyGroupRepositoryTest extends RepositoryTestConfig {
 
@@ -104,14 +102,15 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 			.build();
 
 		//when
-		CursorPageResponse<StudyGroupsResponse> pageResponses =
+		StudyGroupQueryDto.StudyGroupsDto studyGroupsDto =
 			studyGroupRepository.findAllWithCursorPaginationByConditions(conditionDto);
 
 		//then
-		assertThat(pageResponses.contents()).isNotNull();
-		assertThat(pageResponses.contents()).hasSize(3);
-		assertThat(pageResponses.hasNext()).isTrue();
-		pageResponses.contents().forEach(content -> assertThat(content.topic()).isEqualTo(Topic.BACKEND.getValue()));
+		assertThat(studyGroupsDto.studyGroupDtos()).isNotNull();
+		assertThat(studyGroupsDto.studyGroupDtos()).hasSize(3);
+		assertThat(studyGroupsDto.hasNext()).isTrue();
+		studyGroupsDto.studyGroupDtos()
+			.forEach(dto -> assertThat(dto.studyGroup().getTopic()).isEqualTo(Topic.BACKEND));
 	}
 
 	@Test
@@ -130,14 +129,14 @@ class StudyGroupRepositoryTest extends RepositoryTestConfig {
 			.build();
 
 		//when
-		CursorPageResponse<StudyGroupsResponse> pageResponses =
+		StudyGroupQueryDto.StudyGroupsDto studyGroupsDto =
 			studyGroupRepository.findAllWithCursorPaginationByConditions(conditionDto);
 
 		//then
-		assertThat(pageResponses.contents()).isNotNull();
-		assertThat(pageResponses.contents()).hasSize(3);
-		assertThat(pageResponses.hasNext()).isTrue();
-		pageResponses.contents().forEach(content -> assertThat(content.memberId()).isEqualTo(member.getId()));
+		assertThat(studyGroupsDto.studyGroupDtos()).isNotNull();
+		assertThat(studyGroupsDto.studyGroupDtos()).hasSize(3);
+		assertThat(studyGroupsDto.hasNext()).isTrue();
+		studyGroupsDto.studyGroupDtos().forEach(content -> assertThat(content.memberId()).isEqualTo(member.getId()));
 	}
 
 	public void saveStudyGroup(Topic topic) {

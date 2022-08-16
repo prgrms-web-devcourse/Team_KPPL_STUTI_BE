@@ -27,7 +27,7 @@ import prgrms.project.stuti.domain.studygroup.model.StudyGroupMember;
 import prgrms.project.stuti.domain.studygroup.model.StudyGroupMemberRole;
 import prgrms.project.stuti.domain.studygroup.model.StudyPeriod;
 import prgrms.project.stuti.domain.studygroup.model.Topic;
-import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupQueryDto;
+import prgrms.project.stuti.domain.studygroup.repository.dto.StudyGroupMemberQueryDto;
 import prgrms.project.stuti.domain.studygroup.repository.studygroup.StudyGroupRepository;
 
 class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
@@ -152,7 +152,7 @@ class StudyGroupMemberRepositoryTest extends RepositoryTestConfig {
 		Long studyGroupId = studyGroup.getId();
 
 		//when
-		Map<StudyGroup, List<StudyGroupQueryDto.StudyGroupMemberDto>> studyGroupMembersMap =
+		Map<StudyGroup, List<StudyGroupMemberQueryDto>> studyGroupMembersMap =
 			studyGroupMemberRepository.findStudyGroupMembersByStudyGroupId(studyGroupId);
 
 		//then

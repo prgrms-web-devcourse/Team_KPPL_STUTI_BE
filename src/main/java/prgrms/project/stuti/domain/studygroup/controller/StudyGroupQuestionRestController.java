@@ -20,6 +20,7 @@ import prgrms.project.stuti.domain.studygroup.service.StudyGroupQuestionService;
 import prgrms.project.stuti.domain.studygroup.service.dto.StudyGroupQuestionDto;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionResponse;
 import prgrms.project.stuti.domain.studygroup.service.response.StudyGroupQuestionsResponse;
+import prgrms.project.stuti.global.aop.ExecutionTimeLogger;
 import prgrms.project.stuti.global.page.PageResponse;
 
 @RestController
@@ -42,6 +43,7 @@ public class StudyGroupQuestionRestController {
 		return ResponseEntity.ok(questionResponse);
 	}
 
+	@ExecutionTimeLogger
 	@GetMapping
 	public ResponseEntity<PageResponse<StudyGroupQuestionsResponse>> getStudyGroupQuestions(
 		@PathVariable Long studyGroupId, @RequestParam(defaultValue = DEFAULT_SIZE) Long size,

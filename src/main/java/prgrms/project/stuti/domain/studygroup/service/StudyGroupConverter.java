@@ -68,9 +68,9 @@ public class StudyGroupConverter {
 	}
 
 	public static CursorPageResponse<StudyGroupsResponse> toStudyGroupsCursorPageResponse(
-		List<StudyGroupQueryDto.StudyGroupsDto> contents, boolean hasNext
+		StudyGroupQueryDto.StudyGroupsDto studyGroupsDto
 	) {
-		return new CursorPageResponse<>(toStudyGroupsResponse(contents), hasNext);
+		return new CursorPageResponse<>(toStudyGroupsResponse(studyGroupsDto), studyGroupsDto.hasNext());
 	}
 
 	private static Set<PreferredMbti> toPreferredMBTIs(Set<Mbti> preferredMBTIs) {
@@ -95,19 +95,21 @@ public class StudyGroupConverter {
 			.build();
 	}
 
-	private static List<StudyGroupsResponse> toStudyGroupsResponse(List<StudyGroupQueryDto.StudyGroupsDto> contents) {
-		return contents.isEmpty()
+	private static List<StudyGroupsResponse> toStudyGroupsResponse(StudyGroupQueryDto.StudyGroupsDto studyGroupsDto) {
+		List<StudyGroupQueryDto.StudyGroupDto> studyGroupDtos = studyGroupsDto.studyGroupDtos();
+
+		return studyGroupDtos.isEmpty()
 			? Collections.emptyList()
-			: contents
+			: studyGroupDtos
 			.stream()
-			.map(content -> {
-				StudyGroup studyGroup = content.studyGroup();
+			.map(dto -> {
+				StudyGroup studyGroup = dto.studyGroup();
 				StudyPeriod studyPeriod = studyGroup.getStudyPeriod();
 
 				return StudyGroupsResponse
 					.builder()
 					.studyGroupId(studyGroup.getId())
-					.memberId(content.memberId())
+					.memberId(dto.memberId())
 					.imageUrl(studyGroup.getImageUrl())
 					.topic(studyGroup.getTopic().getValue())
 					.title(studyGroup.getTitle())

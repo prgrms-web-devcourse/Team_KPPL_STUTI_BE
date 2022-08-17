@@ -89,7 +89,7 @@
 
 ## 📐 ERD
 
-![image](https://user-images.githubusercontent.com/50127628/184536883-998d3265-61e9-4eac-9705-5bba5af9d054.png)
+<img width="1285" alt="스크린샷 2022-08-17 오후 11 37 07" src="https://user-images.githubusercontent.com/78140516/185166104-f4c35809-3938-4f7c-a828-0eb6dad83d20.png">
 
 ## ☎️ API 명세
 

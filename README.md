@@ -38,16 +38,6 @@
     <td><b>Developer</b></td>
     <td><b>Advisor</b></td>
   </tr>
-  <tr>
-    <td></td>
-    <td>
-      멤버 도메인<br/>
-      JWT 기반의 인증 인가<br/>
-      AWS CICD 구축<br/>
-    </td>
-    <td></td>
-    <td></td>
-  </tr>
 </table>
 
 <br/>
